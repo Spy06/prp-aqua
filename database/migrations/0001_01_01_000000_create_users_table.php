@@ -8,13 +8,28 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Tabel users dikustomisasi untuk sistem verifikasi PRP:
+     * - Login memakai NIK (bukan email) — sesuai implementation plan §4 & §5
+     * - Email dijadikan nullable (tetap ada sebagai kolom opsional)
+     * - Tambah kolom: nik (FK ke karyawan), role ('karyawan'/'qa'), no_whatsapp
+     *
+     * FK ke karyawan tidak bisa dibuat di sini karena tabel karyawan belum ada.
+     * FK akan ditambahkan di migration berikutnya setelah tabel karyawan dibuat.
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name')->nullable();
+            // NIK sebagai username login — FK ke karyawan ditambah di migration terpisah
+            $table->string('nik')->nullable()->unique();
+            // Role akun: 'karyawan' atau 'qa'
+            $table->string('role')->default('karyawan');
+            // Nomor WhatsApp untuk notifikasi Twilio (format: 628xxx)
+            $table->string('no_whatsapp')->nullable();
+            // Email dijadikan nullable — tidak dipakai untuk login
+            $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

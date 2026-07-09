@@ -45,8 +45,11 @@ return [
     |
     */
 
-    'username' => 'email',
+    // Menggunakan NIK sebagai username login — bukan email
+    'username' => 'nik',
 
+    // Email tidak dipakai untuk login, tapi field ini masih dipakai Fortify
+    // untuk reset password (dibiarkan default)
     'email' => 'email',
 
     /*
@@ -60,7 +63,8 @@ return [
     |
     */
 
-    'lowercase_usernames' => true,
+    // NIK bersifat numerik/alphanumerik — tidak perlu lowercase
+    'lowercase_usernames' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -161,13 +165,14 @@ return [
     */
 
     'features' => [
-        Features::registration(),
-        Features::resetPasswords(),
-        Features::emailVerification(),
+        // Registrasi publik DINONAKTIFKAN — akun hanya dibuat oleh QA (admin master)
+        // Features::registration(),
+        // Features::resetPasswords(),
+        // Verifikasi email tidak relevan karena login pakai NIK
+        // Features::emailVerification(),
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,
-            // 'window' => 0
         ]),
         Features::passkeys([
             'confirmPassword' => true,

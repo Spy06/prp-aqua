@@ -1,4 +1,4 @@
-# Implementation plan — sistem verifikasi PRP plant
+ Implementation plan — sistem verifikasi PRP plant
 
 Dokumen ini adalah acuan pengembangan (development blueprint) untuk sistem verifikasi PRP (Prerequisite Program) berbasis web, menggantikan proses Google Form manual yang selama ini digunakan. Dokumen mencakup arsitektur, model data, alur kerja, spesifikasi rute/komponen, hingga rencana kerja harian.
 

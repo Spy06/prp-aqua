@@ -1,124 +1,92 @@
 <?php
 
-use App\Concerns\ProfileValidationRules;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Profile settings')] class extends Component {
-    use ProfileValidationRules;
+new #[Title('Pengaturan Profil')] class extends Component {
 
     public string $name = '';
-    public string $email = '';
+    public ?string $no_whatsapp = null;
 
     /**
      * Mount the component.
+     * Menggunakan NIK-based profile — email tidak dipakai.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->name = $user->name ?? $user->karyawan?->nama ?? '';
+        $this->no_whatsapp = $user->no_whatsapp ?? '';
     }
 
     /**
-     * Update the profile information for the currently authenticated user.
+     * Update nama tampilan dan nomor WhatsApp.
      */
     public function updateProfileInformation(): void
     {
+        $validated = $this->validate([
+            'name'         => ['required', 'string', 'max:255'],
+            'no_whatsapp'  => ['nullable', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+        ], [
+            'no_whatsapp.regex' => 'Nomor WhatsApp hanya boleh berisi angka (contoh: 6281234567890).',
+        ]);
+
         $user = Auth::user();
-
-        $validated = $this->validate($this->profileRules($user->id));
-
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
+        $user->name        = $validated['name'];
+        $user->no_whatsapp = $validated['no_whatsapp'] ?: null;
         $user->save();
 
-        Flux::toast(variant: 'success', text: __('Profile updated.'));
-    }
-
-    /**
-     * Send an email verification notification to the current user.
-     */
-    public function resendVerificationNotification(): void
-    {
-        $user = Auth::user();
-
-        if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false));
-
-            return;
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        Session::flash('status', 'verification-link-sent');
-    }
-
-    #[Computed]
-    public function hasUnverifiedEmail(): bool
-    {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
-    }
-
-    #[Computed]
-    public function showDeleteUser(): bool
-    {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        Flux::toast(variant: 'success', text: __('Profil berhasil diperbarui.'));
     }
 }; ?>
 
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
+    <flux:heading class="sr-only">{{ __('Pengaturan Profil') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+    <x-pages::settings.layout :heading="__('Profil')" :subheading="__('Perbarui nama tampilan dan nomor WhatsApp Anda')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
-            <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+            {{-- NIK (hanya tampilan, tidak bisa diubah) --}}
+            <flux:input
+                :label="__('NIK (Nomor Induk Karyawan)')"
+                :value="Auth::user()->nik ?? '-'"
+                type="text"
+                readonly
+                disabled
+                class="opacity-60 cursor-not-allowed"
+            />
 
-                @if ($this->hasUnverifiedEmail)
-                    <div>
-                        <flux:text class="mt-4">
-                            {{ __('Your email address is unverified.') }}
+            {{-- Nama tampilan --}}
+            <flux:input
+                wire:model="name"
+                :label="__('Nama')"
+                type="text"
+                required
+                autofocus
+                autocomplete="name"
+            />
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email.') }}
-                            </flux:link>
-                        </flux:text>
-
-                        @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
-                                {{ __('A new verification link has been sent to your email address.') }}
-                            </flux:text>
-                        @endif
-                    </div>
-                @endif
-            </div>
+            {{-- Nomor WhatsApp untuk notifikasi --}}
+            <flux:input
+                wire:model="no_whatsapp"
+                :label="__('Nomor WhatsApp')"
+                type="text"
+                autocomplete="tel"
+                placeholder="6281234567890"
+                :description="__('Dipakai untuk notifikasi temuan PRP. Format: 628xxx tanpa spasi atau tanda +')"
+            />
 
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full" data-test="update-profile-button">
-                        {{ __('Save') }}
-                    </flux:button>
-                </div>
-
+                <flux:button variant="primary" type="submit" data-test="update-profile-button">
+                    {{ __('Simpan') }}
+                </flux:button>
             </div>
         </form>
 
-        @if ($this->showDeleteUser)
-            <livewire:pages::settings.delete-user-form />
-        @endif
+        {{-- Hapus akun dinonaktifkan — penghapusan akun hanya oleh QA (admin master) --}}
     </x-pages::settings.layout>
 </section>

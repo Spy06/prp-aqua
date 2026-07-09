@@ -19,10 +19,10 @@
     <div class="p-4 bg-white dark:bg-zinc-800 shadow rounded-lg">
         @if ($tab === 'pelapor')
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Temuan Anda (Pelapor)</h2>
-            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Fitur ini akan diimplementasikan pada Hari 3 (Form Temuan & Daftar Temuan Pelapor).</p>
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Fitur ini akan diimplementasikan mendatang.</p>
         @else
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Tindak Lanjut (PIC)</h2>
-            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Fitur ini akan diimplementasikan pada Hari 4 (Daftar Temuan PIC).</p>
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Fitur ini akan diimplementasikan mendatang.</p>
         @endif
     </div>
 </div>

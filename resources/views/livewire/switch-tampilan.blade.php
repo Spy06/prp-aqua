@@ -11,8 +11,12 @@
                 wire:click="setTab('pic')" 
                 class="{{ $tab === 'pic' ? 'bg-white dark:bg-zinc-700 shadow-sm text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800' }} px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-2">
                 PIC
-                <!-- Placeholder badge untuk PIC -->
-                <span class="rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-semibold text-zinc-600 dark:bg-zinc-600 dark:text-zinc-300">0</span>
+                <!-- Badge: jumlah temuan open/in_progress milik user sebagai PIC -->
+                @if($picBadge > 0)
+                    <span class="rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">{{ $picBadge }}</span>
+                @else
+                    <span class="rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-semibold text-zinc-600 dark:bg-zinc-600 dark:text-zinc-300">0</span>
+                @endif
             </button>
         </div>
 
@@ -37,10 +41,7 @@
             
             <livewire:daftar-temuan-pelapor />
         @else
-            <div class="p-6 bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 rounded-xl">
-                <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Tindak Lanjut (PIC)</h2>
-                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Fitur ini akan diimplementasikan mendatang.</p>
-            </div>
+            <livewire:daftar-temuan-p-i-c />
         @endif
     </div>
 </div>

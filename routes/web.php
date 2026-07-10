@@ -30,8 +30,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Temuan detail (accessible by pelapor_id, pic_id or role qa via Policy)
+    // Policy ditegakkan di DAUD level: middleware route + AuthorizesRequests di Livewire mount()
     Route::get('/temuan/{temuan}', function (\App\Models\Temuan $temuan) {
-        return "Detail Temuan (Placeholder Hari 2) ID: " . $temuan->id;
+        return view('pages.temuan-detail', ['temuan' => $temuan]);
     })->name('temuan.detail')->middleware('can:view,temuan');
 
     // Route untuk test job queue WA (Hanya untuk Hari 2)

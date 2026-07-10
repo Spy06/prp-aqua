@@ -1,6 +1,4 @@
-<div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
-    <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6">Form Pelaporan Temuan PRP</h2>
-
+<div>
     @if (session()->has('success'))
         <div class="mb-4 p-4 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-lg">
             {{ session('success') }}

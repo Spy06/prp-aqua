@@ -17,11 +17,11 @@ class KaryawanUserSeeder extends Seeder
      * ┌──────────────┬─────────────────┬────────────┬──────────┬───────────┐
      * │ NIK          │ Nama            │ Departemen │ Role     │ Password  │
      * ├──────────────┼─────────────────┼────────────┼──────────┼───────────┤
-     * │ 2024001      │ Budi Santoso    │ Produksi   │ karyawan │ password1 │
-     * │ 2024002      │ Siti Rahayu     │ QC         │ karyawan │ password2 │
-     * │ 2024003      │ Ahmad Fauzi     │ Gudang     │ karyawan │ password3 │
+     * │ 2024001      │ Farhan Hakim    │ Produksi   │ karyawan │ password1 │
+     * │ 2024002      │ Fahri Irfandi   │ QC         │ karyawan │ password2 │
+     * │ 2024003      │ Daffa Salman    │ Gudang     │ karyawan │ password3 │
      * │ 2024004      │ Dewi Lestari    │ Maintenance│ karyawan │ password4 │
-     * │ 9900001      │ Indah Permata   │ QC         │ qa       │ qapassword│
+     * │ 9900001      │ Lia Atikah      │ QC         │ qa       │ qapassword│
      * └──────────────┴─────────────────┴────────────┴──────────┴───────────┘
      */
     public function run(): void
@@ -31,11 +31,10 @@ class KaryawanUserSeeder extends Seeder
         $gudang      = Departemen::where('nama_departemen', 'Gudang')->first();
         $maintenance = Departemen::where('nama_departemen', 'Maintenance')->first();
 
-        // ── 1. QA account ──────────────────────────────────────────────────
         $karyawanQa = Karyawan::firstOrCreate(
             ['nik' => '9900001'],
             [
-                'nama'          => 'Indah Permata',
+                'nama'          => 'Lia Atikah',
                 'departemen_id' => $qc->id,
                 'status_aktif'  => true,
             ]
@@ -52,30 +51,29 @@ class KaryawanUserSeeder extends Seeder
             ]
         );
 
-        // ── 2. Karyawan accounts ───────────────────────────────────────────
         $karyawans = [
             [
                 'nik'           => '2024001',
-                'nama'          => 'Budi Santoso',
+                'nama'          => 'Farhan Hakim',
                 'departemen_id' => $produksi->id,
                 'role'          => 'karyawan',
-                'no_whatsapp'   => '6281200000002',
+                'no_whatsapp'   => '6281326532314',
                 'password'      => 'password1',
             ],
             [
                 'nik'           => '2024002',
-                'nama'          => 'Siti Rahayu',
+                'nama'          => 'Mhd Fahri Irfandi Dewantara',
                 'departemen_id' => $qc->id,
                 'role'          => 'karyawan',
-                'no_whatsapp'   => '6281200000003',
+                'no_whatsapp'   => '62895618964044',
                 'password'      => 'password2',
             ],
             [
                 'nik'           => '2024003',
-                'nama'          => 'Ahmad Fauzi',
+                'nama'          => 'Daffa Salman Fauzan Santoso',
                 'departemen_id' => $gudang->id,
                 'role'          => 'karyawan',
-                'no_whatsapp'   => '6281200000004',
+                'no_whatsapp'   => '6281270783144',
                 'password'      => 'password3',
             ],
             [
@@ -110,7 +108,6 @@ class KaryawanUserSeeder extends Seeder
             );
         }
 
-        // ── 3. Karyawan tanpa akun (contoh — belum punya akun sistem) ──────
         $karyawanTanpaAkun = [
             [
                 'nik'           => '2024005',

@@ -9,12 +9,16 @@ class SendWhatsAppDummy implements ShouldQueue
 {
     use Queueable;
 
+    public $to;
+    public $messageBody;
+
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct($to = null, $messageBody = null)
     {
-        //
+        $this->to = $to;
+        $this->messageBody = $messageBody;
     }
 
     /**
@@ -25,8 +29,8 @@ class SendWhatsAppDummy implements ShouldQueue
         $sid    = env('TWILIO_SID');
         $token  = env('TWILIO_AUTH_TOKEN');
         $from   = env('TWILIO_WHATSAPP_FROM');
-        // Dummy target number
-        $to     = env('TWILIO_TEST_NUMBER');
+        $to     = $this->to ?? env('TWILIO_TEST_NUMBER');
+        $body   = $this->messageBody ?? "Hello dari PRP Aqua! Ini adalah pesan test dari queue Laravel.";
 
         if (!$sid || !$token || !$from || !$to) {
             \Illuminate\Support\Facades\Log::warning('Kredensial Twilio belum lengkap di .env, job SendWhatsAppDummy dilewati.');
@@ -40,7 +44,7 @@ class SendWhatsAppDummy implements ShouldQueue
                 ->create("whatsapp:" . $to, // to
                     [
                         "from" => "whatsapp:" . $from,
-                        "body" => "Hello dari PRP Aqua! Ini adalah pesan test dari queue Laravel."
+                        "body" => $body
                     ]
                 );
 

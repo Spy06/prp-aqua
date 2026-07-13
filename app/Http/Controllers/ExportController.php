@@ -1,0 +1,225 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Temuan;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+
+class ExportController extends Controller
+{
+    /**
+     * Guard: hanya role QA yang boleh mengakses semua method di controller ini.
+     */
+    protected function requireQa(): void
+    {
+        if (auth()->user()?->role !== 'qa') {
+            abort(403, 'Hanya QA yang dapat mengakses fitur export.');
+        }
+    }
+
+    /**
+     * Parse parameter filter (dipakai bersama di semua method export).
+     *
+     * @return array{awal: string, akhir: string, label: string}
+     */
+    protected function parseFilter(Request $request): array
+    {
+        $tipe = $request->input('tipe', 'bulan');
+
+        return match($tipe) {
+            'custom' => [
+                'awal'  => $request->input('awal', Carbon::now()->startOfMonth()->toDateString()),
+                'akhir' => $request->input('akhir', Carbon::now()->toDateString()),
+                'label' => $request->input('awal', '-') . ' s/d ' . $request->input('akhir', '-'),
+            ],
+            'tahun' => (function () use ($request) {
+                $tahun = (int) $request->input('tahun', now()->year);
+                $awal  = Carbon::createFromDate($tahun, 1, 1)->startOfYear()->toDateString();
+                $akhir = Carbon::createFromDate($tahun, 1, 1)->endOfYear()->toDateString();
+                return ['awal' => $awal, 'akhir' => $akhir, 'label' => "Tahun {$tahun}"];
+            })(),
+            default => (function () use ($request) { // 'bulan'
+                $bulan = (int) $request->input('bulan', now()->month);
+                $tahun = (int) $request->input('tahun', now()->year);
+                $awal  = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->toDateString();
+                $akhir = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->toDateString();
+                $namaBulan = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
+                return ['awal' => $awal, 'akhir' => $akhir, 'label' => $namaBulan];
+            })(),
+        };
+    }
+
+    /**
+     * Ambil data temuan sesuai filter.
+     */
+    protected function getTemuans(string $awal, string $akhir)
+    {
+        return Temuan::with(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul'])
+            ->whereBetween('tanggal_temuan', [$awal, $akhir])
+            ->orderBy('tanggal_temuan', 'asc')
+            ->get();
+    }
+
+    // =====================================================================
+    // Export Excel (CSV yang kompatibel Excel, tanpa ext-zip)
+    // =====================================================================
+
+    /**
+     * GET /export/excel
+     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir
+     */
+    public function excel(Request $request)
+    {
+        $this->requireQa();
+
+        ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
+        $temuans = $this->getTemuans($awal, $akhir);
+
+        // Build CSV content dengan BOM agar Excel baca UTF-8 dengan benar
+        $bom = "\xEF\xBB\xBF";
+
+        $header = [
+            'ID', 'Tanggal Temuan', 'Departemen', 'Sub Area',
+            'Pelapor (NIK)', 'Pelapor (Nama)', 'PIC (NIK)', 'PIC (Nama)',
+            'Status', 'Klausul PRP', 'Tindakan Perbaikan', 'Due Date',
+            'Foto Bukti', 'Tanggal ACC QA', 'Catatan QA',
+        ];
+
+        $rows = [];
+        foreach ($temuans as $t) {
+            $tl = $t->tindakLanjut;
+            $rows[] = [
+                $t->id,
+                $t->tanggal_temuan->format('d/m/Y'),
+                $t->departemen->nama_departemen ?? '',
+                $t->sub_area,
+                $t->pelapor->nik ?? '',
+                $t->pelapor->name ?? '',
+                $t->pic->nik ?? '',
+                $t->pic->name ?? '',
+                $t->status,
+                $tl?->klausul?->kode_klausul . ' - ' . $tl?->klausul?->nama_klausul ?? '',
+                $tl?->action ?? '',
+                $tl?->due_date?->format('d/m/Y') ?? '',
+                $tl?->foto_bukti_path ? 'Ada' : 'Belum',
+                $tl?->tanggal_acc?->format('d/m/Y') ?? '',
+                $tl?->catatan_qa ?? '',
+            ];
+        }
+
+        // Generate CSV string
+        $csvContent = $bom;
+
+        // Header row
+        $csvContent .= implode(';', array_map(fn($h) => '"' . str_replace('"', '""', $h) . '"', $header)) . "\r\n";
+
+        // Data rows
+        foreach ($rows as $row) {
+            $csvContent .= implode(';', array_map(fn($v) => '"' . str_replace('"', '""', (string)$v) . '"', $row)) . "\r\n";
+        }
+
+        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd_His') . '.csv';
+
+        return response($csvContent, 200, [
+            'Content-Type'        => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'no-store, no-cache, must-revalidate',
+        ]);
+    }
+
+    // =====================================================================
+    // Export PDF — Satu Temuan
+    // =====================================================================
+
+    /**
+     * GET /export/pdf/temuan/{id}
+     */
+    public function pdfTemuan(Temuan $temuan)
+    {
+        $this->requireQa();
+
+        $temuan->loadMissing(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul']);
+
+        // Resolve URL foto untuk DomPDF (butuh path absolut, bukan URL publik)
+        $fotoTemuanUrl = null;
+        if ($temuan->foto_temuan_path) {
+            $path = Storage::disk('public')->path($temuan->foto_temuan_path);
+            if (file_exists($path)) {
+                $fotoTemuanUrl = 'file:///' . str_replace('\\', '/', $path);
+            }
+        }
+
+        $fotoBuktiUrl = null;
+        if ($tl = $temuan->tindakLanjut) {
+            if ($tl->foto_bukti_path) {
+                $path = Storage::disk('public')->path($tl->foto_bukti_path);
+                if (file_exists($path)) {
+                    $fotoBuktiUrl = 'file:///' . str_replace('\\', '/', $path);
+                }
+            }
+        }
+
+        $pdf = Pdf::loadView('pdf.temuan-detail', [
+            'temuan'        => $temuan,
+            'fotoTemuanUrl' => $fotoTemuanUrl,
+            'fotoBuktiUrl'  => $fotoBuktiUrl,
+        ])->setPaper('a4', 'portrait');
+
+        $filename = "laporan-temuan-{$temuan->id}-" . now()->format('Ymd') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    // =====================================================================
+    // Export PDF — Rekap Periode
+    // =====================================================================
+
+    /**
+     * GET /export/pdf/rekap
+     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir
+     */
+    public function pdfRekap(Request $request)
+    {
+        $this->requireQa();
+
+        ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
+        $temuans = $this->getTemuans($awal, $akhir);
+
+        $total     = $temuans->count();
+        $perStatus = [
+            'open'              => $temuans->where('status', 'open')->count(),
+            'in_progress'       => $temuans->where('status', 'in_progress')->count(),
+            'closed_pending_qa' => $temuans->where('status', 'closed_pending_qa')->count(),
+            'closed_acc'        => $temuans->where('status', 'closed_acc')->count(),
+        ];
+        $perDepartemen = $temuans->groupBy('departemen_id')->map(function ($group) {
+            $dept = $group->first()->departemen;
+            return [
+                'nama'              => $dept->nama_departemen ?? 'Tidak Diketahui',
+                'total'             => $group->count(),
+                'open'              => $group->where('status', 'open')->count(),
+                'in_progress'       => $group->where('status', 'in_progress')->count(),
+                'closed_pending_qa' => $group->where('status', 'closed_pending_qa')->count(),
+                'closed_acc'        => $group->where('status', 'closed_acc')->count(),
+            ];
+        })->values();
+
+        $pdf = Pdf::loadView('pdf.rekap', [
+            'temuans'       => $temuans,
+            'total'         => $total,
+            'perStatus'     => $perStatus,
+            'perDepartemen' => $perDepartemen,
+            'periodeLabel'  => $label,
+            'awal'          => $awal,
+            'akhir'         => $akhir,
+        ])->setPaper('a4', 'landscape');
+
+        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+}

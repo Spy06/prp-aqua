@@ -74,7 +74,15 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
-                                <a href="{{ route('temuan.detail', $t->id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('temuan.detail', $t->id) }}"
+                                       class="text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a>
+                                    <span class="text-zinc-300 dark:text-zinc-600">|</span>
+                                    <a href="{{ route('export.pdf.temuan', $t->id) }}"
+                                       target="_blank"
+                                       title="Export PDF Temuan #{{ $t->id }}"
+                                       class="text-red-600 dark:text-red-400 hover:underline text-xs">PDF</a>
+                                </div>
                             </td>
                         </tr>
                     @empty

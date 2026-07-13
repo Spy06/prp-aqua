@@ -11,18 +11,43 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" href="#" >
-                        {{ __('Reports') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="magnifying-glass-circle" href="#" >
-                        {{ __('Findings') }}
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+                @auth
+                    @if(auth()->user()->role === 'qa')
+                        {{-- Menu QA --}}
+                        <flux:sidebar.group :heading="__('QA Dashboard')" class="grid">
+                            <flux:sidebar.item icon="chart-bar" :href="route('qa.dashboard')" :current="request()->routeIs('qa.dashboard')" wire:navigate>
+                                Dashboard Temuan
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="calendar-days" :href="route('qa.rekap')" :current="request()->routeIs('qa.rekap')" wire:navigate>
+                                Rekap Periode
+                            </flux:sidebar.item>
+                        </flux:sidebar.group>
+
+                        <flux:sidebar.group :heading="__('Master Data')" class="grid">
+                            <flux:sidebar.item icon="users" :href="route('qa.master.karyawan')" :current="request()->routeIs('qa.master.karyawan')" wire:navigate>
+                                Karyawan
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="building-office" :href="route('qa.master.departemen')" :current="request()->routeIs('qa.master.departemen')" wire:navigate>
+                                Departemen
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="document-check" :href="route('qa.master.klausul')" :current="request()->routeIs('qa.master.klausul')" wire:navigate>
+                                Klausul PRP
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="user-circle" :href="route('qa.master.akun')" :current="request()->routeIs('qa.master.akun')" wire:navigate>
+                                Akun User
+                            </flux:sidebar.item>
+                        </flux:sidebar.group>
+                    @else
+                        {{-- Menu Karyawan --}}
+                        <flux:sidebar.group :heading="__('Menu')" class="grid">
+                            <flux:sidebar.item icon="home" :href="route('beranda')" :current="request()->routeIs('beranda')" wire:navigate>
+                                Beranda
+                            </flux:sidebar.item>
+                        </flux:sidebar.group>
+                    @endif
+                @endauth
             </flux:sidebar.nav>
+
 
             <flux:spacer />
 

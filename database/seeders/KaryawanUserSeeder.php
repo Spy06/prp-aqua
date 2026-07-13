@@ -26,63 +26,63 @@ class KaryawanUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $produksi    = Departemen::where('nama_departemen', 'Produksi')->first();
-        $qc          = Departemen::where('nama_departemen', 'Quality Control (QC)')->first();
-        $gudang      = Departemen::where('nama_departemen', 'Gudang')->first();
+        $produksi = Departemen::where('nama_departemen', 'Produksi')->first();
+        $qc = Departemen::where('nama_departemen', 'Quality Control (QC)')->first();
+        $gudang = Departemen::where('nama_departemen', 'Gudang')->first();
         $maintenance = Departemen::where('nama_departemen', 'Maintenance')->first();
 
         $karyawanQa = Karyawan::firstOrCreate(
             ['nik' => '9900001'],
             [
-                'nama'          => 'Lia Atikah',
+                'nama' => 'Lia Atikah',
                 'departemen_id' => $qc->id,
-                'status_aktif'  => true,
+                'status_aktif' => true,
             ]
         );
 
         User::firstOrCreate(
             ['nik' => '9900001'],
             [
-                'name'         => $karyawanQa->nama,
-                'nik'          => '9900001',
-                'role'         => 'qa',
-                'no_whatsapp'  => '6281200000001',
-                'password'     => Hash::make('qapassword'),
+                'name' => $karyawanQa->nama,
+                'nik' => '9900001',
+                'role' => 'qa',
+                'no_whatsapp' => '62895618964044',
+                'password' => Hash::make('qapassword'),
             ]
         );
 
         $karyawans = [
             [
-                'nik'           => '2024001',
-                'nama'          => 'Farhan Hakim',
+                'nik' => '2024001',
+                'nama' => 'Farhan Hakim',
                 'departemen_id' => $produksi->id,
-                'role'          => 'karyawan',
-                'no_whatsapp'   => '6281326532314',
-                'password'      => 'password1',
+                'role' => 'karyawan',
+                'no_whatsapp' => '6281326532314',
+                'password' => 'password1',
             ],
             [
-                'nik'           => '2024002',
-                'nama'          => 'Mhd Fahri Irfandi Dewantara',
+                'nik' => '2024002',
+                'nama' => 'Mhd Fahri Irfandi Dewantara',
                 'departemen_id' => $qc->id,
-                'role'          => 'karyawan',
-                'no_whatsapp'   => '62895618964044',
-                'password'      => 'password2',
+                'role' => 'karyawan',
+                'no_whatsapp' => '62895618964044',
+                'password' => 'password2',
             ],
             [
-                'nik'           => '2024003',
-                'nama'          => 'Daffa Salman Fauzan Santoso',
+                'nik' => '2024003',
+                'nama' => 'Daffa Salman Fauzan Santoso',
                 'departemen_id' => $gudang->id,
-                'role'          => 'karyawan',
-                'no_whatsapp'   => '6281270783144',
-                'password'      => 'password3',
+                'role' => 'karyawan',
+                'no_whatsapp' => '6281270783144',
+                'password' => 'password3',
             ],
             [
-                'nik'           => '2024004',
-                'nama'          => 'Dewi Lestari',
+                'nik' => '2024004',
+                'nama' => 'Dewi Lestari',
                 'departemen_id' => $maintenance->id,
-                'role'          => 'karyawan',
-                'no_whatsapp'   => '6281200000005',
-                'password'      => 'password4',
+                'role' => 'karyawan',
+                'no_whatsapp' => '6281200000005',
+                'password' => 'password4',
             ],
         ];
 
@@ -90,33 +90,33 @@ class KaryawanUserSeeder extends Seeder
             Karyawan::firstOrCreate(
                 ['nik' => $data['nik']],
                 [
-                    'nama'          => $data['nama'],
+                    'nama' => $data['nama'],
                     'departemen_id' => $data['departemen_id'],
-                    'status_aktif'  => true,
+                    'status_aktif' => true,
                 ]
             );
 
             User::firstOrCreate(
                 ['nik' => $data['nik']],
                 [
-                    'name'        => $data['nama'],
-                    'nik'         => $data['nik'],
-                    'role'        => $data['role'],
+                    'name' => $data['nama'],
+                    'nik' => $data['nik'],
+                    'role' => $data['role'],
                     'no_whatsapp' => $data['no_whatsapp'],
-                    'password'    => Hash::make($data['password']),
+                    'password' => Hash::make($data['password']),
                 ]
             );
         }
 
         $karyawanTanpaAkun = [
             [
-                'nik'           => '2024005',
-                'nama'          => 'Roni Wibowo',
+                'nik' => '2024005',
+                'nama' => 'Roni Wibowo',
                 'departemen_id' => $produksi->id,
             ],
             [
-                'nik'           => '2024006',
-                'nama'          => 'Maya Anggraeni',
+                'nik' => '2024006',
+                'nama' => 'Maya Anggraeni',
                 'departemen_id' => $gudang->id,
             ],
         ];
@@ -125,9 +125,9 @@ class KaryawanUserSeeder extends Seeder
             Karyawan::firstOrCreate(
                 ['nik' => $data['nik']],
                 [
-                    'nama'          => $data['nama'],
+                    'nama' => $data['nama'],
                     'departemen_id' => $data['departemen_id'],
-                    'status_aktif'  => true,
+                    'status_aktif' => true,
                 ]
             );
         }

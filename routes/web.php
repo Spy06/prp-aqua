@@ -24,9 +24,21 @@ Route::middleware(['auth'])->group(function () {
         Route::view('/beranda', 'pages.beranda')->name('beranda');
     });
 
-    // Role QA
+    // Role QA — Dashboard, Rekap, Master Data
     Route::middleware(['role:qa'])->group(function () {
         Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
+        Route::view('/qa/rekap', 'pages.qa.rekap')->name('qa.rekap');
+        Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
+        Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');
+        Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
+        Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
+    });
+
+    // Export routes — hanya QA (dicek di ExportController::requireQa())
+    Route::middleware(['role:qa'])->group(function () {
+        Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
+        Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
+        Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
     });
 
     // Temuan detail (accessible by pelapor_id, pic_id or role qa via Policy)

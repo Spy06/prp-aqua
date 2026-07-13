@@ -24,11 +24,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $karyawan = \App\Models\Karyawan::factory()->create();
+
         return [
-            'name' => fake()->name(),
-            'nik' => null, // NIK diisi manual dari data karyawan
+            'name' => $karyawan->nama,
+            'nik' => $karyawan->nik, // Hubungkan dengan karyawan.nik
             'role' => 'karyawan',
-            'no_whatsapp' => null,
+            'no_whatsapp' => '628' . $this->faker->numerify('##########'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

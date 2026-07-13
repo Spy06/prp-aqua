@@ -1,4 +1,43 @@
 <div class="space-y-6">
+    {{-- Metric Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Open -->
+        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Open</h3>
+            </div>
+            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['open'] ?? 0 }}</p>
+        </div>
+
+        <!-- In Progress -->
+        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">In Progress</h3>
+            </div>
+            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['in_progress'] ?? 0 }}</p>
+        </div>
+
+        <!-- Pending QA -->
+        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Pending QA</h3>
+            </div>
+            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['pending_qa'] ?? 0 }}</p>
+        </div>
+
+        <!-- Closed -->
+        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Closed</h3>
+            </div>
+            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['closed'] ?? 0 }}</p>
+        </div>
+    </div>
+
     {{-- Header --}}
     <div class="flex items-center justify-between">
         <div>
@@ -7,11 +46,6 @@
                 Temuan yang menunggu tindak lanjut Anda
             </p>
         </div>
-        @if($totalAktif > 0)
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                {{ $totalAktif }} aktif
-            </span>
-        @endif
     </div>
 
     {{-- Daftar Temuan --}}
@@ -33,10 +67,12 @@
                     // Tentukan urgensi berdasarkan due date
                     $isOverdue  = $dueDate && $dueDate->lt($today) && !in_array($temuan->status, ['closed_pending_qa', 'closed_acc']);
                     $isDueSoon  = $dueDate && !$isOverdue && $today->diffInDays($dueDate, false) <= 3 && !in_array($temuan->status, ['closed_pending_qa', 'closed_acc']);
+                    $isPendingQa = $temuan->status === 'closed_pending_qa';
 
                     $cardBorderClass = match(true) {
                         $isOverdue => 'border-l-4 border-l-red-500',
                         $isDueSoon => 'border-l-4 border-l-yellow-400',
+                        $isPendingQa => 'border-l-4 border-l-purple-500',
                         default    => '',
                     };
 
@@ -73,6 +109,13 @@
                             <flux:icon.clock variant="solid" class="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" />
                             <span class="text-xs font-semibold text-yellow-700 dark:text-yellow-400">
                                 Due {{ $dueDate->diffForHumans() }}
+                            </span>
+                        </div>
+                    @elseif($isPendingQa)
+                        <div class="bg-purple-50 dark:bg-purple-900/20 px-4 py-1.5 flex items-center gap-1.5">
+                            <flux:icon.shield-check variant="solid" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                            <span class="text-xs font-semibold text-purple-700 dark:text-purple-400">
+                                Sedang ditinjau QA
                             </span>
                         </div>
                     @endif

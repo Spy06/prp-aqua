@@ -209,10 +209,12 @@
         </div>
     @endif
 
-    @if($isQa)
-        <div class="flex items-center gap-2 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-sm">
+    @if($isQa && $temuan->status === 'closed_pending_qa')
+        <livewire:verifikasi-q-a :temuan="$temuan" :key="'vqa-' . $temuan->id" />
+    @elseif($isQa)
+        <div class="flex items-center gap-2 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-sm mt-6">
             <flux:icon.shield-check variant="outline" class="w-5 h-5 shrink-0" />
-            <span>Panel verifikasi QA (ACC/Reject) akan tersedia di Hari 5.</span>
+            <span>Verifikasi QA hanya bisa dilakukan saat status temuan adalah Pending QA (closed_pending_qa).</span>
         </div>
     @endif
 </div>

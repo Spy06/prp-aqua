@@ -71,6 +71,14 @@ class DaftarTemuanPIC extends Component
             ->whereIn('status', ['open', 'in_progress'])
             ->count();
 
+        // metrics calculation
+        $metrics = [
+            'open' => Temuan::where('pic_id', auth()->id())->where('status', 'open')->count(),
+            'in_progress' => Temuan::where('pic_id', auth()->id())->where('status', 'in_progress')->count(),
+            'pending_qa' => Temuan::where('pic_id', auth()->id())->where('status', 'closed_pending_qa')->count(),
+            'closed' => Temuan::where('pic_id', auth()->id())->where('status', 'closed_acc')->count(),
+        ];
+
         // Juga hitung total semua yang belum closed_acc (untuk info)
         $totalAktif = Temuan::where('pic_id', auth()->id())
             ->whereNotIn('status', ['closed_acc'])
@@ -80,6 +88,7 @@ class DaftarTemuanPIC extends Component
             'temuans'    => $temuans,
             'badgeCount' => $badgeCount,
             'totalAktif' => $totalAktif,
+            'metrics'    => $metrics,
             'today'      => $today,
         ]);
     }

@@ -108,6 +108,14 @@
             @error('deskripsi') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
         </div>
 
+        <!-- Saran & Masukan -->
+        <div>
+            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Saran & Masukan (Opsional - Dikirim langsung ke QA)</label>
+            <textarea wire:model="saran" rows="3" placeholder="Masukkan usulan solusi, tindakan korektif, atau perbaikan terkait temuan ini..."
+                class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-300 sm:text-sm"></textarea>
+            @error('saran') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+        </div>
+
         <!-- Foto Temuan -->
         <div>
             <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Foto Temuan (Max 5MB)</label>

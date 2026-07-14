@@ -19,6 +19,7 @@ class Temuan extends Model
         'sub_area',
         'foto_temuan_path',
         'deskripsi',
+        'saran',
         'status',
     ];
 
@@ -31,6 +32,7 @@ class Temuan extends Model
         return [
             'tanggal_temuan' => 'date',
             'deskripsi'      => 'encrypted',
+            'saran'          => 'encrypted',
         ];
     }
 

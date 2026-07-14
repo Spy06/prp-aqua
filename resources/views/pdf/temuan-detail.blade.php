@@ -173,6 +173,12 @@
                 <td>Deskripsi Temuan</td>
                 <td>{{ $temuan->deskripsi }}</td>
             </tr>
+            @if($temuan->saran)
+            <tr>
+                <td>Saran & Masukan</td>
+                <td>{{ $temuan->saran }}</td>
+            </tr>
+            @endif
         </table>
     </div>
 

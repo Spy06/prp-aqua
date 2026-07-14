@@ -22,6 +22,7 @@ class FormTemuan extends Component
     public $klausul_id;
     public $foto_temuan;
     public $deskripsi;
+    public $saran = '';
     
     // For PIC Search
     public $picSearch = '';
@@ -35,6 +36,7 @@ class FormTemuan extends Component
         'klausul_id'     => 'required|exists:klausul_prp,id',
         'foto_temuan'    => 'required|image|max:5120', // max 5MB
         'deskripsi'      => 'required|string',
+        'saran'          => 'nullable|string',
         'pic_id'         => 'required|exists:users,id',
     ];
 
@@ -93,6 +95,7 @@ class FormTemuan extends Component
                 'klausul_id'       => $this->klausul_id,
                 'foto_temuan_path' => $fotoPath,
                 'deskripsi'        => $this->deskripsi,
+                'saran'            => $this->saran,
                 'status'           => 'open',
             ]);
 
@@ -111,15 +114,24 @@ class FormTemuan extends Component
                 $message = "Halo {$pic->name}, Anda ditunjuk sebagai PIC untuk temuan PRP baru. "
                          . "Segera tindak lanjuti di sini: " . route('temuan.detail', ['temuan' => $temuan->id]);
                 
-                // Gunakan dummy job dari Hari 2 dengan mengirimkan pesan yang sudah dirangkai
-                // Karena SendWhatsAppDummy belum menerima parameter dari luar, kita perlu mengubah sedikit jobnya.
-                // Atau, untuk mematuhi requirement, kita bisa update SendWhatsAppDummy untuk support parameter message & to.
-                // Tapi sesuai arahan, yang penting logic jobnya tereksekusi. Saya akan passing parameter ke Job.
                 SendWhatsAppDummy::dispatch($pic->no_whatsapp, $message);
             }
 
+            // 5. Kirim notifikasi WA ke QA jika ada Saran & Masukan
+            if (!empty($this->saran)) {
+                $qaUsers = User::where('role', 'qa')->get();
+                foreach ($qaUsers as $qa) {
+                    if ($qa->no_whatsapp) {
+                        $messageQA = "Halo QA, ada saran & masukan baru dari pelapor untuk Temuan #{$temuan->id}.\n"
+                                   . "Saran: \"{$this->saran}\"\n"
+                                   . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
+                        SendWhatsAppDummy::dispatch($qa->no_whatsapp, $messageQA);
+                    }
+                }
+            }
+
             // Bersihkan form
-            $this->reset(['sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'pic_id', 'picSearch']);
+            $this->reset(['sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'saran', 'pic_id', 'picSearch']);
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
             
             session()->flash('success', 'Laporan temuan berhasil dikirim!');

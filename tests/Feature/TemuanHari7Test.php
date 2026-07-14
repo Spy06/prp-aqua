@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\SendWhatsAppDummy;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -209,4 +211,50 @@ test('Auth: login menggunakan NIK + password, registrasi publik tidak tersedia (
         'email' => 'john@abc.com',
         'password' => 'password',
     ])->assertStatus(404);
+});
+
+// ===========================================================================
+// 7. Lapor temuan dengan saran langsung mengirimkan WA ke QA
+// ===========================================================================
+test('FormTemuan: lapor temuan dengan saran mengirimkan WA langsung ke QA', function () {
+    Queue::fake();
+
+    $pelapor = testBuatKaryawan('K501', 'Pelapor');
+    $pic = testBuatKaryawan('K502', 'PIC');
+    $qa = testBuatQa('QA9999'); // Buat user QA
+
+    $dept = Departemen::first() ?? Departemen::create(['nama_departemen' => 'Test Dept']);
+    $klausul = KlausulPrp::create([
+        'kode_klausul' => 'PRP-10.1',
+        'nama_klausul' => 'Audit Hygiene',
+    ]);
+
+    Storage::fake('public');
+    $file = UploadedFile::fake()->image('temuan.jpg');
+
+    Livewire::actingAs($pelapor)
+        ->test(\App\Livewire\FormTemuan::class)
+        ->set('tanggal_temuan', now()->toDateString())
+        ->set('departemen_id', $dept->id)
+        ->set('sub_area', 'Jalur A')
+        ->set('klausul_id', $klausul->id)
+        ->set('pic_id', $pic->id)
+        ->set('foto_temuan', $file)
+        ->set('deskripsi', 'Kabel terkelupas')
+        ->set('saran', 'Harap diganti kabel berinsulasi ganda')
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    // Pastikan temuan tersimpan dengan saran
+    $temuan = Temuan::latest()->first();
+    expect($temuan->saran)->toBe('Harap diganti kabel berinsulasi ganda');
+
+    // Pastikan SendWhatsAppDummy di-dispatch ke nomor PIC (6281200000000) dan QA (6281200000001)
+    Queue::assertPushed(SendWhatsAppDummy::class, function ($job) {
+        return $job->to === '6281200000000'; // Ke PIC
+    });
+
+    Queue::assertPushed(SendWhatsAppDummy::class, function ($job) use ($qa) {
+        return $job->to === $qa->no_whatsapp; // Ke QA langsung
+    });
 });

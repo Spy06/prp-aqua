@@ -92,7 +92,7 @@ class ExportController extends Controller
         $header = [
             'ID', 'Tanggal Temuan', 'Departemen', 'Sub Area',
             'Pelapor (NIK)', 'Pelapor (Nama)', 'PIC (NIK)', 'PIC (Nama)',
-            'Status', 'Klausul PRP', 'Tindakan Perbaikan', 'Due Date',
+            'Status', 'Klausul PRP', 'Saran & Masukan', 'Tindakan Perbaikan', 'Due Date',
             'Foto Bukti', 'Tanggal ACC QA', 'Catatan QA',
         ];
 
@@ -110,6 +110,7 @@ class ExportController extends Controller
                 $t->pic->name ?? '',
                 $t->status,
                 $t->klausul ? $t->klausul->kode_klausul . ' - ' . $t->klausul->nama_klausul : '',
+                $t->saran ?? '',
                 $tl?->action ?? '',
                 $tl?->due_date?->format('d/m/Y') ?? '',
                 $tl?->foto_bukti_path ? 'Ada' : 'Belum',

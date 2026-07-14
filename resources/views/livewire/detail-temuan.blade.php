@@ -94,6 +94,13 @@
                     <p class="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ $temuan->deskripsi }}</p>
                 </div>
 
+                @if($temuan->saran)
+                    <div>
+                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Saran & Masukan (Langsung ke QA)</p>
+                        <p class="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ $temuan->saran }}</p>
+                    </div>
+                @endif
+
                 @if($temuan->foto_temuan_path)
                     <div>
                         <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-2">Foto Temuan</p>

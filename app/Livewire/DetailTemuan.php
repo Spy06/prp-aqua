@@ -34,8 +34,8 @@ class DetailTemuan extends Component
         $isPelapor   = $user->id === $temuan->pelapor_id;
         $isQa        = $user->role === 'qa';
 
-        // PIC bisa mengisi tindak lanjut selama status belum closed_acc
-        $showTindakLanjutForm = $isPic && $temuan->status !== 'closed_acc';
+        // PIC bisa mengisi tindak lanjut selama status belum closed_acc dan role bukan QA
+        $showTindakLanjutForm = $isPic && $user->role !== 'qa' && $temuan->status !== 'closed_acc';
 
         return view('livewire.detail-temuan', [
             'temuan'               => $temuan,

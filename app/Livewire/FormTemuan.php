@@ -48,14 +48,13 @@ class FormTemuan extends Component
     public function updatedPicSearch()
     {
         if (strlen($this->picSearch) >= 2) {
-            $this->picResults = User::where(function($q) {
-                $q->where('name', 'like', '%' . $this->picSearch . '%')
-                  ->orWhere('nik', 'like', '%' . $this->picSearch . '%');
-            })
-            // Hanya user dengan akun aktif (semua yg ada di users berarti punya akun)
-            ->whereNotNull('id')
-            ->take(5)
-            ->get();
+            $this->picResults = User::where('role', 'karyawan')
+                ->where(function($q) {
+                    $q->where('name', 'like', '%' . $this->picSearch . '%')
+                      ->orWhere('nik', 'like', '%' . $this->picSearch . '%');
+                })
+                ->take(5)
+                ->get();
         } else {
             $this->picResults = [];
         }
@@ -77,6 +76,12 @@ class FormTemuan extends Component
     public function submit()
     {
         $this->validate();
+
+        $pic = User::find($this->pic_id);
+        if (!$pic || $pic->role !== 'karyawan') {
+            $this->addError('pic_id', 'PIC yang dipilih harus karyawan, bukan QA.');
+            return;
+        }
 
         $user = auth()->user();
 

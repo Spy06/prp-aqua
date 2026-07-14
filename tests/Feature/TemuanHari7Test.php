@@ -258,3 +258,23 @@ test('FormTemuan: lapor temuan dengan saran mengirimkan WA langsung ke QA', func
         return $job->to === $qa->no_whatsapp; // Ke QA langsung
     });
 });
+
+// ===========================================================================
+// 8. QA tidak boleh melihat/mengisi form tindak lanjut PIC
+// ===========================================================================
+test('TindakLanjutPIC: QA tidak boleh mengakses atau mengisi form PIC', function () {
+    $pelapor = testBuatKaryawan('K601', 'Pelapor');
+    $pic = testBuatKaryawan('K602', 'PIC');
+    $qa = testBuatQa('QA7777');
+    $temuan = testBuatTemuan($pelapor, $pic);
+
+    // 1. Pastikan di DetailTemuan, showTindakLanjutForm bernilai false untuk QA
+    Livewire::actingAs($qa)
+        ->test(\App\Livewire\DetailTemuan::class, ['temuan' => $temuan])
+        ->assertSet('showTindakLanjutForm', false);
+
+    // 2. Pastikan jika QA memanggil langsung component TindakLanjutPIC akan diblokir (403)
+    Livewire::actingAs($qa)
+        ->test(\App\Livewire\TindakLanjutPIC::class, ['temuanId' => $temuan->id])
+        ->assertStatus(403);
+});

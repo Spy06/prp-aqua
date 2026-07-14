@@ -24,7 +24,7 @@ class DaftarTemuanPIC extends Component
 
         // Ambil semua temuan di mana user login adalah PIC
         // Kecualikan yang sudah closed_acc (tidak perlu ditindaklanjuti lagi)
-        $temuans = Temuan::with(['departemen', 'pelapor', 'tindakLanjut.klausul'])
+        $temuans = Temuan::with(['departemen', 'pelapor', 'klausul', 'tindakLanjut'])
             ->where('pic_id', auth()->id())
             ->whereNotIn('status', ['closed_acc'])
             ->orderByRaw("

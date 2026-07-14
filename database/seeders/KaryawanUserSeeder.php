@@ -26,10 +26,10 @@ class KaryawanUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $produksi = Departemen::where('nama_departemen', 'Produksi')->first();
-        $qc = Departemen::where('nama_departemen', 'Quality Control (QC)')->first();
-        $gudang = Departemen::where('nama_departemen', 'Gudang')->first();
-        $maintenance = Departemen::where('nama_departemen', 'Maintenance')->first();
+        $produksi = Departemen::where('nama_departemen', 'Manufacturing')->first() ?? Departemen::first();
+        $qc = Departemen::where('nama_departemen', 'Quality Assurance')->first() ?? Departemen::first();
+        $gudang = Departemen::where('nama_departemen', 'Logistics')->first() ?? Departemen::first();
+        $maintenance = Departemen::where('nama_departemen', 'Engineering')->first() ?? Departemen::first();
 
         $karyawanQa = Karyawan::firstOrCreate(
             ['nik' => '9900001'],

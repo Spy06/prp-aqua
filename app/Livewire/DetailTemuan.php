@@ -24,7 +24,7 @@ class DetailTemuan extends Component
     public function render()
     {
         // Eager load relasi yang dibutuhkan
-        $this->temuan->loadMissing(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul']);
+        $this->temuan->loadMissing(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
 
         $user    = auth()->user();
         $temuan  = $this->temuan;

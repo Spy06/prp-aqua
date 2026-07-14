@@ -139,10 +139,10 @@
                             {{ $temuan->deskripsi }}
                         </p>
 
-                        @if($tl && $tl->klausul)
+                        @if($temuan->klausul)
                             <div class="mt-2">
                                 <span class="inline-block px-2 py-0.5 text-xs bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded">
-                                    {{ $tl->klausul->kode_klausul }}: {{ Str::limit($tl->klausul->nama_klausul, 30) }}
+                                    {{ $temuan->klausul->kode_klausul }}: {{ Str::limit($temuan->klausul->nama_klausul, 30) }}
                                 </span>
                             </div>
                         @endif

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => redirect()->route('login'))->name('home');
+Route::view('/', 'welcome')->name('home');
 
 // Pendaftaran publik DINONAKTIFKAN — akun hanya dibuat oleh QA (admin master)
 // Rute /register secara eksplisit mengembalikan 404

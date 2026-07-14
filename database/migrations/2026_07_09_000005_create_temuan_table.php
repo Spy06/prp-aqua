@@ -21,6 +21,7 @@ return new class extends Migration
             // Departemen lokasi temuan
             $table->foreignId('departemen_id')->constrained('departemen')->onDelete('restrict');
             $table->string('sub_area');
+            $table->foreignId('klausul_id')->nullable()->constrained('klausul_prp')->onDelete('restrict');
             $table->string('foto_temuan_path')->nullable();
             // deskripsi akan di-encrypt di level aplikasi (Eloquent cast encrypted)
             $table->text('deskripsi');

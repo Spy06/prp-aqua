@@ -14,6 +14,7 @@ class Temuan extends Model
         'tanggal_temuan',
         'pelapor_id',
         'pic_id',
+        'klausul_id',
         'departemen_id',
         'sub_area',
         'foto_temuan_path',
@@ -56,6 +57,14 @@ class Temuan extends Model
     public function departemen(): BelongsTo
     {
         return $this->belongsTo(Departemen::class, 'departemen_id');
+    }
+
+    /**
+     * Klausul PRP temuan ini.
+     */
+    public function klausul(): BelongsTo
+    {
+        return $this->belongsTo(KlausulPrp::class, 'klausul_id');
     }
 
     /**

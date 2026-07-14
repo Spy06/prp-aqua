@@ -21,7 +21,6 @@ class TindakLanjutPIC extends Component
     public int $temuanId;
 
     // State form tindak lanjut
-    public ?int    $klausul_id   = null;
     public string  $action       = '';
     public ?string $due_date     = null;
     public         $foto_bukti   = null; // Livewire temporary upload
@@ -60,7 +59,6 @@ class TindakLanjutPIC extends Component
         $tl = TindakLanjut::where('temuan_id', $this->temuanId)->first();
 
         if ($tl) {
-            $this->klausul_id      = $tl->klausul_id;
             $this->action          = $tl->action ?? '';
             $this->due_date        = $tl->due_date?->format('Y-m-d');
             $this->foto_bukti_path = $tl->foto_bukti_path;
@@ -76,17 +74,14 @@ class TindakLanjutPIC extends Component
     public function simpanDetail(): void
     {
         $this->validate([
-            'klausul_id' => 'required|exists:klausul_prp,id',
             'action'     => 'required|string|max:2000',
             'due_date'   => 'required|date',
         ], [
-            'klausul_id.required' => 'Klausul PRP wajib dipilih.',
             'action.required'     => 'Deskripsi tindakan wajib diisi.',
             'due_date.required'   => 'Due date wajib diisi.',
         ]);
 
         TindakLanjut::where('temuan_id', $this->temuanId)->update([
-            'klausul_id' => $this->klausul_id,
             'action'     => $this->action,
             'due_date'   => $this->due_date,
         ]);
@@ -166,9 +161,9 @@ class TindakLanjutPIC extends Component
 
         // 6. Jika menuju closed_pending_qa: wajib ada detail dan foto bukti
         if ($statusBaru === 'closed_pending_qa') {
-            // Wajib sudah isi klausul & action
-            if (empty($tl->klausul_id) || empty($tl->action) || empty($tl->due_date)) {
-                session()->flash('status_error', 'Lengkapi klausul, tindakan, dan due date terlebih dahulu sebelum menutup laporan.');
+            // Wajib sudah isi action & due_date
+            if (empty($tl->action) || empty($tl->due_date)) {
+                session()->flash('status_error', 'Lengkapi tindakan dan due date terlebih dahulu sebelum menutup laporan.');
                 return;
             }
 
@@ -227,8 +222,6 @@ class TindakLanjutPIC extends Component
 
     public function render()
     {
-        $klausuls = KlausulPrp::orderBy('kode_klausul')->get();
-
         // Refresh foto_bukti_path dari DB agar selalu up to date
         $tl = TindakLanjut::where('temuan_id', $this->temuanId)->first();
         if ($tl) {
@@ -238,7 +231,6 @@ class TindakLanjutPIC extends Component
         }
 
         return view('livewire.tindak-lanjut-pic', [
-            'klausuls'    => $klausuls,
             'tindakLanjut' => $tl,
         ]);
     }

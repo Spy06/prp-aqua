@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('tindak_lanjut', function (Blueprint $table) {
             $table->id();
             $table->foreignId('temuan_id')->constrained('temuan')->onDelete('cascade');
-            $table->foreignId('klausul_id')->nullable()->constrained('klausul_prp')->onDelete('restrict');
             // action akan di-encrypt di level aplikasi jika dianggap sensitif
             $table->text('action')->nullable();
             $table->date('due_date')->nullable();

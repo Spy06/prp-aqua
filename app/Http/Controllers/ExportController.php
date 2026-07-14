@@ -57,7 +57,7 @@ class ExportController extends Controller
      */
     protected function getTemuans(string $awal, string $akhir, Request $request)
     {
-        $query = Temuan::with(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul'])
+        $query = Temuan::with(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut'])
             ->whereBetween('tanggal_temuan', [$awal, $akhir]);
 
         if ($request->filled('departemen_id')) {
@@ -109,7 +109,7 @@ class ExportController extends Controller
                 $t->pic->nik ?? '',
                 $t->pic->name ?? '',
                 $t->status,
-                $tl?->klausul?->kode_klausul . ' - ' . $tl?->klausul?->nama_klausul ?? '',
+                $t->klausul ? $t->klausul->kode_klausul . ' - ' . $t->klausul->nama_klausul : '',
                 $tl?->action ?? '',
                 $tl?->due_date?->format('d/m/Y') ?? '',
                 $tl?->foto_bukti_path ? 'Ada' : 'Belum',
@@ -150,7 +150,7 @@ class ExportController extends Controller
     {
         $this->requireQa();
 
-        $temuan->loadMissing(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul']);
+        $temuan->loadMissing(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
 
         // Resolve URL foto untuk DomPDF (butuh path absolut, bukan URL publik)
         $fotoTemuanUrl = null;

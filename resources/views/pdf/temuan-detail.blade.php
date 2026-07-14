@@ -144,6 +144,10 @@
                 <td>{{ $temuan->sub_area }}</td>
             </tr>
             <tr>
+                <td>Klausul PRP</td>
+                <td>{{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}</td>
+            </tr>
+            <tr>
                 <td>Pelapor</td>
                 <td>{{ $temuan->pelapor->name ?? '-' }} (NIK: {{ $temuan->pelapor->nik ?? '-' }})</td>
             </tr>
@@ -187,12 +191,6 @@
         <div class="section">
             <div class="section-title">Tindak Lanjut PIC</div>
             <table class="info">
-                @if($tl->klausul)
-                    <tr>
-                        <td>Klausul PRP</td>
-                        <td>{{ $tl->klausul->kode_klausul }} — {{ $tl->klausul->nama_klausul }}</td>
-                    </tr>
-                @endif
                 <tr>
                     <td>Tindakan Perbaikan</td>
                     <td>{{ $tl->action ?? '-' }}</td>

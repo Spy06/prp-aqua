@@ -11,7 +11,6 @@ class TindakLanjut extends Model
 
     protected $fillable = [
         'temuan_id',
-        'klausul_id',
         'action',
         'due_date',
         'foto_bukti_path',
@@ -41,13 +40,5 @@ class TindakLanjut extends Model
     public function temuan(): BelongsTo
     {
         return $this->belongsTo(Temuan::class, 'temuan_id');
-    }
-
-    /**
-     * Klausul PRP yang relevan dengan tindak lanjut ini.
-     */
-    public function klausul(): BelongsTo
-    {
-        return $this->belongsTo(KlausulPrp::class, 'klausul_id');
     }
 }

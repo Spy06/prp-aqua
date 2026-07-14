@@ -62,6 +62,13 @@
                 </div>
 
                 <div>
+                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Klausul PRP</p>
+                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                        {{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}
+                    </p>
+                </div>
+
+                <div>
                     <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Pelapor</p>
                     <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->pelapor->name ?? '-' }}</p>
                 </div>
@@ -114,17 +121,6 @@
 
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-4">
-                    <div>
-                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Klausul PRP</p>
-                        @if($tl->klausul)
-                            <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                                {{ $tl->klausul->kode_klausul }} — {{ $tl->klausul->nama_klausul }}
-                            </p>
-                        @else
-                            <p class="text-sm text-zinc-400 italic">Belum diisi</p>
-                        @endif
-                    </div>
-
                     <div>
                         <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Tindakan Perbaikan</p>
                         @if($tl->action)

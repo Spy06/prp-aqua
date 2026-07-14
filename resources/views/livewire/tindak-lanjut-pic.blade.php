@@ -58,27 +58,6 @@
             Detail Tindak Lanjut
         </h4>
 
-        {{-- Klausul PRP --}}
-        <div>
-            <label for="klausul_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Klausul PRP <span class="text-red-500">*</span>
-            </label>
-            <select id="klausul_id"
-                    wire:model="klausul_id"
-                    class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }}>
-                <option value="">-- Pilih Klausul --</option>
-                @foreach($klausuls as $klausul)
-                    <option value="{{ $klausul->id }}" {{ (int)$klausul_id === $klausul->id ? 'selected' : '' }}>
-                        {{ $klausul->kode_klausul }} — {{ $klausul->nama_klausul }}
-                    </option>
-                @endforeach
-            </select>
-            @error('klausul_id')
-                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
         {{-- Tindakan / Action --}}
         <div>
             <label for="action" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">

@@ -19,6 +19,7 @@ class FormTemuan extends Component
     public $tanggal_temuan;
     public $departemen_id;
     public $sub_area;
+    public $klausul_id;
     public $foto_temuan;
     public $deskripsi;
     
@@ -31,6 +32,7 @@ class FormTemuan extends Component
         'tanggal_temuan' => 'required|date',
         'departemen_id'  => 'required|exists:departemen,id',
         'sub_area'       => 'required|string|max:255',
+        'klausul_id'     => 'required|exists:klausul_prp,id',
         'foto_temuan'    => 'required|image|max:5120', // max 5MB
         'deskripsi'      => 'required|string',
         'pic_id'         => 'required|exists:users,id',
@@ -88,6 +90,7 @@ class FormTemuan extends Component
                 'pic_id'           => $this->pic_id,
                 'departemen_id'    => $this->departemen_id,
                 'sub_area'         => $this->sub_area,
+                'klausul_id'       => $this->klausul_id,
                 'foto_temuan_path' => $fotoPath,
                 'deskripsi'        => $this->deskripsi,
                 'status'           => 'open',
@@ -116,7 +119,7 @@ class FormTemuan extends Component
             }
 
             // Bersihkan form
-            $this->reset(['sub_area', 'foto_temuan', 'deskripsi', 'pic_id', 'picSearch']);
+            $this->reset(['sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'pic_id', 'picSearch']);
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
             
             session()->flash('success', 'Laporan temuan berhasil dikirim!');
@@ -134,6 +137,7 @@ class FormTemuan extends Component
     {
         return view('livewire.form-temuan', [
             'departemens' => Departemen::orderBy('nama_departemen')->get(),
+            'klausuls'    => \App\Models\KlausulPrp::orderBy('id')->get(),
         ]);
     }
 }

@@ -228,8 +228,10 @@ describe('TindakLanjutPIC: transisi status', function () {
 
         // Pastikan klausul ada
         $klausul = KlausulPrp::first() ?? KlausulPrp::create(['kode_klausul' => 'K1', 'nama_klausul' => 'Test']);
+        Temuan::where('id', $temuan->id)->update([
+            'klausul_id' => $klausul->id,
+        ]);
         TindakLanjut::where('temuan_id', $temuan->id)->update([
-            'klausul_id'     => $klausul->id,
             'action'         => 'Tindakan test',
             'due_date'       => now()->addDays(7)->toDateString(),
             'foto_bukti_path' => null, // Belum ada foto
@@ -255,8 +257,10 @@ describe('TindakLanjutPIC: transisi status', function () {
         $temuan  = buatTemuan($pelapor, $pic, 'in_progress');
 
         $klausul = KlausulPrp::first() ?? KlausulPrp::create(['kode_klausul' => 'K2', 'nama_klausul' => 'Test2']);
+        Temuan::where('id', $temuan->id)->update([
+            'klausul_id' => $klausul->id,
+        ]);
         TindakLanjut::where('temuan_id', $temuan->id)->update([
-            'klausul_id'      => $klausul->id,
             'action'          => 'Tindakan sudah dilakukan',
             'due_date'        => now()->addDays(7)->toDateString(),
             'foto_bukti_path' => 'bukti/test-foto.jpg', // Foto sudah ada

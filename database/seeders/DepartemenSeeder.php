@@ -10,11 +10,13 @@ class DepartemenSeeder extends Seeder
     public function run(): void
     {
         $departemen = [
-            'Produksi',
-            'Quality Control (QC)',
-            'Gudang',
-            'Maintenance',
-            'Sanitasi',
+            'Manufacturing',
+            'Engineering',
+            'Logistics',
+            'Human Resource',
+            'Quality Assurance',
+            'Safety Health & Environment (SHE)',
+            'Corporate Social Responsibility'
         ];
 
         foreach ($departemen as $nama) {

@@ -90,6 +90,7 @@ test('FormTemuan: validasi field wajib', function () {
         ->assertHasErrors([
             'departemen_id' => 'required',
             'sub_area' => 'required',
+            'klausul_id' => 'required',
             'foto_temuan' => 'required',
             'deskripsi' => 'required',
             'pic_id' => 'required',
@@ -109,7 +110,6 @@ test('TindakLanjutPIC: validasi field wajib simpanDetail dan uploadFoto', functi
         ->test(\App\Livewire\TindakLanjutPIC::class, ['temuanId' => $temuan->id])
         ->call('simpanDetail')
         ->assertHasErrors([
-            'klausul_id' => 'required',
             'action' => 'required',
             'due_date' => 'required',
         ]);

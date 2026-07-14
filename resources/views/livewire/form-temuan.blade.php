@@ -48,6 +48,19 @@
                     class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-300 sm:text-sm">
                 @error('sub_area') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
             </div>
+
+            <!-- Klausul PRP -->
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Klausul PRP</label>
+                <select wire:model="klausul_id" 
+                    class="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-300 sm:text-sm">
+                    <option value="">-- Pilih Klausul --</option>
+                    @foreach($klausuls as $klausul)
+                        <option value="{{ $klausul->id }}">{{ $klausul->kode_klausul }} — {{ $klausul->nama_klausul }}</option>
+                    @endforeach
+                </select>
+                @error('klausul_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         <!-- Pencarian PIC -->

@@ -1,8 +1,28 @@
 <div class="space-y-6">
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6" wire:ignore>
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Grafik Temuan per Departemen</h2>
-        <div class="w-full h-64">
-            <canvas id="temuanChart"></canvas>
+    {{-- Grid Grafik --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Card: Chart Departemen --}}
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+            <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Temuan per Departemen</h2>
+            <div class="w-full h-64">
+                <canvas id="temuanChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Card: Chart Klausul --}}
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+            <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Temuan per Klausul PRP</h2>
+            <div class="w-full h-64">
+                <canvas id="klausulChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Card: Chart Status --}}
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+            <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Proporsi Status Temuan</h2>
+            <div class="w-full h-64">
+                <canvas id="statusChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -101,14 +121,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('livewire:initialized', () => {
-            const ctx = document.getElementById('temuanChart');
-            let chart;
+            const ctxDept = document.getElementById('temuanChart');
+            const ctxKlausul = document.getElementById('klausulChart');
+            const ctxStatus = document.getElementById('statusChart');
+            let chartDept, chartKlausul, chartStatus;
 
-            const initChart = (labels, data) => {
-                if (chart) {
-                    chart.destroy();
-                }
-                chart = new Chart(ctx, {
+            const initDeptChart = (labels, data) => {
+                if (chartDept) chartDept.destroy();
+                chartDept = new Chart(ctxDept, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -123,12 +143,73 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        }
+                    }
+                });
+            };
+
+            const initKlausulChart = (labels, data) => {
+                if (chartKlausul) chartKlausul.destroy();
+                chartKlausul = new Chart(ctxKlausul, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Temuan',
+                            data: data,
+                            backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                            borderColor: 'rgb(139, 92, 246)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        }
+                    }
+                });
+            };
+
+            const initStatusChart = (labels, data) => {
+                if (chartStatus) chartStatus.destroy();
+                chartStatus = new Chart(ctxStatus, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: [
+                                'rgba(250, 204, 21, 0.7)', // Yellow for open
+                                'rgba(59, 130, 246, 0.7)',  // Blue for in progress
+                                'rgba(168, 85, 247, 0.7)',  // Purple for pending qa
+                                'rgba(34, 197, 94, 0.7)'    // Green for closed acc
+                            ],
+                            borderColor: [
+                                'rgb(250, 204, 21)',
+                                'rgb(59, 130, 246)',
+                                'rgb(168, 85, 247)',
+                                'rgb(34, 197, 94)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, padding: 8 }
                             }
                         }
                     }
@@ -136,14 +217,15 @@
             };
 
             // Initial render
-            let labels = {!! $chartLabels !!};
-            let data = {!! $chartData !!};
-            initChart(labels, data);
+            initDeptChart({!! $chartLabels !!}, {!! $chartData !!});
+            initKlausulChart({!! $klausulLabels !!}, {!! $klausulData !!});
+            initStatusChart({!! $statusLabels !!}, {!! $statusData !!});
 
             Livewire.on('chart-updated', (event) => {
-                let newLabels = JSON.parse(event[0].labels);
-                let newData = JSON.parse(event[0].data);
-                initChart(newLabels, newData);
+                const payload = event[0];
+                initDeptChart(JSON.parse(payload.deptLabels), JSON.parse(payload.deptData));
+                initKlausulChart(JSON.parse(payload.klausulLabels), JSON.parse(payload.klausulData));
+                initStatusChart(JSON.parse(payload.statusLabels), JSON.parse(payload.statusData));
             });
         });
     </script>

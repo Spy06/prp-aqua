@@ -23,6 +23,10 @@ class RekapPeriode extends Component
     // Filter per tahun
     public string $filterTahun;
 
+    // Filter tambahan
+    public string $filterDepartemen = '';
+    public string $filterStatus = '';
+
     public function mount(): void
     {
         $now = Carbon::now();
@@ -37,6 +41,16 @@ class RekapPeriode extends Component
      * Reset pagination saat filter berubah.
      */
     public function updatedFilterTipe(): void
+    {
+        // re-render otomatis
+    }
+
+    public function updatedFilterDepartemen(): void
+    {
+        // re-render otomatis
+    }
+
+    public function updatedFilterStatus(): void
     {
         // re-render otomatis
     }
@@ -69,7 +83,7 @@ class RekapPeriode extends Component
      */
     public function buildQueryParams(): array
     {
-        return match($this->filterTipe) {
+        $params = match($this->filterTipe) {
             'custom' => [
                 'tipe'  => 'custom',
                 'awal'  => $this->tanggalAwal,
@@ -85,6 +99,16 @@ class RekapPeriode extends Component
                 'tahun' => $this->filterBulanTahun,
             ],
         };
+
+        if ($this->filterDepartemen) {
+            $params['departemen_id'] = $this->filterDepartemen;
+        }
+
+        if ($this->filterStatus) {
+            $params['status'] = $this->filterStatus;
+        }
+
+        return $params;
     }
 
     public function render()
@@ -94,21 +118,27 @@ class RekapPeriode extends Component
         $query = Temuan::with(['departemen', 'tindakLanjut'])
             ->whereBetween('tanggal_temuan', [$awal, $akhir]);
 
-        $temuans = $query->get();
+        // Base data untuk period ini (termasuk filter departemen & status jika dipilih)
+        $baseQuery = clone $query;
+        if ($this->filterDepartemen) {
+            $baseQuery->where('departemen_id', $this->filterDepartemen);
+        }
+        if ($this->filterStatus) {
+            $baseQuery->where('status', $this->filterStatus);
+        }
 
-        // Total
-        $total = $temuans->count();
+        $baseTemuans = $baseQuery->get();
 
-        // Breakdown per status
+        // Breakdown per status (untuk area / departemen / status terpilih)
         $perStatus = [
-            'open'              => $temuans->where('status', 'open')->count(),
-            'in_progress'       => $temuans->where('status', 'in_progress')->count(),
-            'closed_pending_qa' => $temuans->where('status', 'closed_pending_qa')->count(),
-            'closed_acc'        => $temuans->where('status', 'closed_acc')->count(),
+            'open'              => $baseTemuans->where('status', 'open')->count(),
+            'in_progress'       => $baseTemuans->where('status', 'in_progress')->count(),
+            'closed_pending_qa' => $baseTemuans->where('status', 'closed_pending_qa')->count(),
+            'closed_acc'        => $baseTemuans->where('status', 'closed_acc')->count(),
         ];
 
         // Breakdown per departemen
-        $perDepartemen = $temuans->groupBy('departemen_id')->map(function ($group) {
+        $perDepartemen = $baseTemuans->groupBy('departemen_id')->map(function ($group) {
             $dept = $group->first()->departemen;
             return [
                 'nama'  => $dept->nama_departemen ?? 'Tidak Diketahui',
@@ -120,19 +150,33 @@ class RekapPeriode extends Component
             ];
         })->values();
 
+        // Filter list temuan (menggunakan departemen dan status)
+        $listQuery = clone $query;
+        if ($this->filterDepartemen) {
+            $listQuery->where('departemen_id', $this->filterDepartemen);
+        }
+        if ($this->filterStatus) {
+            $listQuery->where('status', $this->filterStatus);
+        }
+
+        $temuans = $listQuery->get();
+        $total = $temuans->count();
+
         // Daftar tahun untuk dropdown (dari tahun pertama data sampai sekarang)
         $tahunList = range(Carbon::now()->year, Carbon::now()->year - 5, -1);
+        $allDepartemens = Departemen::orderBy('nama_departemen')->get();
 
         return view('livewire.rekap-periode', [
-            'total'         => $total,
-            'perStatus'     => $perStatus,
-            'perDepartemen' => $perDepartemen,
-            'temuans'       => $temuans,
-            'awal'          => $awal,
-            'akhir'         => $akhir,
-            'tahunList'     => $tahunList,
-            'queryParams'   => $this->buildQueryParams(),
-            'bulanList'     => [
+            'total'           => $total,
+            'perStatus'       => $perStatus,
+            'perDepartemen'   => $perDepartemen,
+            'temuans'         => $temuans,
+            'awal'            => $awal,
+            'akhir'           => $akhir,
+            'tahunList'       => $tahunList,
+            'allDepartemens'  => $allDepartemens,
+            'queryParams'     => $this->buildQueryParams(),
+            'bulanList'       => [
                 '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
                 '04' => 'April',   '05' => 'Mei',       '06' => 'Juni',
                 '07' => 'Juli',    '08' => 'Agustus',   '09' => 'September',

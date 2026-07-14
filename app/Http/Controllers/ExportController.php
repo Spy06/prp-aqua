@@ -55,12 +55,20 @@ class ExportController extends Controller
     /**
      * Ambil data temuan sesuai filter.
      */
-    protected function getTemuans(string $awal, string $akhir)
+    protected function getTemuans(string $awal, string $akhir, Request $request)
     {
-        return Temuan::with(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul'])
-            ->whereBetween('tanggal_temuan', [$awal, $akhir])
-            ->orderBy('tanggal_temuan', 'asc')
-            ->get();
+        $query = Temuan::with(['departemen', 'pelapor', 'pic', 'tindakLanjut.klausul'])
+            ->whereBetween('tanggal_temuan', [$awal, $akhir]);
+
+        if ($request->filled('departemen_id')) {
+            $query->where('departemen_id', $request->input('departemen_id'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        return $query->orderBy('tanggal_temuan', 'asc')->get();
     }
 
     // =====================================================================
@@ -69,14 +77,14 @@ class ExportController extends Controller
 
     /**
      * GET /export/excel
-     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir
+     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir, departemen_id, status
      */
     public function excel(Request $request)
     {
         $this->requireQa();
 
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
-        $temuans = $this->getTemuans($awal, $akhir);
+        $temuans = $this->getTemuans($awal, $akhir, $request);
 
         // Build CSV content dengan BOM agar Excel baca UTF-8 dengan benar
         $bom = "\xEF\xBB\xBF";
@@ -187,7 +195,7 @@ class ExportController extends Controller
         $this->requireQa();
 
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
-        $temuans = $this->getTemuans($awal, $akhir);
+        $temuans = $this->getTemuans($awal, $akhir, $request);
 
         $total     = $temuans->count();
         $perStatus = [

@@ -46,7 +46,7 @@ class KaryawanUserSeeder extends Seeder
                 'name' => $karyawanQa->nama,
                 'nik' => '9900001',
                 'role' => 'qa',
-                'no_whatsapp' => '62895618964044',
+                'no_whatsapp' => '628562001150',
                 'password' => Hash::make('qapassword'),
             ]
         );

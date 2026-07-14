@@ -23,6 +23,25 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
+    /* Aqua Theme Colors */
+    --color-aqua-primary: #008B9D;
+    --color-aqua-secondary: #E0F7FA;
+    --color-aqua-tertiary: #00ACC1;
+    --color-aqua-neutral: #607D8B;
+
+    /* Override standard colors to apply Aqua theme globally */
+    --color-teal-600: #00ACC1; /* Tertiary */
+    --color-teal-700: #008B9D; /* Primary */
+    --color-teal-800: #008B9D; /* Primary */
+    --color-teal-900: #00606D; /* Darker Primary for hover */
+    
+    --color-cyan-50: #E0F7FA; /* Secondary */
+    --color-cyan-100: #c5eff5; /* Slightly darker than secondary */
+    --color-cyan-200: #00ACC1; /* Tertiary */
+    
+    --color-zinc-500: #607D8B; /* Neutral */
+    --color-zinc-600: #4a6370; /* Darker Neutral */
+
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
@@ -30,9 +49,32 @@
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-teal-700);
+        --color-accent-content: var(--color-teal-700);
+        --color-accent-foreground: var(--color-zinc-900);
+
+        /* Map standard theme colors to Dark Mode Palette */
+        --color-teal-600: #00D4FF; /* Tertiary -> Primary cyan */
+        --color-teal-700: #00D4FF; /* Primary -> Primary cyan */
+        --color-teal-800: #00D4FF; /* Primary -> Primary cyan */
+        --color-teal-900: #00a6c7; /* Darker Primary */
+
+        --color-cyan-50: #0B141A; /* Secondary -> Neutral/Background */
+        --color-cyan-100: #1E3A4A; /* Surface -> Secondary */
+        --color-cyan-200: #2c4a5c; /* Border/Tertiary */
+
+        /* Dark mode generic zinc mapping */
+        --color-zinc-50: #0B141A;
+        --color-zinc-100: #1E3A4A;
+        --color-zinc-200: #2c4a5c;
+        --color-zinc-300: #4a6370;
+        --color-zinc-400: #607D8B;
+        --color-zinc-500: #8ca4b3;
+        --color-zinc-600: #b0bec5;
+        --color-zinc-700: #e0f7fa;
+        --color-zinc-800: #ffffff;
+        --color-zinc-900: #ffffff;
+        --color-zinc-950: #ffffff;
     }
 }
 

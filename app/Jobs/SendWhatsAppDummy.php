@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SendWhatsAppDummy implements ShouldQueue
 {
@@ -12,47 +14,45 @@ class SendWhatsAppDummy implements ShouldQueue
     public $to;
     public $messageBody;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct($to = null, $messageBody = null)
     {
-        $this->to = $to;
+        // Pastikan format nomor diawali dengan country code (misal: 62812...)
+        // Hapus tanda + atau angka 0 di awal jika ada
+        $this->to = ltrim($to, '+0');
         $this->messageBody = $messageBody;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        $sid    = env('TWILIO_SID');
-        $token  = env('TWILIO_AUTH_TOKEN');
-        $from   = env('TWILIO_WHATSAPP_FROM');
-        $to     = $this->to ?? env('TWILIO_TEST_NUMBER');
-        $body   = $this->messageBody ?? "Hello dari PRP Aqua! Ini adalah pesan test dari queue Laravel.";
+        $instanceId = env('GREENAPI_INSTANCE_ID');
+        $token      = env('GREENAPI_TOKEN');
+        $to         = $this->to ?? '6281200000000'; // Nomor default untuk testing
+        $body       = $this->messageBody ?? "Hello dari PRP Aqua! Ini adalah pesan test Green API.";
 
-        if (!$sid || !$token || !$from || !$to) {
-            \Illuminate\Support\Facades\Log::warning('Kredensial Twilio belum lengkap di .env, job SendWhatsAppDummy dilewati.');
+        if (!$instanceId || !$token || !$to) {
+            Log::warning('Kredensial Green API belum lengkap di .env, job SendWhatsApp dilewati.');
             return;
         }
 
         try {
-            $twilio = new \Twilio\Rest\Client($sid, $token);
+            // URL endpoint dari Green API (SendMessage)
+            $url = "https://api.green-api.com/waInstance{$instanceId}/sendMessage/{$token}";
 
-            $message = $twilio->messages
-                ->create("whatsapp:" . $to, // to
-                    [
-                        "from" => "whatsapp:" . $from,
-                        "body" => $body
-                    ]
-                );
+            // Kirim HTTP POST Request
+            $response = Http::post($url, [
+                // Nomor tujuan WA harus diakhiri dengan @c.us untuk chat personal
+                'chatId'  => $to . '@c.us',
+                'message' => $body
+            ]);
 
-            \Illuminate\Support\Facades\Log::info("Pesan dummy berhasil dikirim! SID: " . $message->sid);
+            if ($response->successful()) {
+                Log::info("Pesan berhasil dikirim via Green API! Response: " . $response->body());
+            } else {
+                Log::error("Gagal mengirim via Green API. HTTP Status: " . $response->status() . " Body: " . $response->body());
+            }
+
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Gagal mengirim pesan dummy: " . $e->getMessage());
-            // Optional: jika butuh retry, bisa di-throw kembali
-            // throw $e;
+            Log::error("Error koneksi saat mengirim via Green API: " . $e->getMessage());
         }
     }
 }

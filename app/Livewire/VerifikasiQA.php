@@ -53,11 +53,11 @@ class VerifikasiQA extends Component
         $messagePic = "Temuan #{$this->temuan->id} sudah disetujui QA dan resmi closed:\n" . $url;
 
         if ($pelaporUser && $pelaporUser->no_whatsapp) {
-            \App\Jobs\SendWhatsAppDummy::dispatch($pelaporUser->no_whatsapp, $messagePelapor);
+            \App\Jobs\SendWhatsApp::dispatch($pelaporUser->no_whatsapp, $messagePelapor);
         }
 
         if ($picUser && $picUser->no_whatsapp) {
-            \App\Jobs\SendWhatsAppDummy::dispatch($picUser->no_whatsapp, $messagePic);
+            \App\Jobs\SendWhatsApp::dispatch($picUser->no_whatsapp, $messagePic);
         }
 
         // Just to ensure UI updates
@@ -102,7 +102,7 @@ class VerifikasiQA extends Component
             $catatanRingkas = \Illuminate\Support\Str::limit($this->catatan_qa, 50);
             $messagePic = "Temuan #{$this->temuan->id} dikembalikan, catatan QA: {$catatanRingkas}\n" . $url;
             
-            \App\Jobs\SendWhatsAppDummy::dispatch($picUser->no_whatsapp, $messagePic);
+            \App\Jobs\SendWhatsApp::dispatch($picUser->no_whatsapp, $messagePic);
         }
 
         $this->redirectRoute('temuan.detail', $this->temuan->id);

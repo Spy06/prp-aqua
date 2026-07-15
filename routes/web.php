@@ -47,11 +47,6 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.temuan-detail', ['temuan' => $temuan]);
     })->name('temuan.detail')->middleware('can:view,temuan');
 
-    // Route untuk test job queue WA (Hanya untuk Hari 2)
-    Route::get('/test-wa', function () {
-        \App\Jobs\SendWhatsAppDummy::dispatch();
-        return "Job SendWhatsAppDummy telah dikirim ke Queue!";
-    });
 
 });
 

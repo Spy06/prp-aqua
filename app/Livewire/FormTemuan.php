@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Jobs\SendWhatsAppDummy;
+use App\Jobs\SendWhatsApp;
 use App\Models\Departemen;
 use App\Models\Temuan;
 use App\Models\TindakLanjut;
@@ -119,7 +119,7 @@ class FormTemuan extends Component
                 $message = "Halo {$pic->name}, Anda ditunjuk sebagai PIC untuk temuan PRP baru. "
                          . "Segera tindak lanjuti di sini: " . route('temuan.detail', ['temuan' => $temuan->id]);
                 
-                SendWhatsAppDummy::dispatch($pic->no_whatsapp, $message);
+                SendWhatsApp::dispatch($pic->no_whatsapp, $message);
             }
 
             // 5. Kirim notifikasi WA ke QA jika ada Saran & Masukan
@@ -130,7 +130,7 @@ class FormTemuan extends Component
                         $messageQA = "Halo QA, ada saran & masukan baru dari pelapor untuk Temuan #{$temuan->id}.\n"
                                    . "Saran: \"{$this->saran}\"\n"
                                    . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
-                        SendWhatsAppDummy::dispatch($qa->no_whatsapp, $messageQA);
+                        SendWhatsApp::dispatch($qa->no_whatsapp, $messageQA);
                     }
                 }
             }

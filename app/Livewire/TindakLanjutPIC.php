@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Jobs\SendWhatsAppDummy;
+use App\Jobs\SendWhatsApp;
 use App\Models\KlausulPrp;
 use App\Models\TindakLanjut;
 use App\Models\Temuan;
@@ -216,7 +216,7 @@ class TindakLanjutPIC extends Component
                 $message = "Temuan #{$this->temuanId} sudah ditindaklanjuti PIC dan menunggu verifikasi Anda. "
                          . "Silakan cek: {$link}";
 
-                SendWhatsAppDummy::dispatch($qa->no_whatsapp, $message);
+                SendWhatsApp::dispatch($qa->no_whatsapp, $message);
             }
         }
     }

@@ -114,7 +114,7 @@
         <div class="header-top">
             <div>
                 <div class="company-name">Sistem Verifikasi PRP Plant</div>
-                <div style="font-size:10px; color:#6b7280;">PT. Aqua — Laporan Resmi</div>
+                <div style="font-size:10px; color:#6b7280;">PT Tirta Investama - Pabrik Cianjur</div>
             </div>
             <div>
                 <div class="doc-title">LAPORAN TEMUAN #{{ $temuan->id }}</div>
@@ -239,7 +239,6 @@
 
     {{-- Footer --}}
     <div class="footer">
-        <span>Sistem Verifikasi PRP Plant</span>
         <span>Dokumen ini dicetak otomatis oleh sistem pada {{ now()->format('d/m/Y H:i:s') }}</span>
     </div>
 </body>

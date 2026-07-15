@@ -89,7 +89,7 @@
         <div class="header-top">
             <div>
                 <div class="company-name">Sistem Verifikasi PRP Plant</div>
-                <div style="font-size:9px; color:#6b7280;">PT. Aqua — Rekap Temuan</div>
+                <div style="font-size:9px; color:#6b7280;">PT Tirta Investama - Pabrik Cianjur — Rekap Temuan</div>
             </div>
             <div>
                 <div class="doc-title">REKAP PERIODE TEMUAN PRP</div>

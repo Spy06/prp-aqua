@@ -153,12 +153,14 @@ class ExportController extends Controller
 
         $temuan->loadMissing(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
 
-        // Resolve URL foto untuk DomPDF (butuh path absolut, bukan URL publik)
+        // Resolve URL foto untuk DomPDF (Gunakan Base64 agar lintas platform & menghindari isu path Windows)
         $fotoTemuanUrl = null;
         if ($temuan->foto_temuan_path) {
             $path = Storage::disk('public')->path($temuan->foto_temuan_path);
             if (file_exists($path)) {
-                $fotoTemuanUrl = 'file:///' . str_replace('\\', '/', $path);
+                $type = pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+                $fotoTemuanUrl = 'data:image/' . $type . ';base64,' . base64_encode($data);
             }
         }
 
@@ -167,7 +169,9 @@ class ExportController extends Controller
             if ($tl->foto_bukti_path) {
                 $path = Storage::disk('public')->path($tl->foto_bukti_path);
                 if (file_exists($path)) {
-                    $fotoBuktiUrl = 'file:///' . str_replace('\\', '/', $path);
+                    $type = pathinfo($path, PATHINFO_EXTENSION);
+                    $data = file_get_contents($path);
+                    $fotoBuktiUrl = 'data:image/' . $type . ';base64,' . base64_encode($data);
                 }
             }
         }

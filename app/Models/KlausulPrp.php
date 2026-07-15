@@ -17,8 +17,8 @@ class KlausulPrp extends Model
     /**
      * Tindak lanjut yang mengacu ke klausul ini.
      */
-    public function tindakLanjuts(): HasMany
+    public function temuans(): HasMany
     {
-        return $this->hasMany(TindakLanjut::class, 'klausul_id');
+        return $this->hasMany(Temuan::class, 'klausul_id');
     }
 }

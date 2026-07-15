@@ -71,11 +71,11 @@ class MasterKlausul extends Component
 
     public function hapus(int $id): void
     {
-        $k = KlausulPrp::with('tindakLanjuts')->find($id);
+        $k = KlausulPrp::with('temuans')->find($id);
         if (!$k) return;
 
-        if ($k->tindakLanjuts()->count() > 0) {
-            session()->flash('error', "Klausul tidak bisa dihapus karena sudah digunakan di tindak lanjut.");
+        if ($k->temuans()->count() > 0) {
+            session()->flash('error', "Klausul tidak bisa dihapus karena sudah digunakan di laporan temuan.");
             return;
         }
 
@@ -86,7 +86,7 @@ class MasterKlausul extends Component
 
     public function render()
     {
-        $klausuls = KlausulPrp::withCount('tindakLanjuts')
+        $klausuls = KlausulPrp::withCount('temuans')
             ->orderBy('kode_klausul')
             ->paginate(20);
 

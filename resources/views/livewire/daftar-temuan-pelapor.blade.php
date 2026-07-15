@@ -104,5 +104,9 @@
                 </a>
             @endforeach
         </div>
+
+        <div class="mt-6">
+            {{ $temuans->links() }}
+        </div>
     @endif
 </div>

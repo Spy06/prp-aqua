@@ -64,7 +64,7 @@
                     <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
                         <td class="px-5 py-3 font-mono text-xs font-semibold text-blue-700 dark:text-blue-400">{{ $k->kode_klausul }}</td>
                         <td class="px-5 py-3 text-zinc-700 dark:text-zinc-300">{{ $k->nama_klausul }}</td>
-                        <td class="px-5 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $k->tindak_lanjuts_count }}</td>
+                        <td class="px-5 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $k->temuans_count }}</td>
                         <td class="px-5 py-3 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <button wire:click="openEdit({{ $k->id }})" title="Edit"

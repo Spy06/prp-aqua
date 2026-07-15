@@ -24,6 +24,7 @@ class SendWhatsAppDummy implements ShouldQueue
 
     public function handle(): void
     {
+
         $instanceId = env('GREENAPI_INSTANCE_ID');
         $token      = env('GREENAPI_TOKEN');
         $to         = $this->to ?? '6281200000000'; // Nomor default untuk testing

@@ -79,7 +79,7 @@
                 @csrf
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest" for="nik">NIK Karyawan</label>
+                    <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest" for="nik">Nomor Induk Karyawan</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-cyan-500/60 z-10 pointer-events-none text-xl">badge</span>
                         <input class="w-full h-12 sm:h-14 pl-11 pr-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/50 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-zinc-900 dark:text-zinc-100 transition-all text-sm sm:text-base placeholder:text-zinc-400" id="nik" name="nik" value="{{ old('nik') }}" placeholder="Masukkan NIK" required autofocus type="text" />
@@ -111,7 +111,7 @@
             <!-- Footer Note -->
             <div class="mt-2 border-t border-zinc-200/50 dark:border-zinc-700/50 w-full pt-4 text-center">
                 <p class="text-xs text-zinc-500 dark:text-zinc-500">
-                    © 2026 Industrial Verification Co.
+                    © 2026 Nama Perusahaan
                 </p>
             </div>
         </div>

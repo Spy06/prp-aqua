@@ -2,63 +2,61 @@
     {{-- Metric Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Open -->
-        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+        <div class="bg-surface p-6 rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant flex flex-col justify-between transition-transform hover:-translate-y-1">
             <div class="flex items-center gap-2 mb-2">
-                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Open</h3>
+                <div class="w-3.5 h-3.5 rounded-full bg-[#fbbc04]"></div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Open</h3>
             </div>
-            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['open'] ?? 0 }}</p>
+            <p class="font-headline-xl text-headline-xl text-on-surface">{{ $metrics['open'] ?? 0 }}</p>
         </div>
 
         <!-- In Progress -->
-        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+        <div class="bg-surface p-6 rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant flex flex-col justify-between transition-transform hover:-translate-y-1">
             <div class="flex items-center gap-2 mb-2">
-                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">In Progress</h3>
+                <div class="w-3.5 h-3.5 rounded-full bg-primary"></div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">In Progress</h3>
             </div>
-            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['in_progress'] ?? 0 }}</p>
+            <p class="font-headline-xl text-headline-xl text-on-surface">{{ $metrics['in_progress'] ?? 0 }}</p>
         </div>
 
         <!-- Pending QA -->
-        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+        <div class="bg-surface p-6 rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant flex flex-col justify-between transition-transform hover:-translate-y-1">
             <div class="flex items-center gap-2 mb-2">
-                <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Pending QA</h3>
+                <div class="w-3.5 h-3.5 rounded-full bg-tertiary"></div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Pending QA</h3>
             </div>
-            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['pending_qa'] ?? 0 }}</p>
+            <p class="font-headline-xl text-headline-xl text-on-surface">{{ $metrics['pending_qa'] ?? 0 }}</p>
         </div>
 
         <!-- Closed -->
-        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 flex flex-col justify-between">
+        <div class="bg-surface p-6 rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant flex flex-col justify-between transition-transform hover:-translate-y-1">
             <div class="flex items-center gap-2 mb-2">
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Closed</h3>
+                <div class="w-3.5 h-3.5 rounded-full bg-[#1e8e3e]"></div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Closed</h3>
             </div>
-            <p class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100">{{ $metrics['closed'] ?? 0 }}</p>
+            <p class="font-headline-xl text-headline-xl text-on-surface">{{ $metrics['closed'] ?? 0 }}</p>
         </div>
     </div>
 
     {{-- Header --}}
-    <div class="flex items-center justify-between">
+    <div class="flex justify-between items-end mt-10 mb-4 px-1">
         <div>
-            <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Temuan Saya (PIC)</h2>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Temuan yang menunggu tindak lanjut Anda
-            </p>
+            <h2 class="font-headline-lg text-headline-lg text-on-background mb-xs">Temuan Saya (PIC)</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Temuan yang menunggu tindak lanjut Anda</p>
         </div>
     </div>
 
     {{-- Daftar Temuan --}}
     @if($temuans->isEmpty())
-        <div class="text-center py-16 bg-white dark:bg-zinc-800 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700">
-            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <flux:icon.check-circle variant="outline" class="w-6 h-6 text-green-600 dark:text-green-400" />
+        <div class="text-center py-16 bg-surface rounded-xl border border-dashed border-outline-variant shadow-sm">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[#e6f4ea] flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px] text-[#137333]">check_circle</span>
             </div>
-            <p class="text-sm font-medium text-zinc-600 dark:text-zinc-300">Tidak ada temuan yang perlu ditindaklanjuti</p>
-            <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-1">Semua temuan Anda sudah selesai atau belum ada penunjukan PIC.</p>
+            <p class="font-body-md text-body-md text-on-surface">Tidak ada temuan yang perlu ditindaklanjuti</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Semua temuan Anda sudah selesai atau belum ada penunjukan PIC.</p>
         </div>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
             @foreach($temuans as $temuan)
                 @php
                     $tl = $temuan->tindakLanjut;
@@ -70,18 +68,18 @@
                     $isPendingQa = $temuan->status === 'closed_pending_qa';
 
                     $cardBorderClass = match(true) {
-                        $isOverdue => 'border-l-4 border-l-red-500',
-                        $isDueSoon => 'border-l-4 border-l-yellow-400',
-                        $isPendingQa => 'border-l-4 border-l-purple-500',
+                        $isOverdue => 'border-l-4 border-l-error',
+                        $isDueSoon => 'border-l-4 border-l-[#fbbc04]',
+                        $isPendingQa => 'border-l-4 border-l-tertiary',
                         default    => '',
                     };
 
                     $statusBadgeClass = match($temuan->status) {
-                        'open'               => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-                        'in_progress'        => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-                        'closed_pending_qa'  => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-                        'closed_acc'         => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-                        default              => 'bg-gray-100 text-gray-800',
+                        'open'               => 'bg-[#fef7e0] text-[#b06000] border-[#fde293]',
+                        'in_progress'        => 'bg-secondary-container text-on-secondary-container border-outline-variant',
+                        'closed_pending_qa'  => 'bg-[#fce8e6] text-[#c5221f] border-[#f2b8b5]',
+                        'closed_acc'         => 'bg-[#e6f4ea] text-[#137333] border-[#ceead6]',
+                        default              => 'bg-surface-variant text-on-surface-variant border-outline-variant',
                     };
 
                     $statusText = match($temuan->status) {
@@ -94,54 +92,54 @@
                 @endphp
 
                 <a href="{{ route('temuan.detail', $temuan->id) }}"
-                   class="block bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 hover:shadow-md transition-all duration-200 overflow-hidden {{ $cardBorderClass }} flex flex-col">
+                   class="block bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant hover:shadow-[0px_8px_24px_rgba(0,0,0,0.08)] transition-all duration-200 overflow-hidden {{ $cardBorderClass }} flex flex-col group">
 
                     {{-- Urgency Banner --}}
                     @if($isOverdue)
-                        <div class="bg-red-50 dark:bg-red-900/20 px-4 py-1.5 flex items-center gap-1.5">
-                            <flux:icon.exclamation-triangle variant="solid" class="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-                            <span class="text-xs font-semibold text-red-700 dark:text-red-400">
+                        <div class="bg-error-container text-on-error-container px-4 py-2 flex items-center gap-1.5 border-b border-error">
+                            <span class="material-symbols-outlined text-[16px] filled-icon">warning</span>
+                            <span class="font-label-md text-label-md">
                                 OVERDUE — {{ $dueDate->format('d M Y') }}
                             </span>
                         </div>
                     @elseif($isDueSoon)
-                        <div class="bg-yellow-50 dark:bg-yellow-900/20 px-4 py-1.5 flex items-center gap-1.5">
-                            <flux:icon.clock variant="solid" class="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" />
-                            <span class="text-xs font-semibold text-yellow-700 dark:text-yellow-400">
+                        <div class="bg-[#fef7e0] text-[#b06000] px-4 py-2 flex items-center gap-1.5 border-b border-[#fde293]">
+                            <span class="material-symbols-outlined text-[16px] filled-icon">schedule</span>
+                            <span class="font-label-md text-label-md">
                                 Due {{ $dueDate->diffForHumans() }}
                             </span>
                         </div>
                     @elseif($isPendingQa)
-                        <div class="bg-purple-50 dark:bg-purple-900/20 px-4 py-1.5 flex items-center gap-1.5">
-                            <flux:icon.shield-check variant="solid" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-                            <span class="text-xs font-semibold text-purple-700 dark:text-purple-400">
+                        <div class="bg-[#f3e8fd] text-[#6b1cb0] px-4 py-2 flex items-center gap-1.5 border-b border-[#e9d2fc]">
+                            <span class="material-symbols-outlined text-[16px] filled-icon">shield</span>
+                            <span class="font-label-md text-label-md">
                                 Sedang ditinjau QA
                             </span>
                         </div>
                     @endif
 
-                    <div class="p-5 flex-1 flex flex-col">
+                    <div class="p-md flex-1 flex flex-col">
                         {{-- Header: dept + status badge --}}
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">
+                        <div class="flex justify-between items-start mb-sm">
+                            <h3 class="font-title-md text-title-md text-on-surface leading-snug group-hover:text-primary transition-colors">
                                 {{ $temuan->departemen->nama_departemen ?? '-' }}
                             </h3>
-                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $statusBadgeClass }} shrink-0 ml-2">
+                            <span class="px-3 py-1 font-label-md text-label-md rounded-full border {{ $statusBadgeClass }} shrink-0 ml-2">
                                 {{ $statusText }}
                             </span>
                         </div>
 
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
-                            Sub area: <span class="font-medium text-zinc-700 dark:text-zinc-300">{{ $temuan->sub_area }}</span>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mb-1">
+                            Sub area: <span class="font-semibold text-primary">{{ $temuan->sub_area }}</span>
                         </p>
 
-                        <p class="text-sm text-zinc-600 dark:text-zinc-300 line-clamp-2 flex-1">
+                        <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 flex-1">
                             {{ $temuan->deskripsi }}
                         </p>
 
                         @if($temuan->klausul)
-                            <div class="mt-2">
-                                <span class="inline-block px-2 py-0.5 text-xs bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded">
+                            <div class="mt-sm">
+                                <span class="inline-block px-2 py-1 font-label-md text-[10px] bg-surface-container-high text-on-surface rounded border border-outline-variant/50">
                                     {{ $temuan->klausul->kode_klausul }}: {{ Str::limit($temuan->klausul->nama_klausul, 30) }}
                                 </span>
                             </div>
@@ -149,14 +147,14 @@
                     </div>
 
                     {{-- Footer --}}
-                    <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700/50 bg-zinc-50 dark:bg-zinc-800/50 flex justify-between items-center text-xs text-zinc-500 dark:text-zinc-400">
+                    <div class="px-md py-sm border-t border-outline-variant bg-surface-container-low flex justify-between items-center font-label-md text-label-md text-on-surface-variant">
                         <div class="flex items-center gap-1.5">
-                            <flux:icon.calendar-days variant="outline" class="w-3.5 h-3.5" />
+                            <span class="material-symbols-outlined text-[16px]">calendar_today</span>
                             {{ $temuan->tanggal_temuan->format('d M Y') }}
                         </div>
                         <div class="flex items-center gap-1">
-                            <span class="text-zinc-400">dari:</span>
-                            <span class="font-medium text-zinc-600 dark:text-zinc-300 truncate max-w-[90px]">
+                            <span>dari:</span>
+                            <span class="font-semibold text-on-surface truncate max-w-[90px]">
                                 {{ $temuan->pelapor->name ?? '-' }}
                             </span>
                         </div>
@@ -165,7 +163,7 @@
             @endforeach
         </div>
 
-        <div class="mt-6">
+        <div class="mt-lg">
             {{ $temuans->links() }}
         </div>
     @endif

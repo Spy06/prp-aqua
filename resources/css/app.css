@@ -11,28 +11,130 @@
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
+    --color-inverse-surface: #163440;
+    --color-on-error-container: #93000a;
+    --color-primary-fixed: #a0efff;
+    --color-on-background: #001f2a;
+    --color-on-secondary-fixed: #091f21;
+    --color-secondary: #4d6265;
+    --color-surface-container: #d9f2ff;
+    --color-tertiary: #006673;
+    --color-on-tertiary: #ffffff;
+    --color-surface-container-low: #e6f6ff;
+    --color-inverse-on-surface: #e0f4ff;
+    --color-secondary-fixed: #d0e7ea;
+    --color-on-secondary: #ffffff;
+    --color-on-tertiary-fixed-variant: #004e59;
+    --color-primary-fixed-dim: #6fd5e8;
+    --color-on-tertiary-container: #f8feff;
+    --color-surface: #f4faff;
+    --color-on-primary-container: #f8fdff;
+    --color-surface-container-high: #ceedfd;
+    --color-surface-tint: #006876;
+    --color-tertiary-fixed: #9eefff;
+    --color-primary-container: #008091;
+    --color-on-primary-fixed: #001f25;
+    --color-surface-bright: #f4faff;
+    --color-on-tertiary-fixed: #001f24;
+    --color-surface-dim: #c0dfee;
+    --color-secondary-fixed-dim: #b4cbce;
+    --color-background: #f4faff;
+    --color-outline: #6e797c;
+    --color-on-primary-fixed-variant: #004e59;
+    --color-on-secondary-fixed-variant: #364a4d;
+    --color-surface-variant: #c9e7f7;
+    --color-on-secondary-container: #53686b;
+    --color-on-error: #ffffff;
+    --color-error: #ba1a1a;
+    --color-primary: #006673;
+    --color-secondary-container: #d0e7ea;
+    --color-inverse-primary: #6fd5e8;
+    --color-surface-container-lowest: #ffffff;
+    --color-on-surface: #001f2a;
+    --color-error-container: #ffdad6;
+    --color-tertiary-container: #008091;
+    --color-tertiary-fixed-dim: #55d7ed;
+    --color-outline-variant: #bdc9cb;
+    --color-surface-container-highest: #c9e7f7;
+    --color-on-primary: #ffffff;
+    --color-on-surface-variant: #3e494b;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
+    --spacing-sidebar-width: 260px;
+    --spacing-container-max: 1440px;
+    --spacing-md: 16px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-xl: 40px;
+    --spacing-base: 4px;
+    --spacing-lg: 24px;
+
+    --font-headline-lg-mobile: Inter;
+    --font-label-md: Inter;
+    --font-body-sm: Inter;
+    --font-body-md: Inter;
+    --font-title-md: Inter;
+    --font-headline-xl: Inter;
+    --font-headline-lg: Inter;
+
+    /* Flux specific variables to prevent breaking existing components slightly */
+    --color-accent: var(--color-primary);
+    --color-accent-content: var(--color-primary);
+    --color-accent-foreground: var(--color-on-primary);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-primary-container: #00d4ff;
+        --color-primary: #a8e8ff;
+        --color-surface-container-low: #141d23;
+        --color-surface-container-high: #222b32;
+        --color-surface-bright: #313a41;
+        --color-on-primary-fixed: #001f27;
+        --color-on-primary-fixed-variant: #004e5f;
+        --color-on-secondary: #173343;
+        --color-surface-tint: #3cd7ff;
+        --color-primary-fixed-dim: #3cd7ff;
+        --color-secondary-fixed: #cae6fb;
+        --color-on-tertiary-fixed: #001f25;
+        --color-on-tertiary: #00363e;
+        --color-on-tertiary-fixed-variant: #004e59;
+        --color-error-container: #93000a;
+        --color-on-tertiary-container: #005865;
+        --color-inverse-surface: #dae4ec;
+        --color-background: #0b141a;
+        --color-on-error-container: #ffdad6;
+        --color-on-secondary-fixed: #001e2d;
+        --color-surface-container-highest: #2d363d;
+        --color-tertiary-fixed: #a0efff;
+        --color-on-surface-variant: #bbc9cf;
+        --color-inverse-primary: #00677e;
+        --color-tertiary-container: #6bd1e4;
+        --color-tertiary: #90edff;
+        --color-tertiary-fixed-dim: #6fd5e8;
+        --color-surface-container: #182127;
+        --color-surface-dim: #0b141a;
+        --color-outline: #859398;
+        --color-surface-container-lowest: #060f15;
+        --color-on-primary-container: #00586b;
+        --color-on-primary: #003642;
+        --color-primary-fixed: #b4ebff;
+        --color-on-secondary-fixed-variant: #2f4a5b;
+        --color-on-surface: #dae4ec;
+        --color-outline-variant: #3c494e;
+        --color-surface-variant: #2d363d;
+        --color-error: #ffb4ab;
+        --color-secondary: #aecade;
+        --color-inverse-on-surface: #293238;
+        --color-surface: #0b141a;
+        --color-on-background: #dae4ec;
+        --color-on-secondary-container: #9db9cd;
+        --color-secondary-container: #2f4a5b;
+        --color-on-error: #690005;
+        --color-secondary-fixed-dim: #aecade;
+
+        --color-accent: var(--color-primary);
+        --color-accent-content: var(--color-primary);
+        --color-accent-foreground: var(--color-on-primary);
     }
 }
 
@@ -43,7 +145,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-outline-variant, currentColor);
     }
 }
 
@@ -58,9 +160,5 @@
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+    @apply outline-hidden ring-2 ring-primary border-primary;
 }
-
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */

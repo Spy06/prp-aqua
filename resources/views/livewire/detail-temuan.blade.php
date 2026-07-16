@@ -1,33 +1,33 @@
 <div class="max-w-4xl mx-auto space-y-6" id="detail-temuan-container">
     {{-- Header + Breadcrumb --}}
-    <div class="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-        <a href="{{ route('beranda') }}" class="hover:text-zinc-700 dark:hover:text-zinc-200 transition">Beranda</a>
-        <flux:icon.chevron-right class="w-4 h-4" />
-        <span class="text-zinc-900 dark:text-zinc-100 font-medium">Temuan #{{ $temuan->id }}</span>
+    <div class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant">
+        <a href="{{ route('beranda') }}" class="hover:text-primary transition-colors">Beranda</a>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        <span class="text-on-surface font-semibold">Temuan #{{ $temuan->id }}</span>
     </div>
 
     {{-- Card: Info Temuan --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+    <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
         {{-- Card Header --}}
-        <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-700 flex items-center justify-between">
+        <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                    <flux:icon.document-text variant="outline" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-primary-container text-[20px]">description</span>
                 </div>
                 <div>
-                    <h1 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Detail Temuan PRP #{{ $temuan->id }}</h1>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Dilaporkan {{ $temuan->created_at->diffForHumans() }}</p>
+                    <h1 class="font-title-md text-title-md text-on-surface">Detail Temuan PRP #{{ $temuan->id }}</h1>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Dilaporkan {{ $temuan->created_at->diffForHumans() }}</p>
                 </div>
             </div>
 
             {{-- Status Badge --}}
             @php
                 $statusBadgeClass = match($temuan->status) {
-                    'open'              => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-                    'in_progress'       => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-                    'closed_pending_qa' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-                    'closed_acc'        => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-                    default             => 'bg-gray-100 text-gray-800',
+                    'open'              => 'bg-[#fef7e0] text-[#b06000] border-[#fde293]',
+                    'in_progress'       => 'bg-secondary-container text-on-secondary-container border-outline-variant',
+                    'closed_pending_qa' => 'bg-[#fce8e6] text-[#c5221f] border-[#f2b8b5]',
+                    'closed_acc'        => 'bg-[#e6f4ea] text-[#137333] border-[#ceead6]',
+                    default             => 'bg-surface-variant text-on-surface-variant border-outline-variant',
                 };
                 $statusText = match($temuan->status) {
                     'open'              => 'Open',
@@ -37,7 +37,7 @@
                     default             => $temuan->status,
                 };
             @endphp
-            <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusBadgeClass }}">
+            <span class="px-3 py-1 font-label-md text-label-md rounded-full border {{ $statusBadgeClass }}">
                 {{ $statusText }}
             </span>
         </div>
@@ -47,41 +47,41 @@
             {{-- Kolom Kiri --}}
             <div class="space-y-4">
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Tanggal Temuan</p>
-                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->tanggal_temuan->format('d F Y') }}</p>
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Tanggal Temuan</p>
+                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->tanggal_temuan->format('d F Y') }}</p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Departemen</p>
-                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->departemen->nama_departemen ?? '-' }}</p>
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Departemen</p>
+                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->departemen->nama_departemen ?? '-' }}</p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Sub Area</p>
-                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->sub_area }}</p>
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Sub Area</p>
+                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->sub_area }}</p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Klausul PRP</p>
-                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Klausul PRP</p>
+                    <p class="font-body-md text-body-md text-on-surface font-semibold">
                         {{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}
                     </p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Pelapor</p>
-                    <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->pelapor->name ?? '-' }}</p>
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Pelapor</p>
+                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->pelapor->name ?? '-' }}</p>
                 </div>
 
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">PIC yang Ditunjuk</p>
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-semibold">
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">PIC yang Ditunjuk</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary text-xs font-bold">
                             {{ substr($temuan->pic->name ?? '?', 0, 1) }}
                         </div>
-                        <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ $temuan->pic->name ?? '-' }}</p>
+                        <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->pic->name ?? '-' }}</p>
                         @if($isPic)
-                            <span class="px-1.5 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">Anda</span>
+                            <span class="px-1.5 py-0.5 font-label-md text-[10px] bg-primary-container text-on-primary-container rounded border border-primary/20">Anda</span>
                         @endif
                     </div>
                 </div>
@@ -90,24 +90,24 @@
             {{-- Kolom Kanan: Deskripsi + Foto --}}
             <div class="space-y-4">
                 <div>
-                    <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Deskripsi Temuan</p>
-                    <p class="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ $temuan->deskripsi }}</p>
+                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Deskripsi Temuan</p>
+                    <p class="font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $temuan->deskripsi }}</p>
                 </div>
 
                 @if($temuan->saran)
                     <div>
-                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Saran & Masukan (Langsung ke QA)</p>
-                        <p class="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ $temuan->saran }}</p>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Saran & Masukan (Langsung ke QA)</p>
+                        <p class="font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $temuan->saran }}</p>
                     </div>
                 @endif
 
                 @if($temuan->foto_temuan_path)
                     <div>
-                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-2">Foto Temuan</p>
-                        <div class="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                            <img src="{{ Storage::disk('public')->url($temuan->foto_temuan_path) }}"
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-2">Foto Temuan</p>
+                        <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low">
+                            <img src="{{ asset('storage/' . $temuan->foto_temuan_path) }}"
                                  alt="Foto temuan PRP"
-                                 class="w-full max-h-72 object-cover" />
+                                 class="w-full max-h-72 object-contain" />
                         </div>
                     </div>
                 @endif
@@ -118,39 +118,39 @@
     {{-- Card: Tindak Lanjut (info ringkas, selalu ditampilkan) --}}
     @php $tl = $temuan->tindakLanjut; @endphp
     @if($tl)
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-            <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-700 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
-                    <flux:icon.clipboard-document-check variant="outline" class="w-5 h-5 text-teal-600 dark:text-teal-400" />
+        <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
+            <div class="px-6 py-4 border-b border-outline-variant flex items-center gap-3 bg-surface-container-low">
+                <div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-secondary-container text-[20px]">task_alt</span>
                 </div>
-                <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Tindak Lanjut</h2>
+                <h2 class="font-title-md text-title-md text-on-surface">Tindak Lanjut</h2>
             </div>
 
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-4">
                     <div>
-                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Tindakan Perbaikan</p>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Tindakan Perbaikan</p>
                         @if($tl->action)
-                            <p class="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap">{{ $tl->action }}</p>
+                            <p class="font-body-md text-body-md text-on-surface whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $tl->action }}</p>
                         @else
-                            <p class="text-sm text-zinc-400 italic">Belum diisi</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant italic">Belum diisi</p>
                         @endif
                     </div>
 
                     <div>
-                        <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Due Date</p>
+                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Due Date</p>
                         @if($tl->due_date)
                             @php
                                 $isOverdue = $tl->due_date->lt(now()) && !in_array($temuan->status, ['closed_pending_qa', 'closed_acc']);
                             @endphp
-                            <p class="text-sm font-semibold {{ $isOverdue ? 'text-red-600 dark:text-red-400' : 'text-zinc-900 dark:text-zinc-100' }}">
+                            <p class="font-body-md text-body-md font-semibold {{ $isOverdue ? 'text-error' : 'text-on-surface' }}">
                                 {{ $tl->due_date->format('d F Y') }}
                                 @if($isOverdue)
-                                    <span class="text-xs font-normal text-red-500">(Overdue)</span>
+                                    <span class="font-label-md text-[10px] text-error border border-error/50 px-1 py-0.5 rounded ml-1">Overdue</span>
                                 @endif
                             </p>
                         @else
-                            <p class="text-sm text-zinc-400 italic">Belum diisi</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant italic">Belum diisi</p>
                         @endif
                     </div>
                 </div>
@@ -158,24 +158,24 @@
                 <div class="space-y-4">
                     @if($tl->foto_bukti_path)
                         <div>
-                            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-2">Foto Bukti</p>
-                            <div class="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                                <img src="{{ Storage::disk('public')->url($tl->foto_bukti_path) }}"
+                            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-2">Foto Bukti</p>
+                            <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low">
+                                <img src="{{ asset('storage/' . $tl->foto_bukti_path) }}"
                                      alt="Foto bukti tindak lanjut"
-                                     class="w-full max-h-48 object-cover" />
+                                     class="w-full max-h-48 object-contain" />
                             </div>
                         </div>
                     @else
-                        <div class="flex items-center gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 text-xs">
-                            <flux:icon.exclamation-triangle variant="outline" class="w-4 h-4 shrink-0" />
+                        <div class="flex items-center gap-2 p-3 rounded-lg bg-[#fef7e0] border border-[#fde293] text-[#b06000] text-xs">
+                            <span class="material-symbols-outlined text-[16px] shrink-0">warning</span>
                             Foto bukti belum diupload
                         </div>
                     @endif
 
                     @if($tl->catatan_qa)
                         <div>
-                            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Catatan QA</p>
-                            <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-sm text-amber-800 dark:text-amber-200">
+                            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Catatan QA</p>
+                            <div class="p-3 rounded-lg bg-surface-container-highest border border-outline-variant font-body-sm text-on-surface">
                                 {{ $tl->catatan_qa }}
                             </div>
                         </div>
@@ -187,14 +187,14 @@
 
     {{-- Panel: Form TindakLanjutPIC (hanya untuk PIC, selama belum closed_acc) --}}
     @if($showTindakLanjutForm)
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-            <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-700 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                    <flux:icon.pencil-square variant="outline" class="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+        <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
+            <div class="px-6 py-4 border-b border-outline-variant flex items-center gap-3 bg-surface-container-low">
+                <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-primary-container text-[20px]">edit_document</span>
                 </div>
                 <div>
-                    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Form Tindak Lanjut PIC</h2>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Isi detail tindakan perbaikan dan update status</p>
+                    <h2 class="font-title-md text-title-md text-on-surface">Form Tindak Lanjut PIC</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Isi detail tindakan perbaikan dan update status</p>
                 </div>
             </div>
 
@@ -206,8 +206,8 @@
 
     {{-- Info: Read-only untuk Pelapor atau QA yang melihat --}}
     @if($isPelapor && !$isPic)
-        <div class="flex items-center gap-2 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 text-sm">
-            <flux:icon.information-circle variant="outline" class="w-5 h-5 shrink-0" />
+        <div class="flex items-center gap-2 p-4 rounded-lg bg-secondary-container border border-outline-variant text-on-secondary-container font-body-sm">
+            <span class="material-symbols-outlined text-[20px] shrink-0">info</span>
             <span>Anda adalah pelapor temuan ini. Tindak lanjut dilakukan oleh PIC yang ditunjuk.</span>
         </div>
     @endif
@@ -215,8 +215,8 @@
     @if($isQa && $temuan->status === 'closed_pending_qa')
         <livewire:verifikasi-q-a :temuan="$temuan" :key="'vqa-' . $temuan->id" />
     @elseif($isQa)
-        <div class="flex items-center gap-2 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-sm mt-6">
-            <flux:icon.shield-check variant="outline" class="w-5 h-5 shrink-0" />
+        <div class="flex items-center gap-2 p-4 rounded-lg bg-[#fef7e0] border border-[#fde293] text-[#b06000] font-body-sm mt-6">
+            <span class="material-symbols-outlined text-[20px] shrink-0">shield</span>
             <span>Verifikasi QA hanya bisa dilakukan saat status temuan adalah Pending QA (closed_pending_qa).</span>
         </div>
     @endif

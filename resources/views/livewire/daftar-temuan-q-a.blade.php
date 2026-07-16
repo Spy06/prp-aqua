@@ -2,26 +2,158 @@
     {{-- Grid Grafik --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Card: Chart Departemen --}}
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5"
+             data-labels="{{ $chartLabels }}"
+             data-values="{{ $chartData }}"
+             x-data="{
+                 init() {
+                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const data = JSON.parse(this.$el.dataset.values);
+                     let chart = new Chart(this.$refs.canvas, {
+                         type: 'bar',
+                         data: {
+                             labels: labels,
+                             datasets: [{
+                                 label: 'Jumlah Temuan',
+                                 data: data,
+                                 backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                                 borderColor: 'rgb(59, 130, 246)',
+                                 borderWidth: 1
+                             }]
+                         },
+                         options: {
+                             responsive: true,
+                             maintainAspectRatio: false,
+                             plugins: {
+                                 legend: { display: false }
+                             },
+                             scales: {
+                                 y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                             }
+                         }
+                     });
+
+                     this.$wire.on('chart-updated', (event) => {
+                         const payload = Array.isArray(event) ? event[0] : event;
+                         if (chart && payload) {
+                             chart.data.labels = JSON.parse(payload.deptLabels);
+                             chart.data.datasets[0].data = JSON.parse(payload.deptData);
+                             chart.update();
+                         }
+                     });
+                 }
+             }"
+             wire:ignore>
             <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Temuan per Departemen</h2>
             <div class="w-full h-64">
-                <canvas id="temuanChart"></canvas>
+                <canvas x-ref="canvas"></canvas>
             </div>
         </div>
 
         {{-- Card: Chart Klausul --}}
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5"
+             data-labels="{{ $klausulLabels }}"
+             data-values="{{ $klausulData }}"
+             x-data="{
+                 init() {
+                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const data = JSON.parse(this.$el.dataset.values);
+                     let chart = new Chart(this.$refs.canvas, {
+                         type: 'bar',
+                         data: {
+                             labels: labels,
+                             datasets: [{
+                                 label: 'Jumlah Temuan',
+                                 data: data,
+                                 backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                                 borderColor: 'rgb(139, 92, 246)',
+                                 borderWidth: 1
+                             }]
+                         },
+                         options: {
+                             responsive: true,
+                             maintainAspectRatio: false,
+                             plugins: {
+                                 legend: { display: false }
+                             },
+                             scales: {
+                                 y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                             }
+                         }
+                     });
+
+                     this.$wire.on('chart-updated', (event) => {
+                         const payload = Array.isArray(event) ? event[0] : event;
+                         if (chart && payload) {
+                             chart.data.labels = JSON.parse(payload.klausulLabels);
+                             chart.data.datasets[0].data = JSON.parse(payload.klausulData);
+                             chart.update();
+                         }
+                     });
+                 }
+             }"
+             wire:ignore>
             <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Temuan per Klausul PRP</h2>
             <div class="w-full h-64">
-                <canvas id="klausulChart"></canvas>
+                <canvas x-ref="canvas"></canvas>
             </div>
         </div>
 
         {{-- Card: Chart Status --}}
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5" wire:ignore>
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5"
+             data-labels="{{ $statusLabels }}"
+             data-values="{{ $statusData }}"
+             x-data="{
+                 init() {
+                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const data = JSON.parse(this.$el.dataset.values);
+                     let chart = new Chart(this.$refs.canvas, {
+                         type: 'doughnut',
+                         data: {
+                             labels: labels,
+                             datasets: [{
+                                 data: data,
+                                 backgroundColor: [
+                                     'rgba(250, 204, 21, 0.7)', // Yellow for open
+                                     'rgba(59, 130, 246, 0.7)',  // Blue for in progress
+                                     'rgba(168, 85, 247, 0.7)',  // Purple for pending qa
+                                     'rgba(34, 197, 94, 0.7)'    // Green for closed acc
+                                 ],
+                                 borderColor: [
+                                     'rgb(250, 204, 21)',
+                                     'rgb(59, 130, 246)',
+                                     'rgb(168, 85, 247)',
+                                     'rgb(34, 197, 94)'
+                                 ],
+                                 borderWidth: 1
+                             }]
+                         },
+                         options: {
+                             responsive: true,
+                             maintainAspectRatio: false,
+                             plugins: {
+                                 legend: {
+                                     position: 'bottom',
+                                     labels: { boxWidth: 12, padding: 8 }
+                                 }
+                             }
+                         }
+                     });
+
+                     this.$wire.on('chart-updated', (event) => {
+                         const payload = Array.isArray(event) ? event[0] : event;
+                         if (chart && payload) {
+                             chart.data.labels = JSON.parse(payload.statusLabels);
+                             chart.data.datasets[0].data = JSON.parse(payload.statusData);
+                             chart.update();
+                         }
+                     });
+                 }
+             }"
+             wire:ignore>
             <h2 class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Proporsi Status Temuan</h2>
             <div class="w-full h-64">
-                <canvas id="statusChart"></canvas>
+                <canvas x-ref="canvas"></canvas>
             </div>
         </div>
     </div>
@@ -118,115 +250,5 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('livewire:initialized', () => {
-            const ctxDept = document.getElementById('temuanChart');
-            const ctxKlausul = document.getElementById('klausulChart');
-            const ctxStatus = document.getElementById('statusChart');
-            let chartDept, chartKlausul, chartStatus;
-
-            const initDeptChart = (labels, data) => {
-                if (chartDept) chartDept.destroy();
-                chartDept = new Chart(ctxDept, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Jumlah Temuan',
-                            data: data,
-                            backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                            borderColor: 'rgb(59, 130, 246)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                        }
-                    }
-                });
-            };
-
-            const initKlausulChart = (labels, data) => {
-                if (chartKlausul) chartKlausul.destroy();
-                chartKlausul = new Chart(ctxKlausul, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Jumlah Temuan',
-                            data: data,
-                            backgroundColor: 'rgba(139, 92, 246, 0.5)',
-                            borderColor: 'rgb(139, 92, 246)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                        }
-                    }
-                });
-            };
-
-            const initStatusChart = (labels, data) => {
-                if (chartStatus) chartStatus.destroy();
-                chartStatus = new Chart(ctxStatus, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: [
-                                'rgba(250, 204, 21, 0.7)', // Yellow for open
-                                'rgba(59, 130, 246, 0.7)',  // Blue for in progress
-                                'rgba(168, 85, 247, 0.7)',  // Purple for pending qa
-                                'rgba(34, 197, 94, 0.7)'    // Green for closed acc
-                            ],
-                            borderColor: [
-                                'rgb(250, 204, 21)',
-                                'rgb(59, 130, 246)',
-                                'rgb(168, 85, 247)',
-                                'rgb(34, 197, 94)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { boxWidth: 12, padding: 8 }
-                            }
-                        }
-                    }
-                });
-            };
-
-            // Initial render
-            initDeptChart({!! $chartLabels !!}, {!! $chartData !!});
-            initKlausulChart({!! $klausulLabels !!}, {!! $klausulData !!});
-            initStatusChart({!! $statusLabels !!}, {!! $statusData !!});
-
-            Livewire.on('chart-updated', (event) => {
-                const payload = event[0];
-                initDeptChart(JSON.parse(payload.deptLabels), JSON.parse(payload.deptData));
-                initKlausulChart(JSON.parse(payload.klausulLabels), JSON.parse(payload.klausulData));
-                initStatusChart(JSON.parse(payload.statusLabels), JSON.parse(payload.statusData));
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" data-navigate-once></script>
 </div>

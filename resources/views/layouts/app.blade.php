@@ -1,6 +1,31 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        function toggleTheme() {
+            if(document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+        
+        document.addEventListener('livewire:navigated', () => {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{{ $title ?? 'Sistem Verifikasi PRP' }}</title>
@@ -33,7 +58,7 @@
         </div>
         <div class="flex items-center gap-md">
             <!-- Theme Toggle Mobile -->
-            <button onclick="document.documentElement.classList.toggle('dark')" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center">
+            <button onclick="toggleTheme()" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center">
                 <span class="material-symbols-outlined">dark_mode</span>
             </button>
             @auth
@@ -109,7 +134,7 @@
             <!-- Theme Toggle Desktop -->
             <div class="flex items-center justify-between px-md py-sm mb-2 rounded-lg bg-surface-container-high border border-outline-variant/50">
                 <span class="font-label-md text-label-md text-on-surface-variant">Theme</span>
-                <button onclick="document.documentElement.classList.toggle('dark')" class="text-on-surface hover:text-primary transition-colors flex items-center justify-center bg-surface-container-highest p-1 rounded">
+                <button onclick="toggleTheme()" class="text-on-surface hover:text-primary transition-colors flex items-center justify-center bg-surface-container-highest p-1 rounded">
                     <span class="material-symbols-outlined text-[18px]">dark_mode</span>
                 </button>
             </div>

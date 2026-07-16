@@ -81,9 +81,9 @@
     @endif
 
     {{-- Search --}}
-    <div>
+    <div class="w-full md:w-1/2 lg:w-1/3">
         <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari NIK atau Nama..."
-               class="w-full max-w-sm rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2" />
+               class="w-full rounded-lg border border-outline-variant bg-surface text-on-surface text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary transition" />
     </div>
 
     {{-- Table --}}

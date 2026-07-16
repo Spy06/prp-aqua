@@ -1,6 +1,6 @@
-<div class="space-y-6">
+<div class="space-y-4 sm:space-y-6">
     {{-- Grid Grafik --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {{-- Card: Chart Departemen --}}
         <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5"
              data-labels="{{ $chartLabels }}"
@@ -158,19 +158,19 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Semua Temuan</h2>
+    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
+            <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Semua Temuan</h2>
             
-            <div class="flex gap-2">
-                <select wire:model.live="filterDepartemen" class="rounded-md border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <div class="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+                <select wire:model.live="filterDepartemen" class="w-full sm:w-auto rounded-md border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-2 py-1.5">
                     <option value="">Semua Departemen</option>
                     @foreach($departemens as $dept)
                         <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
                     @endforeach
                 </select>
 
-                <select wire:model.live="filterStatus" class="rounded-md border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <select wire:model.live="filterStatus" class="w-full sm:w-auto rounded-md border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-2 py-1.5">
                     <option value="">Semua Status</option>
                     <option value="open">Open</option>
                     <option value="in_progress">In Progress</option>
@@ -180,31 +180,32 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+            <div class="min-w-[600px] sm:min-w-0">
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Tgl Temuan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Departemen & Area</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">PIC</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Tgl Temuan</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Departemen & Area</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">PIC</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($temuans as $t)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
                                 {{ $t->tanggal_temuan->format('d M Y') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                            <td class="px-3 sm:px-6 py-3 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
                                 <div class="font-medium">{{ $t->departemen->nama_departemen ?? '-' }}</div>
                                 <div class="text-xs text-zinc-500">{{ $t->sub_area }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
                                 {{ $t->pic->name ?? '-' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm">
                                 @php
                                     $statusClass = match($t->status) {
                                         'open'              => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
@@ -225,10 +226,10 @@
                                     {{ $statusText }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('temuan.detail', $t->id) }}"
-                                       class="text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a>
+                                       class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Detail</a>
                                     <span class="text-zinc-300 dark:text-zinc-600">|</span>
                                     <a href="{{ route('export.pdf.temuan', $t->id) }}"
                                        target="_blank"
@@ -244,9 +245,10 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
         <div class="mt-4">
-            {{ $temuans->links() }}
+            {{ $temuans->links('vendor.pagination.tailwind') }}
         </div>
     </div>
 

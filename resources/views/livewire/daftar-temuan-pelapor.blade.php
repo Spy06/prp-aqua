@@ -106,7 +106,7 @@
         </div>
 
         <div class="mt-lg">
-            {{ $temuans->links() }}
+            {{ $temuans->links('vendor.pagination.tailwind') }}
         </div>
     @endif
 </div>

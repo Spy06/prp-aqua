@@ -14,10 +14,10 @@
     @endif
 
     {{-- Header --}}
-    <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Master Karyawan</h2>
+    <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3">
+        <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Master Karyawan</h2>
         <button wire:click="openCreate" id="btn-tambah-karyawan"
-                class="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                class="self-start xs:self-auto inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
             <flux:icon.plus variant="outline" class="w-4 h-4" />
             Tambah Karyawan
         </button>
@@ -89,47 +89,51 @@
     {{-- Table --}}
     <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm min-w-[540px]">
                 <thead class="bg-zinc-50 dark:bg-zinc-900/50">
                     <tr>
-                        <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">NIK</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Nama</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Departemen</th>
-                        <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Status</th>
-                        <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Aksi</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">NIK</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Nama</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden sm:table-cell">Departemen</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Status</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
                     @forelse($karyawans as $k)
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
-                            <td class="px-5 py-3 font-mono text-xs text-zinc-700 dark:text-zinc-300">{{ $k->nik }}</td>
-                            <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $k->nama }}</td>
-                            <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400">{{ $k->departemen->nama_departemen ?? '-' }}</td>
-                            <td class="px-5 py-3 text-center">
+                            <td class="px-4 py-3 font-mono text-xs text-zinc-700 dark:text-zinc-300">{{ $k->nik }}</td>
+                            <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">
+                                {{ $k->nama }}
+                                <div class="text-xs text-zinc-500 sm:hidden">{{ $k->departemen->nama_departemen ?? '-' }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-sm hidden sm:table-cell">{{ $k->departemen->nama_departemen ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center">
                                 @if($k->status_aktif)
                                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
                                 @else
                                     <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Non-aktif</span>
                                 @endif
                             </td>
-                            <td class="px-5 py-3 text-center">
-                                <div class="flex items-center justify-center gap-3">
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex items-center justify-center gap-1">
                                     <button wire:click="openEdit('{{ $k->nik }}')" title="Edit"
-                                            class="p-2 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
-                                        <flux:icon.pencil variant="outline" class="w-5 h-5" />
+                                            class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
+                                        <flux:icon.pencil variant="outline" class="w-4 h-4" />
                                     </button>
                                     
                                     <button wire:click="toggleAktif('{{ $k->nik }}')"
                                             wire:confirm="Ubah status aktif karyawan ini?"
-                                            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition {{ $k->status_aktif ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20' : 'text-green-700 bg-green-50 hover:bg-green-100 dark:text-green-400 dark:bg-green-900/20' }}">
-                                        {{ $k->status_aktif ? 'Non-aktifkan' : 'Aktifkan' }}
+                                            title="{{ $k->status_aktif ? 'Non-aktifkan' : 'Aktifkan' }}"
+                                            class="p-1.5 rounded-lg transition {{ $k->status_aktif ? 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20' : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
+                                        <span class="material-symbols-outlined text-base">{{ $k->status_aktif ? 'person_off' : 'how_to_reg' }}</span>
                                     </button>
 
                                     <button wire:click="hapus('{{ $k->nik }}')"
                                             wire:confirm="Apakah Anda yakin ingin menghapus karyawan ini beserta akun user-nya?"
                                             title="Hapus"
-                                            class="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
-                                        <flux:icon.trash variant="outline" class="w-5 h-5" />
+                                            class="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                                        <flux:icon.trash variant="outline" class="w-4 h-4" />
                                     </button>
                                 </div>
                             </td>
@@ -146,7 +150,7 @@
         </div>
         @if($karyawans->hasPages())
             <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">
-                {{ $karyawans->links() }}
+                {{ $karyawans->links('vendor.pagination.tailwind') }}
             </div>
         @endif
     </div>

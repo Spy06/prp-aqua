@@ -12,10 +12,10 @@
         </div>
     @endif
 
-    <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Master Departemen</h2>
+    <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3">
+        <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Master Departemen</h2>
         <button wire:click="openCreate" id="btn-tambah-dept"
-                class="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                class="self-start xs:self-auto inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
             <flux:icon.plus variant="outline" class="w-4 h-4" />
             Tambah Departemen
         </button>
@@ -48,46 +48,48 @@
     @endif
 
     <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-zinc-50 dark:bg-zinc-900/50">
-                <tr>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Nama Departemen</th>
-                    <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Karyawan</th>
-                    <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Temuan</th>
-                    <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
-                @forelse($departemens as $d)
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
-                        <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $d->nama_departemen }}</td>
-                        <td class="px-5 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $d->karyawans_count }}</td>
-                        <td class="px-5 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $d->temuans_count }}</td>
-                        <td class="px-5 py-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button wire:click="openEdit({{ $d->id }})" title="Edit"
-                                        class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
-                                    <flux:icon.pencil variant="outline" class="w-4 h-4" />
-                                </button>
-                                <button wire:click="hapus({{ $d->id }})"
-                                        wire:confirm="Yakin hapus departemen '{{ $d->nama_departemen }}'?"
-                                        title="Hapus"
-                                        class="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
-                                    <flux:icon.trash variant="outline" class="w-4 h-4" />
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-zinc-50 dark:bg-zinc-900/50">
                     <tr>
-                        <td colspan="4" class="px-5 py-10 text-center text-zinc-400 dark:text-zinc-500 text-sm">Belum ada departemen.</td>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Nama Departemen</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Karyawan</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Temuan</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase">Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
+                    @forelse($departemens as $d)
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
+                            <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100 text-sm">{{ $d->nama_departemen }}</td>
+                            <td class="px-4 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $d->karyawans_count }}</td>
+                            <td class="px-4 py-3 text-center text-zinc-600 dark:text-zinc-400">{{ $d->temuans_count }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button wire:click="openEdit({{ $d->id }})" title="Edit"
+                                            class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
+                                        <flux:icon.pencil variant="outline" class="w-4 h-4" />
+                                    </button>
+                                    <button wire:click="hapus({{ $d->id }})"
+                                            wire:confirm="Yakin hapus departemen '{{ $d->nama_departemen }}'?"
+                                            title="Hapus"
+                                            class="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                                        <flux:icon.trash variant="outline" class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-5 py-10 text-center text-zinc-400 dark:text-zinc-500 text-sm">Belum ada departemen.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
         @if($departemens->hasPages())
             <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">
-                {{ $departemens->links() }}
+                {{ $departemens->links('vendor.pagination.tailwind') }}
             </div>
         @endif
     </div>

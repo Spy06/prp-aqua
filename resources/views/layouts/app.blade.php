@@ -52,20 +52,23 @@
 </head>
 <body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pb-20 lg:pb-0 lg:flex-row">
     <!-- TopNavBar Mobile -->
-    <header class="lg:hidden bg-surface flex justify-between items-center w-full px-lg h-16 sticky top-0 z-50 border-b border-outline-variant shadow-sm">
-        <div class="flex items-center gap-sm">
-            <h1 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary">Sistem Verifikasi PRP</h1>
+    <header class="lg:hidden bg-surface flex justify-between items-center w-full px-4 h-14 sticky top-0 z-50 border-b border-outline-variant shadow-sm">
+        <div class="flex items-center gap-2 min-w-0">
+            <div class="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+                <span class="material-symbols-outlined text-base">factory</span>
+            </div>
+            <h1 class="text-sm font-bold text-primary truncate">Verifikasi PRP</h1>
         </div>
-        <div class="flex items-center gap-md">
+        <div class="flex items-center gap-1">
             <!-- Theme Toggle Mobile -->
             <button onclick="toggleTheme()" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center">
-                <span class="material-symbols-outlined">dark_mode</span>
+                <span class="material-symbols-outlined text-xl">dark_mode</span>
             </button>
             @auth
             <form method="POST" action="{{ route('logout') }}" class="inline">
                 @csrf
                 <button type="submit" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 flex items-center justify-center">
-                    <span class="material-symbols-outlined">logout</span>
+                    <span class="material-symbols-outlined text-xl">logout</span>
                 </button>
             </form>
             @endauth
@@ -160,27 +163,49 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 lg:ml-[260px] p-0 lg:p-lg w-full max-w-[1440px] mx-auto min-h-screen">
-        {{ $slot }}
+    <main class="flex-1 lg:ml-[260px] p-0 lg:p-lg w-full max-w-[1440px] mx-auto min-h-screen overflow-x-hidden">
+        <div class="p-3 sm:p-4 lg:p-0">
+            {{ $slot }}
+        </div>
     </main>
 
     <!-- BottomNavBar Mobile -->
-    <nav class="lg:hidden fixed bottom-0 left-0 w-full z-40 flex justify-around items-center h-16 px-4 bg-surface border-t border-outline-variant shadow-lg rounded-t-xl pb-2 pt-2">
+    <nav class="lg:hidden fixed bottom-0 left-0 w-full z-40 bg-surface border-t border-outline-variant shadow-lg">
         @auth
             @if(auth()->user()->role === 'qa')
-                <a href="{{ route('qa.dashboard') }}" wire:navigate class="flex flex-col items-center justify-center {{ request()->routeIs('qa.dashboard') ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-variant' }} rounded-full px-4 py-1 transition-colors">
-                    <span class="material-symbols-outlined {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">dashboard</span>
-                    <span class="text-[10px] mt-1 font-semibold">Dashboard</span>
-                </a>
-                <a href="{{ route('qa.rekap') }}" wire:navigate class="flex flex-col items-center justify-center {{ request()->routeIs('qa.rekap') ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-variant' }} rounded-full px-4 py-1 transition-colors">
-                    <span class="material-symbols-outlined {{ request()->routeIs('qa.rekap') ? 'filled-icon' : '' }}">calendar_month</span>
-                    <span class="text-[10px] mt-1 font-semibold">Rekap</span>
-                </a>
+                <div class="flex overflow-x-auto no-scrollbar h-16 items-center">
+                    <a href="{{ route('qa.dashboard') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.dashboard') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px] {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">dashboard</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Dashboard</span>
+                    </a>
+                    <a href="{{ route('qa.rekap') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.rekap') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px] {{ request()->routeIs('qa.rekap') ? 'filled-icon' : '' }}">calendar_month</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Rekap</span>
+                    </a>
+                    <a href="{{ route('qa.master.karyawan') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.master.karyawan') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px]">group</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Karyawan</span>
+                    </a>
+                    <a href="{{ route('qa.master.departemen') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.master.departemen') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px]">domain</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Departemen</span>
+                    </a>
+                    <a href="{{ route('qa.master.klausul') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.master.klausul') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px]">rule</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Klausul</span>
+                    </a>
+                    <a href="{{ route('qa.master.akun') }}" wire:navigate class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.master.akun') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px]">manage_accounts</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Akun</span>
+                    </a>
+                </div>
             @else
-                <a href="{{ route('beranda') }}" wire:navigate class="flex flex-col items-center justify-center {{ request()->routeIs('beranda') ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-variant' }} rounded-full px-4 py-1 transition-colors">
-                    <span class="material-symbols-outlined {{ request()->routeIs('beranda') ? 'filled-icon' : '' }}">home</span>
-                    <span class="text-[10px] mt-1 font-semibold">Beranda</span>
-                </a>
+                <div class="flex justify-around items-center h-16">
+                    <a href="{{ route('beranda') }}" wire:navigate class="flex flex-col items-center justify-center min-w-[72px] h-full px-1 {{ request()->routeIs('beranda') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span class="material-symbols-outlined text-[22px] {{ request()->routeIs('beranda') ? 'filled-icon' : '' }}">home</span>
+                        <span class="text-[9px] mt-0.5 font-semibold">Beranda</span>
+                    </a>
+                </div>
             @endif
         @endauth
     </nav>

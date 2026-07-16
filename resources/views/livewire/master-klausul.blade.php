@@ -87,7 +87,7 @@
             </tbody>
         </table>
         @if($klausuls->hasPages())
-            <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">{{ $klausuls->links() }}</div>
+            <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">{{ $klausuls->links('vendor.pagination.tailwind') }}</div>
         @endif
     </div>
 </div>

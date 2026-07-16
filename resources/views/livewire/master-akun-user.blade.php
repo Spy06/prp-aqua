@@ -5,10 +5,10 @@
         </div>
     @endif
 
-    <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Manajemen Akun User</h2>
+    <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3">
+        <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Manajemen Akun User</h2>
         <button wire:click="openCreate" id="btn-buat-akun"
-                class="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                class="self-start xs:self-auto inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
             <flux:icon.user-plus variant="outline" class="w-4 h-4" />
             Buat Akun Baru
         </button>
@@ -128,47 +128,52 @@
 
     {{-- Table --}}
     <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-zinc-50 dark:bg-zinc-900/50">
-                <tr>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">NIK</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Nama</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Departemen</th>
-                    <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Role</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">No. WA</th>
-                    <th class="text-center px-5 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
-                @forelse($users as $u)
-                    <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
-                        <td class="px-5 py-3 font-mono text-xs text-zinc-700 dark:text-zinc-300">{{ $u->nik }}</td>
-                        <td class="px-5 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $u->name }}</td>
-                        <td class="px-5 py-3 text-zinc-600 dark:text-zinc-400 text-xs">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</td>
-                        <td class="px-5 py-3 text-center">
-                            @if($u->role === 'qa')
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">QA</span>
-                            @else
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">Karyawan</span>
-                            @endif
-                        </td>
-                        <td class="px-5 py-3 font-mono text-xs text-zinc-500">{{ $u->no_whatsapp ?? '-' }}</td>
-                        <td class="px-5 py-3 text-center">
-                            <button wire:click="openEdit({{ $u->id }})" title="Edit"
-                                    class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
-                                <flux:icon.pencil variant="outline" class="w-4 h-4" />
-                            </button>
-                        </td>
-                    </tr>
-                @empty
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[520px]">
+                <thead class="bg-zinc-50 dark:bg-zinc-900/50">
                     <tr>
-                        <td colspan="6" class="px-5 py-10 text-center text-zinc-400 text-sm">Tidak ada akun user ditemukan.</td>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">NIK</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Nama</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Departemen</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Role</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide hidden sm:table-cell">No. WA</th>
+                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
+                    @forelse($users as $u)
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
+                            <td class="px-4 py-3 font-mono text-xs text-zinc-700 dark:text-zinc-300">{{ $u->nik }}</td>
+                            <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">
+                                {{ $u->name }}
+                                <div class="text-xs text-zinc-500 sm:hidden">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-xs hidden sm:table-cell">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center">
+                                @if($u->role === 'qa')
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">QA</span>
+                                @else
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">Karyawan</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 font-mono text-xs text-zinc-500 hidden sm:table-cell">{{ $u->no_whatsapp ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <button wire:click="openEdit({{ $u->id }})" title="Edit"
+                                        class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
+                                    <flux:icon.pencil variant="outline" class="w-4 h-4" />
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-5 py-10 text-center text-zinc-400 text-sm">Tidak ada akun user ditemukan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
         @if($users->hasPages())
-            <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">{{ $users->links() }}</div>
+            <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">{{ $users->links('vendor.pagination.tailwind') }}</div>
         @endif
     </div>
 </div>

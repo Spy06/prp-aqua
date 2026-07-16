@@ -47,7 +47,7 @@ class KaryawanUserSeeder extends Seeder
                 'nik' => '9900001',
                 'role' => 'qa',
                 'no_whatsapp' => '628562001150',
-                'password' => Hash::make('qapassword'),
+                'password' => Hash::make('9900001'),
             ]
         );
 
@@ -58,7 +58,6 @@ class KaryawanUserSeeder extends Seeder
                 'departemen_id' => $produksi->id,
                 'role' => 'karyawan',
                 'no_whatsapp' => '6281326532314',
-                'password' => 'password1',
             ],
             [
                 'nik' => '2024002',
@@ -66,7 +65,6 @@ class KaryawanUserSeeder extends Seeder
                 'departemen_id' => $qc->id,
                 'role' => 'karyawan',
                 'no_whatsapp' => '62895618964044',
-                'password' => 'password2',
             ],
             [
                 'nik' => '2024003',
@@ -74,7 +72,6 @@ class KaryawanUserSeeder extends Seeder
                 'departemen_id' => $gudang->id,
                 'role' => 'karyawan',
                 'no_whatsapp' => '6281270783144',
-                'password' => 'password3',
             ],
             [
                 'nik' => '2024004',
@@ -82,7 +79,6 @@ class KaryawanUserSeeder extends Seeder
                 'departemen_id' => $maintenance->id,
                 'role' => 'karyawan',
                 'no_whatsapp' => '6281200000005',
-                'password' => 'password4',
             ],
         ];
 
@@ -103,7 +99,7 @@ class KaryawanUserSeeder extends Seeder
                     'nik' => $data['nik'],
                     'role' => $data['role'],
                     'no_whatsapp' => $data['no_whatsapp'],
-                    'password' => Hash::make($data['password']),
+                    'password' => Hash::make($data['nik']),
                 ]
             );
         }
@@ -136,11 +132,11 @@ class KaryawanUserSeeder extends Seeder
         $this->command->info('═══════════════════════════════════════════════════════');
         $this->command->info('  AKUN DUMMY YANG TERSEDIA — SISTEM VERIFIKASI PRP    ');
         $this->command->info('═══════════════════════════════════════════════════════');
-        $this->command->info('  NIK: 9900001   | Password: qapassword   | Role: QA  ');
-        $this->command->info('  NIK: 2024001   | Password: password1    | Role: Karyawan');
-        $this->command->info('  NIK: 2024002   | Password: password2    | Role: Karyawan');
-        $this->command->info('  NIK: 2024003   | Password: password3    | Role: Karyawan');
-        $this->command->info('  NIK: 2024004   | Password: password4    | Role: Karyawan');
+        $this->command->info('  NIK: 9900001   | Password: NIK nya sendiri (9900001) | Role: QA  ');
+        $this->command->info('  NIK: 2024001   | Password: NIK nya sendiri (2024001) | Role: Karyawan');
+        $this->command->info('  NIK: 2024002   | Password: NIK nya sendiri (2024002) | Role: Karyawan');
+        $this->command->info('  NIK: 2024003   | Password: NIK nya sendiri (2024003) | Role: Karyawan');
+        $this->command->info('  NIK: 2024004   | Password: NIK nya sendiri (2024004) | Role: Karyawan');
         $this->command->info('═══════════════════════════════════════════════════════');
         $this->command->info('');
     }

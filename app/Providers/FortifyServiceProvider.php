@@ -31,12 +31,12 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         Fortify::authenticateUsing(function (Request $request) {
-            $user = \App\Models\User::where('nik', $request->nik)->first();
+            $user = \App\Models\User::where('name', $request->name)->first();
 
             if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
                 if ($user->karyawan && !$user->karyawan->status_aktif) {
                     throw \Illuminate\Validation\ValidationException::withMessages([
-                        'nik' => 'Akun karyawan Anda telah dinonaktifkan. Hubungi QA/Admin.',
+                        'name' => 'Akun karyawan Anda telah dinonaktifkan. Hubungi QA/Admin.',
                     ]);
                 }
                 return $user;

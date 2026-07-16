@@ -45,8 +45,8 @@ return [
     |
     */
 
-    // Menggunakan NIK sebagai username login — bukan email
-    'username' => 'nik',
+    // Menggunakan nama karyawan sebagai username login — bukan NIK atau email
+    'username' => 'name',
 
     // Email tidak dipakai untuk login, tapi field ini masih dipakai Fortify
     // untuk reset password (dibiarkan default)

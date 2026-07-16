@@ -17,12 +17,10 @@ class MasterAkunUser extends Component
     public string $nik_baru         = '';
     public string $role_baru        = 'karyawan';
     public string $no_whatsapp_baru = '';
-    public string $password_baru    = '';
 
     // Form Edit Akun (yang sudah ada)
     public string  $edit_no_whatsapp = '';
     public string  $edit_role        = '';
-    public string  $edit_password    = ''; // kosong = tidak diubah
     public ?int    $editingUserId    = null;
 
     public bool    $showFormCreate   = false;
@@ -39,14 +37,12 @@ class MasterAkunUser extends Component
             'nik_baru'         => 'required|string|max:20',
             'role_baru'        => 'required|in:karyawan,qa',
             'no_whatsapp_baru' => 'required|string|regex:/^628[0-9]{8,12}$/',
-            'password_baru'    => 'required|min:8',
         ];
     }
 
     protected array $messages = [
         'no_whatsapp_baru.regex' => 'Format no. WhatsApp harus diawali 628 (contoh: 6281234567890).',
         'edit_no_whatsapp.regex' => 'Format no. WhatsApp harus diawali 628 (contoh: 6281234567890).',
-        'password_baru.min'      => 'Password minimal 8 karakter.',
     ];
 
     public function updatedNikBaru(): void
@@ -59,7 +55,7 @@ class MasterAkunUser extends Component
             $k = Karyawan::where('nik', $this->nik_baru)->first();
             if ($k) {
                 if (!$k->status_aktif) {
-                    $this->nikSearchError = "Karyawan dengan NIK {$this->nik_baru} tidak aktif dan tidak bisa dibuatkan akun.";
+                    $this->nikSearchError = "Karyawan dengan NIK {$this->nik_baru} tidak aktif and tidak bisa dibuatkan akun.";
                 } elseif ($k->user()->exists()) {
                     $this->nikSearchError = "NIK {$this->nik_baru} sudah memiliki akun sistem.";
                 } else {
@@ -73,7 +69,7 @@ class MasterAkunUser extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'password_baru', 'nikSearchResult', 'nikSearchError']);
+        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
         $this->role_baru    = 'karyawan';
         $this->showFormEdit = false;
         $this->showFormCreate = true;
@@ -86,7 +82,6 @@ class MasterAkunUser extends Component
         $this->editingUserId    = $user->id;
         $this->edit_role        = $user->role;
         $this->edit_no_whatsapp = $user->no_whatsapp ?? '';
-        $this->edit_password    = '';
         $this->showFormCreate   = false;
         $this->showFormEdit     = true;
         $this->resetValidation();
@@ -119,11 +114,11 @@ class MasterAkunUser extends Component
             'name'         => $karyawan->nama,
             'role'         => $this->role_baru,
             'no_whatsapp'  => $this->no_whatsapp_baru,
-            'password'     => Hash::make($this->password_baru),
+            'password'     => Hash::make($this->nik_baru), // password default adalah NIK
         ]);
 
         session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat.");
-        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'password_baru', 'nikSearchResult', 'nikSearchError']);
+        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
         $this->showFormCreate = false;
         $this->resetPage();
     }
@@ -133,7 +128,6 @@ class MasterAkunUser extends Component
         $this->validate([
             'edit_role'        => 'required|in:karyawan,qa',
             'edit_no_whatsapp' => 'required|string|regex:/^628[0-9]{8,12}$/',
-            'edit_password'    => 'nullable|min:8',
         ]);
 
         $user = User::findOrFail($this->editingUserId);
@@ -142,10 +136,6 @@ class MasterAkunUser extends Component
             'role'        => $this->edit_role,
             'no_whatsapp' => $this->edit_no_whatsapp,
         ];
-
-        if (!empty($this->edit_password)) {
-            $updateData['password'] = Hash::make($this->edit_password);
-        }
 
         $user->update($updateData);
 

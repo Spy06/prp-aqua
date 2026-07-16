@@ -74,14 +74,6 @@
                     <p class="text-xs text-zinc-400 mt-1">Format: 628xxx (diawali 628 tanpa +)</p>
                     @error('no_whatsapp_baru') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
-
-                {{-- Password --}}
-                <div class="md:col-span-2">
-                    <label for="form-pw" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Password <span class="text-red-500">*</span> <span class="font-normal text-zinc-400">(min. 8 karakter)</span></label>
-                    <input type="password" id="form-pw" wire:model="password_baru"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500" />
-                    @error('password_baru') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-5">
@@ -116,14 +108,6 @@
                     <input type="text" id="edit-wa" wire:model="edit_no_whatsapp" placeholder="628xxxxxxxxxx"
                            class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500" />
                     @error('edit_no_whatsapp') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div class="md:col-span-2">
-                    <label for="edit-pw" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                        Reset Password <span class="font-normal text-zinc-400">(kosongkan jika tidak ingin mengubah)</span>
-                    </label>
-                    <input type="password" id="edit-pw" wire:model="edit_password"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500" />
-                    @error('edit_password') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
             <div class="flex justify-end gap-3 mt-4">

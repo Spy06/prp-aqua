@@ -63,7 +63,7 @@ class MassiveTemuanSeeder extends Seeder
                 'klausul_id'       => !empty($klausuls) ? $klausuls[array_rand($klausuls)] : null,
                 'foto_temuan_path' => null,
                 'deskripsi'        => $dummyDescriptions[array_rand($dummyDescriptions)],
-                'saran'            => 'Tolong segera dicek dan diperbaiki.',
+                'saran'            => Crypt::encryptString('Tolong segera dicek dan diperbaiki.'),
                 'status'           => $statuses[array_rand($statuses)],
                 'created_at'       => $randomDate->toDateTimeString(),
                 'updated_at'       => $randomDate->toDateTimeString(),

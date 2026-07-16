@@ -98,6 +98,33 @@ class MasterKaryawan extends Component
         session()->flash('success', "Status karyawan {$k->nama} berhasil diubah.");
     }
 
+    public function hapus(string $nik): void
+    {
+        $k = Karyawan::findOrFail($nik);
+        $user = $k->user;
+
+        if ($user) {
+            $hasFindings = \App\Models\Temuan::where('pelapor_id', $user->id)
+                ->orWhere('pic_id', $user->id)
+                ->exists();
+
+            if ($hasFindings) {
+                session()->flash('error', "Karyawan {$k->nama} tidak dapat dihapus karena akun user-nya terikat dengan data temuan. Silakan non-aktifkan saja.");
+                return;
+            }
+        }
+
+        try {
+            if ($user) {
+                $user->delete();
+            }
+            $k->delete();
+            session()->flash('success', "Karyawan {$k->nama} beserta akun user-nya berhasil dihapus.");
+        } catch (\Exception $e) {
+            session()->flash('error', "Gagal menghapus karyawan: " . $e->getMessage());
+        }
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();

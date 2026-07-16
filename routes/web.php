@@ -11,13 +11,14 @@ Route::post('/register', fn () => abort(404));
 
 Route::middleware(['auth'])->group(function () {
     
-    // Redirect based on role
     Route::get('/dashboard', function () {
         if (request()->user()->role === 'qa') {
             return redirect()->route('qa.dashboard');
         }
         return redirect()->route('beranda');
     })->name('dashboard');
+
+    Route::redirect('/home', '/dashboard')->name('home');
 
     // Role Karyawan
     Route::middleware(['role:karyawan'])->group(function () {

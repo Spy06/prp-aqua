@@ -113,20 +113,23 @@
                                 @endif
                             </td>
                             <td class="px-5 py-3 text-center">
-                                <div class="flex items-center justify-center gap-2">
+                                <div class="flex items-center justify-center gap-3">
                                     <button wire:click="openEdit('{{ $k->nik }}')" title="Edit"
-                                            class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
-                                        <flux:icon.pencil variant="outline" class="w-4 h-4" />
+                                            class="p-2 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
+                                        <flux:icon.pencil variant="outline" class="w-5 h-5" />
                                     </button>
+                                    
                                     <button wire:click="toggleAktif('{{ $k->nik }}')"
                                             wire:confirm="Ubah status aktif karyawan ini?"
-                                            title="{{ $k->status_aktif ? 'Non-aktifkan' : 'Aktifkan' }}"
-                                            class="p-1.5 text-zinc-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition">
-                                        @if($k->status_aktif)
-                                            <flux:icon.x-circle variant="outline" class="w-4 h-4" />
-                                        @else
-                                            <flux:icon.check-circle variant="outline" class="w-4 h-4" />
-                                        @endif
+                                            class="px-2.5 py-1 text-xs font-semibold rounded-lg transition {{ $k->status_aktif ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20' : 'text-green-700 bg-green-50 hover:bg-green-100 dark:text-green-400 dark:bg-green-900/20' }}">
+                                        {{ $k->status_aktif ? 'Non-aktifkan' : 'Aktifkan' }}
+                                    </button>
+
+                                    <button wire:click="hapus('{{ $k->nik }}')"
+                                            wire:confirm="Apakah Anda yakin ingin menghapus karyawan ini beserta akun user-nya?"
+                                            title="Hapus"
+                                            class="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                                        <flux:icon.trash variant="outline" class="w-5 h-5" />
                                     </button>
                                 </div>
                             </td>

@@ -86,11 +86,14 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2" x-data="{ showPassword: false }">
                     <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest" for="password">Password</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-cyan-500/60 z-10 pointer-events-none text-xl">lock</span>
-                        <input class="w-full h-12 sm:h-14 pl-11 pr-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/50 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-zinc-900 dark:text-zinc-100 transition-all text-sm sm:text-base placeholder:text-zinc-400" id="password" name="password" placeholder="••••••••" required type="password" />
+                        <input type="password" :type="showPassword ? 'text' : 'password'" class="w-full h-12 sm:h-14 pl-11 pr-12 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white/50 dark:bg-zinc-900/50 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-zinc-900 dark:text-zinc-100 transition-all text-sm sm:text-base placeholder:text-zinc-400" id="password" name="password" placeholder="••••••••" required />
+                        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-cyan-500 transition-colors focus:outline-none flex items-center justify-center">
+                            <span class="material-symbols-outlined text-xl" x-text="showPassword ? 'visibility' : 'visibility_off'"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -116,5 +119,6 @@
             </div>
         </div>
     </div>
+    @fluxScripts
 </body>
 </html>

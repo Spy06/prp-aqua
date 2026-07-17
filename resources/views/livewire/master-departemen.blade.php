@@ -22,17 +22,19 @@
     </div>
 
     @if($showForm)
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5">
-            <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">
-                {{ $editingId ? 'Edit Departemen' : 'Tambah Departemen Baru' }}
-            </h3>
-            <div class="max-w-md">
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5 flex flex-col gap-4">
+            <div>
+                <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                    {{ $editingId ? 'Edit Departemen' : 'Tambah Departemen Baru' }}
+                </h3>
+            </div>
+            <div class="w-full max-w-[448px]">
                 <label for="form-dept-nama" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Nama Departemen <span class="text-red-500">*</span></label>
                 <input type="text" id="form-dept-nama" wire:model="nama_departemen" placeholder="Contoh: Quality Assurance"
                        class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500" />
                 @error('nama_departemen') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
-            <div class="flex justify-end gap-3 mt-4">
+            <div class="flex justify-end gap-3 mt-2">
                 <button wire:click="resetForm"
                         class="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition">
                     Batal
@@ -93,4 +95,5 @@
             </div>
         @endif
     </div>
+
 </div>

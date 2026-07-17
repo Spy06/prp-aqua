@@ -310,7 +310,7 @@ new #[Title('Security settings')] class extends Component {
 
     <flux:modal
         name="delete-passkey-modal"
-        class="max-w-md md:min-w-md"
+        class="max-w-[448px] md:min-w-[448px]"
         @close="closeDeleteModal"
         wire:model="showDeleteModal"
     >

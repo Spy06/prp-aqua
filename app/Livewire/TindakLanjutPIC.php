@@ -51,16 +51,18 @@ class TindakLanjutPIC extends Component
     public function mount(int $temuanId): void
     {
         $this->temuanId = $temuanId;
-        $this->authorizePic();
+        // Load data regardless — blade will only show action buttons if authorized
         $this->loadTindakLanjut();
     }
 
-    protected function authorizePic(): void
+    protected function authorizePic(): bool
     {
         $temuan = Temuan::findOrFail($this->temuanId);
         if (auth()->id() !== $temuan->pic_id || auth()->user()->role === 'qa') {
-            abort(403, 'Hanya PIC dengan role non-QA yang dapat mengakses form tindak lanjut ini.');
+            session()->flash('status_error', 'Akses ditolak: hanya PIC karyawan yang dapat mengubah status temuan ini.');
+            return false;
         }
+        return true;
     }
 
     protected function loadTindakLanjut(): void
@@ -82,7 +84,7 @@ class TindakLanjutPIC extends Component
      */
     public function simpanDetail(): void
     {
-        $this->authorizePic();
+        if (!$this->authorizePic()) return;
         $this->validate([
             'action'     => 'required|string|max:2000',
             'due_date'   => 'required|date',
@@ -105,7 +107,7 @@ class TindakLanjutPIC extends Component
      */
     public function uploadFoto(): void
     {
-        $this->authorizePic();
+        if (!$this->authorizePic()) return;
         $this->validate([
             'foto_bukti' => 'required|image|max:5120',
         ], [
@@ -136,7 +138,7 @@ class TindakLanjutPIC extends Component
      */
     public function ubahStatus(string $statusBaru): void
     {
-        $this->authorizePic();
+        if (!$this->authorizePic()) return;
         // 1. Validasi: PIC tidak boleh set closed_acc
         if ($statusBaru === 'closed_acc') {
             session()->flash('status_error', 'Status closed_acc hanya bisa diset oleh QA.');

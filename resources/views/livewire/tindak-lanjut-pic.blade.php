@@ -138,16 +138,29 @@
                 <div class="flex items-start gap-3">
                     <div class="flex-1">
                         <input type="file"
-                               id="foto-bukti-input"
+                               id="foto-bukti-gallery"
                                wire:model="foto_bukti"
                                accept="image/*"
-                               class="block w-full text-sm text-zinc-500 dark:text-zinc-400
-                                      file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
-                                      file:text-sm file:font-semibold
-                                      file:bg-blue-50 file:text-blue-700
-                                      dark:file:bg-blue-900/30 dark:file:text-blue-300
-                                      hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50
-                                      transition cursor-pointer" />
+                               class="hidden" />
+                        <input type="file"
+                               id="foto-bukti-camera"
+                               wire:model="foto_bukti"
+                               accept="image/*"
+                               capture="environment"
+                               class="hidden" />
+
+                        <div class="flex gap-2">
+                            <label for="foto-bukti-camera"
+                                   class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition select-none">
+                                <span class="material-symbols-outlined text-sm leading-none">photo_camera</span>
+                                Ambil Foto
+                            </label>
+                            <label for="foto-bukti-gallery"
+                                   class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-sm font-semibold rounded-lg border border-zinc-300 dark:border-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition select-none">
+                                <span class="material-symbols-outlined text-sm leading-none">photo_library</span>
+                                Dari Galeri
+                            </label>
+                        </div>
 
                         @error('foto_bukti')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>

@@ -53,19 +53,36 @@
                 <div class="flex flex-col gap-xs">
                     <label class="font-label-md text-label-md text-on-surface">Upload Foto <span class="text-error">*</span></label>
                     <div class="relative border-2 border-dashed border-outline-variant rounded-lg p-md flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-variant transition-colors cursor-pointer group">
-                        <input type="file" wire:model="foto_temuan" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                        
+                        {{-- Input tanpa capture (gallery) — hidden, dipicu tombol --}}
+                        <input type="file" id="foto-gallery" wire:model="foto_temuan" accept="image/*"
+                               class="hidden" />
+                        {{-- Input dengan capture=environment (kamera belakang) — hidden, dipicu tombol --}}
+                        <input type="file" id="foto-camera" wire:model="foto_temuan" accept="image/*"
+                               capture="environment" class="hidden" />
+
                         @if ($foto_temuan)
                             <img src="{{ $foto_temuan->temporaryUrl() }}" class="h-32 object-contain rounded-md shadow-sm pointer-events-none">
                         @else
-                            <span class="material-symbols-outlined text-outline group-hover:text-primary mb-sm text-4xl pointer-events-none">add_a_photo</span>
-                            <span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary pointer-events-none">Klik atau drag foto ke sini</span>
-                            <span class="font-label-md text-label-md text-outline-variant mt-xs pointer-events-none">Max 5MB (JPG/PNG)</span>
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2">add_a_photo</span>
+                            <p class="font-body-sm text-on-surface-variant text-sm mb-3">Pilih metode upload foto</p>
                         @endif
+
+                        <div class="flex gap-2 mt-2">
+                            <label for="foto-camera"
+                                   class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:opacity-90 transition select-none">
+                                <span class="material-symbols-outlined text-sm leading-none">photo_camera</span>
+                                Ambil Foto
+                            </label>
+                            <label for="foto-gallery"
+                                   class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high text-on-surface text-xs font-semibold rounded-lg border border-outline-variant hover:bg-surface-variant transition select-none">
+                                <span class="material-symbols-outlined text-sm leading-none">photo_library</span>
+                                Dari Galeri
+                            </label>
+                        </div>
                     </div>
-                    <div wire:loading wire:target="foto_temuan" class="font-body-sm text-primary mt-1">Mengunggah foto...</div>
                     @error('foto_temuan') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
                 </div>
+                <div wire:loading wire:target="foto_temuan" class="font-body-sm text-primary mt-1">Mengunggah foto...</div>
             </div>
 
             <!-- Right Column -->

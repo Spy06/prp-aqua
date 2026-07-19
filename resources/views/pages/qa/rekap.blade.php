@@ -1,5 +1,5 @@
-<x-layouts::app title="Rekap Periode">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl py-2">
+﻿<x-layouts::qa :title="__('Rekap Periode')">
+    <div class="flex h-full w-full flex-1 flex-col gap-4 py-2">
         <livewire:rekap-periode />
     </div>
-</x-layouts::app>
+</x-layouts::qa>

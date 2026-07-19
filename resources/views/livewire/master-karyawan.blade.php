@@ -1,157 +1,152 @@
-<div class="space-y-5" id="master-karyawan-container">
-    {{-- Flash Messages --}}
+<div class="fu" id="master-karyawan-container" style="display:flex;flex-direction:column;gap:16px;">
+
+    {{-- Alerts --}}
     @if(session('success'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 text-sm">
-            <flux:icon.check-circle variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('success') }}
-        </div>
+    <div class="balert balert-success fu">
+        <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">check_circle</span>
+        <span>{{ session('success') }}</span>
+    </div>
     @endif
     @if(session('error'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 text-sm">
-            <flux:icon.exclamation-triangle variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('error') }}
-        </div>
+    <div class="balert balert-error fu">
+        <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">error</span>
+        <span>{{ session('error') }}</span>
+    </div>
     @endif
 
     {{-- Header --}}
-    <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3">
-        <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Master Karyawan</h2>
-        <button wire:click="openCreate" id="btn-tambah-karyawan"
-                class="self-start xs:self-auto inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
-            <flux:icon.plus variant="outline" class="w-4 h-4" />
+    <div class="bph">
+        <div>
+            <h2 class="bph-title">Master Karyawan</h2>
+            <p class="bph-sub">Kelola data karyawan yang terdaftar dalam sistem</p>
+        </div>
+        <button wire:click="openCreate" id="btn-tambah-karyawan" class="bbtn bbtn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px;">person_add</span>
             Tambah Karyawan
         </button>
     </div>
 
     {{-- Form Tambah/Edit --}}
     @if($showForm)
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5">
-            <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">
-                {{ $editingNik ? "Edit Karyawan (NIK: {$editingNik})" : 'Tambah Karyawan Baru' }}
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {{-- NIK --}}
-                <div>
-                    <label for="form-nik" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">NIK <span class="text-red-500">*</span></label>
-                    <input type="text" id="form-nik" wire:model="nik"
-                           {{ $editingNik ? 'disabled' : '' }}
-                           placeholder="Contoh: 2024001"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500 disabled:bg-zinc-100 dark:disabled:bg-zinc-800" />
-                    @error('nik') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                {{-- Nama --}}
-                <div>
-                    <label for="form-nama" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" id="form-nama" wire:model="nama" placeholder="Nama lengkap"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500" />
-                    @error('nama') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                {{-- Departemen --}}
-                <div>
-                    <label for="form-dept" class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">Departemen <span class="text-red-500">*</span></label>
-                    <select id="form-dept" wire:model="departemen_id"
-                            class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Pilih Departemen --</option>
-                        @foreach($departemens as $d)
-                            <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
-                        @endforeach
-                    </select>
-                    @error('departemen_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                {{-- Status Aktif --}}
-                <div class="flex items-center gap-3 pt-5">
-                    <input type="checkbox" id="form-aktif" wire:model="status_aktif"
-                           class="w-4 h-4 rounded border-zinc-300 text-blue-600" />
-                    <label for="form-aktif" class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Karyawan Aktif</label>
-                </div>
+    <div class="bcard fu1" style="padding:20px;">
+        <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
+            {{ $editingNik ? "Edit Karyawan (NIK: {$editingNik})" : 'Tambah Karyawan Baru' }}
+        </h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+            <div>
+                <label for="form-nik" class="blabel">NIK <span style="color:var(--be);">*</span></label>
+                <input type="text" id="form-nik" wire:model="nik"
+                       {{ $editingNik ? 'disabled' : '' }}
+                       placeholder="Contoh: 2024001"
+                       class="binput" style="{{ $editingNik ? 'opacity:.6;cursor:not-allowed;' : '' }}" />
+                @error('nik') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
-            <div class="flex justify-end gap-3 mt-5">
-                <button wire:click="resetForm"
-                        class="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition">
-                    Batal
-                </button>
-                <button wire:click="simpan" wire:loading.attr="disabled" id="btn-simpan-karyawan"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition disabled:opacity-50">
-                    <span wire:loading.remove wire:target="simpan"><flux:icon.check variant="outline" class="w-4 h-4" /></span>
-                    <span wire:loading wire:target="simpan"><flux:icon.arrow-path class="w-4 h-4 animate-spin" /></span>
-                    Simpan
-                </button>
+            <div>
+                <label for="form-nama" class="blabel">Nama Lengkap <span style="color:var(--be);">*</span></label>
+                <input type="text" id="form-nama" wire:model="nama" placeholder="Nama lengkap" class="binput" />
+                @error('nama') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label for="form-dept" class="blabel">Departemen <span style="color:var(--be);">*</span></label>
+                <select id="form-dept" wire:model="departemen_id" class="binput">
+                    <option value="">-- Pilih Departemen --</option>
+                    @foreach($departemens as $d)
+                        <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
+                    @endforeach
+                </select>
+                @error('departemen_id') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding-top:20px;">
+                <input type="checkbox" id="form-aktif" wire:model="status_aktif"
+                       style="width:16px;height:16px;accent-color:var(--bp);" />
+                <label for="form-aktif" style="font-size:13.5px;font-weight:500;color:var(--btxt);cursor:pointer;">Karyawan Aktif</label>
             </div>
         </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button wire:click="resetForm" class="bbtn bbtn-secondary">Batal</button>
+            <button wire:click="simpan" wire:loading.attr="disabled" id="btn-simpan-karyawan" class="bbtn bbtn-primary">
+                <span wire:loading.remove wire:target="simpan">
+                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                </span>
+                <span wire:loading wire:target="simpan">
+                    <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">refresh</span>
+                </span>
+                Simpan
+            </button>
+        </div>
+    </div>
     @endif
 
     {{-- Search --}}
-    <div class="w-full md:w-1/2 lg:w-1/3">
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari NIK atau Nama..."
-               class="w-full rounded-lg border border-outline-variant bg-surface text-on-surface text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary transition" />
+    <div style="max-width:340px;">
+        <div style="position:relative;">
+            <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+            <input type="text" wire:model.live.debounce.300ms="search"
+                   placeholder="Cari NIK atau Nama..."
+                   class="binput" style="padding-left:40px;" />
+        </div>
     </div>
 
     {{-- Table --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm min-w-[540px]">
-                <thead class="bg-zinc-50 dark:bg-zinc-900/50">
+    <div class="bcard fu2" style="overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="btbl" style="min-width:500px;">
+                <thead>
                     <tr>
-                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">NIK</th>
-                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Nama</th>
-                        <th class="text-left px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide hidden sm:table-cell">Departemen</th>
-                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Status</th>
-                        <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Aksi</th>
+                        <th>NIK</th>
+                        <th>Nama</th>
+                        <th>Departemen</th>
+                        <th style="text-align:center;">Status</th>
+                        <th style="text-align:center;">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
+                <tbody>
                     @forelse($karyawans as $k)
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
-                            <td class="px-4 py-3 font-mono text-xs text-zinc-700 dark:text-zinc-300">{{ $k->nik }}</td>
-                            <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">
-                                {{ $k->nama }}
-                                <div class="text-xs text-zinc-500 sm:hidden">{{ $k->departemen->nama_departemen ?? '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-400 text-sm hidden sm:table-cell">{{ $k->departemen->nama_departemen ?? '-' }}</td>
-                            <td class="px-4 py-3 text-center">
-                                @if($k->status_aktif)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
-                                @else
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Non-aktif</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                <div class="flex items-center justify-center gap-1">
-                                    <button wire:click="openEdit('{{ $k->nik }}')" title="Edit"
-                                            class="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
-                                        <flux:icon.pencil variant="outline" class="w-4 h-4" />
-                                    </button>
-                                    
-                                    <button wire:click="toggleAktif('{{ $k->nik }}')"
-                                            wire:confirm="Ubah status aktif karyawan ini?"
-                                            title="{{ $k->status_aktif ? 'Non-aktifkan' : 'Aktifkan' }}"
-                                            class="p-1.5 rounded-lg transition {{ $k->status_aktif ? 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20' : 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-                                        <span class="material-symbols-outlined text-base">{{ $k->status_aktif ? 'person_off' : 'how_to_reg' }}</span>
-                                    </button>
-
-                                    <button wire:click="hapus('{{ $k->nik }}')"
-                                            wire:confirm="Apakah Anda yakin ingin menghapus karyawan ini beserta akun user-nya?"
-                                            title="Hapus"
-                                            class="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
-                                        <flux:icon.trash variant="outline" class="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td style="font-family:monospace;font-size:12.5px;">{{ $k->nik }}</td>
+                        <td style="font-weight:600;">
+                            {{ $k->nama }}
+                            <div style="font-size:11.5px;color:var(--btxt2);display:none;" class="sm-dept">{{ $k->departemen->nama_departemen ?? '-' }}</div>
+                        </td>
+                        <td>{{ $k->departemen->nama_departemen ?? '-' }}</td>
+                        <td style="text-align:center;">
+                            @if($k->status_aktif)
+                                <span class="bbadge bbadge-closed">Aktif</span>
+                            @else
+                                <span class="bbadge bbadge-open">Non-aktif</span>
+                            @endif
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <button wire:click="openEdit('{{ $k->nik }}')" title="Edit"
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                                </button>
+                                <button wire:click="toggleStatus('{{ $k->nik }}')"
+                                        wire:confirm="Ubah status aktif karyawan '{{ $k->nama }}'?"
+                                        title="Toggle Status"
+                                        class="bbtn bbtn-sm" style="padding:5px 8px!important;background:{{ $k->status_aktif ? '#fff3e0' : '#e8f5e9' }};color:{{ $k->status_aktif ? '#e65100' : '#1b5e20' }};border:1px solid {{ $k->status_aktif ? '#ffcc80' : '#a5d6a7' }};">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">{{ $k->status_aktif ? 'person_off' : 'person' }}</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="px-5 py-10 text-center text-zinc-400 dark:text-zinc-500 text-sm">
-                                Tidak ada karyawan ditemukan.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">group</span>
+                            Belum ada data karyawan
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         @if($karyawans->hasPages())
-            <div class="px-5 py-3 border-t border-zinc-100 dark:border-zinc-700">
-                {{ $karyawans->links('vendor.pagination.tailwind') }}
-            </div>
+        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+            {{ $karyawans->links('vendor.pagination.tailwind') }}
+        </div>
         @endif
     </div>
+    <style>@keyframes spin{to{transform:rotate(360deg);}}</style>
 </div>

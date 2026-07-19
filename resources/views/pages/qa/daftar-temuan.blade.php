@@ -1,5 +1,5 @@
-<x-layouts::app :title="__('Daftar Temuan')">
+﻿<x-layouts::qa :title="__('Daftar Temuan')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 py-2">
         <livewire:daftar-temuan-q-a />
     </div>
-</x-layouts::app>
+</x-layouts::qa>

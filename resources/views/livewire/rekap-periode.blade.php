@@ -1,117 +1,94 @@
-<div class="space-y-4 sm:space-y-6" id="rekap-periode-container">
-    {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100">Rekap Periode</h2>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Rangkuman temuan dalam rentang waktu tertentu
-            </p>
-        </div>
+<div class="fu" id="rekap-periode-container">
 
-        {{-- Export Buttons --}}
-        <div class="flex items-center gap-2">
-            <a href="{{ route('export.excel', $queryParams) }}"
-               target="_blank"
-               class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
-                <flux:icon.table-cells variant="outline" class="w-4 h-4" />
-                Excel
+    {{-- Header --}}
+    <div class="bph">
+        <div>
+            <h2 class="bph-title">Rekap Periode</h2>
+            <p class="bph-sub">Rangkuman temuan dalam rentang waktu tertentu</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="{{ route('export.excel', $queryParams) }}" target="_blank" class="bbtn bbtn-success">
+                <span class="material-symbols-outlined" style="font-size:16px;">table_chart</span> Excel
             </a>
-            <a href="{{ route('export.pdf.rekap', $queryParams) }}"
-               target="_blank"
-               class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">
-                <flux:icon.document-text variant="outline" class="w-4 h-4" />
-                PDF
+            <a href="{{ route('export.pdf.rekap', $queryParams) }}" target="_blank" class="bbtn bbtn-danger">
+                <span class="material-symbols-outlined" style="font-size:16px;">picture_as_pdf</span> PDF
             </a>
         </div>
     </div>
 
     {{-- Filter Panel --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-5">
-        <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">Filter Periode</h3>
+    <div class="bcard fu1" style="padding:20px;">
+        <p style="font-size:13px;font-weight:700;color:var(--btxt);margin:0 0 16px;">Filter Periode</p>
 
         {{-- Tipe Filter --}}
-        <div class="flex flex-wrap gap-3 mb-4">
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" wire:model.live="filterTipe" value="bulan"
-                       class="text-blue-600 focus:ring-blue-500" id="filter-bulan" />
-                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Per Bulan</span>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="radio" wire:model.live="filterTipe" value="bulan" id="filter-bulan"
+                       style="accent-color:var(--bp);" />
+                <span style="font-size:13.5px;font-weight:500;color:var(--btxt);">Per Bulan</span>
             </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" wire:model.live="filterTipe" value="tahun"
-                       class="text-blue-600 focus:ring-blue-500" id="filter-tahun" />
-                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Per Tahun</span>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="radio" wire:model.live="filterTipe" value="tahun" id="filter-tahun"
+                       style="accent-color:var(--bp);" />
+                <span style="font-size:13.5px;font-weight:500;color:var(--btxt);">Per Tahun</span>
             </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" wire:model.live="filterTipe" value="custom"
-                       class="text-blue-600 focus:ring-blue-500" id="filter-custom" />
-                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Custom Range</span>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="radio" wire:model.live="filterTipe" value="custom" id="filter-custom"
+                       style="accent-color:var(--bp);" />
+                <span style="font-size:13.5px;font-weight:500;color:var(--btxt);">Custom Range</span>
             </label>
         </div>
 
-        {{-- Filter Per Bulan --}}
         @if($filterTipe === 'bulan')
-            <div class="flex flex-wrap gap-3 items-end">
-                <div class="flex-1 min-w-[120px]">
-                    <label class="block text-xs text-zinc-500 mb-1">Bulan</label>
-                    <select wire:model.live="filterBulan"
-                            id="select-bulan"
-                            class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2">
-                        @foreach($bulanList as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="flex-1 min-w-[100px]">
-                    <label class="block text-xs text-zinc-500 mb-1">Tahun</label>
-                    <select wire:model.live="filterBulanTahun"
-                            id="select-bulan-tahun"
-                            class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2">
-                        @foreach($tahunList as $y)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+            <div style="flex:1;min-width:130px;">
+                <label class="blabel">Bulan</label>
+                <select wire:model.live="filterBulan" id="select-bulan" class="binput">
+                    @foreach($bulanList as $kode => $nama)
+                        <option value="{{ $kode }}">{{ $nama }}</option>
+                    @endforeach
+                </select>
             </div>
-        @endif
-
-        {{-- Filter Per Tahun --}}
-        @if($filterTipe === 'tahun')
-            <div>
-                <label class="block text-xs text-zinc-500 mb-1">Tahun</label>
-                <select wire:model.live="filterTahun"
-                        id="select-tahun"
-                        class="rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2">
+            <div style="flex:1;min-width:100px;">
+                <label class="blabel">Tahun</label>
+                <select wire:model.live="filterBulanTahun" id="select-bulan-tahun" class="binput">
                     @foreach($tahunList as $y)
                         <option value="{{ $y }}">{{ $y }}</option>
                     @endforeach
                 </select>
             </div>
+        </div>
         @endif
 
-        {{-- Filter Custom Range --}}
+        @if($filterTipe === 'tahun')
+        <div style="max-width:160px;">
+            <label class="blabel">Tahun</label>
+            <select wire:model.live="filterTahun" id="select-tahun" class="binput">
+                @foreach($tahunList as $y)
+                    <option value="{{ $y }}">{{ $y }}</option>
+                @endforeach
+            </select>
+        </div>
+        @endif
+
         @if($filterTipe === 'custom')
-            <div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4 items-end">
-                <div>
-                    <label for="tanggal-awal" class="block text-xs text-zinc-500 mb-1">Tanggal Awal</label>
-                    <input type="date" id="tanggal-awal"
-                           wire:model.live="tanggalAwal"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2" />
-                </div>
-                <div>
-                    <label for="tanggal-akhir" class="block text-xs text-zinc-500 mb-1">Tanggal Akhir</label>
-                    <input type="date" id="tanggal-akhir"
-                           wire:model.live="tanggalAkhir"
-                           class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2" />
-                </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
+            <div>
+                <label for="tanggal-awal" class="blabel">Tanggal Awal</label>
+                <input type="date" id="tanggal-awal" wire:model.live="tanggalAwal" class="binput" />
             </div>
+            <div>
+                <label for="tanggal-akhir" class="blabel">Tanggal Akhir</label>
+                <input type="date" id="tanggal-akhir" wire:model.live="tanggalAkhir" class="binput" />
+            </div>
+        </div>
         @endif
 
         {{-- Filter Departemen & Status --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--bbor);">
             <div>
-                <label for="filter-dept" class="block text-xs font-semibold text-zinc-500 mb-1">Filter Departemen</label>
-                <select id="filter-dept" wire:model.live="filterDepartemen"
-                        class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2">
+                <label for="filter-dept" class="blabel">Filter Departemen</label>
+                <select id="filter-dept" wire:model.live="filterDepartemen" class="binput">
                     <option value="">Semua Departemen</option>
                     @foreach($allDepartemens as $dept)
                         <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
@@ -119,9 +96,8 @@
                 </select>
             </div>
             <div>
-                <label for="filter-status" class="block text-xs font-semibold text-zinc-500 mb-1">Filter Status</label>
-                <select id="filter-status" wire:model.live="filterStatus"
-                        class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2">
+                <label for="filter-status" class="blabel">Filter Status</label>
+                <select id="filter-status" wire:model.live="filterStatus" class="binput">
                     <option value="">Semua Status</option>
                     <option value="open">Open</option>
                     <option value="in_progress">In Progress</option>
@@ -131,86 +107,85 @@
             </div>
         </div>
 
-        {{-- Range yang aktif --}}
-        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-3">
-            Menampilkan data: <span class="font-semibold text-zinc-700 dark:text-zinc-200">
+        <p style="font-size:12px;color:var(--btxt2);margin-top:12px;">
+            Menampilkan data: <strong style="color:var(--btxt);">
                 {{ \Carbon\Carbon::parse($awal)->translatedFormat('d M Y') }} — {{ \Carbon\Carbon::parse($akhir)->translatedFormat('d M Y') }}
-            </span>
+            </strong>
         </p>
     </div>
 
-    {{-- Summary Cards --}}
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5">
-            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">Total</p>
-            <p class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">{{ $total }}</p>
-        </div>
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Open</p>
+    {{-- Summary Stat Cards --}}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;" class="fu2">
+        <div class="bstat">
+            <div class="bstat-icon" style="background:linear-gradient(135deg,#ede7f6,#d1c4e9);">
+                <span class="material-symbols-outlined fil" style="color:#5e35b1;font-size:24px;">assignment</span>
             </div>
-            <p class="text-xl sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $perStatus['open'] }}</p>
+            <div><div class="bstat-val">{{ $total }}</div><div class="bstat-lbl">Total</div></div>
         </div>
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
-                <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Progress</p>
+        <div class="bstat">
+            <div class="bstat-icon" style="background:#fff3e0;">
+                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:24px;">error</span>
             </div>
-            <p class="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $perStatus['in_progress'] }}</p>
+            <div><div class="bstat-val" style="color:#e65100;">{{ $perStatus['open'] }}</div><div class="bstat-lbl">Open</div></div>
         </div>
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div>
-                <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Pending QA</p>
+        <div class="bstat">
+            <div class="bstat-icon" style="background:#e3f2fd;">
+                <span class="material-symbols-outlined fil" style="color:#0d47a1;font-size:24px;">pending</span>
             </div>
-            <p class="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $perStatus['closed_pending_qa'] }}</p>
+            <div><div class="bstat-val" style="color:#0d47a1;">{{ $perStatus['in_progress'] }}</div><div class="bstat-lbl">In Progress</div></div>
         </div>
-        <div class="col-span-2 sm:col-span-1 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5">
-            <div class="flex items-center gap-2 mb-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Closed ACC</p>
+        <div class="bstat">
+            <div class="bstat-icon" style="background:#f3e5f5;">
+                <span class="material-symbols-outlined fil" style="color:#6a1b9a;font-size:24px;">hourglass_top</span>
             </div>
-            <p class="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{{ $perStatus['closed_acc'] }}</p>
+            <div><div class="bstat-val" style="color:#6a1b9a;">{{ $perStatus['closed_pending_qa'] }}</div><div class="bstat-lbl">Pending QA</div></div>
+        </div>
+        <div class="bstat">
+            <div class="bstat-icon" style="background:#e8f5e9;">
+                <span class="material-symbols-outlined fil" style="color:#1b5e20;font-size:24px;">task_alt</span>
+            </div>
+            <div><div class="bstat-val" style="color:#1b5e20;">{{ $perStatus['closed_acc'] }}</div><div class="bstat-lbl">Closed ACC</div></div>
         </div>
     </div>
 
     {{-- Breakdown Per Departemen --}}
     @if($perDepartemen->isNotEmpty())
-        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-            <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-700">
-                <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Breakdown per Departemen</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-zinc-50 dark:bg-zinc-900/50">
-                        <tr>
-                            <th class="text-left px-6 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Departemen</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Total</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">Open</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">In Progress</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Pending QA</th>
-                            <th class="text-center px-4 py-3 text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide">Closed ACC</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700/50">
-                        @foreach($perDepartemen as $row)
-                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition">
-                                <td class="px-6 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $row['nama'] }}</td>
-                                <td class="px-4 py-3 text-center font-bold text-zinc-900 dark:text-zinc-100">{{ $row['total'] }}</td>
-                                <td class="px-4 py-3 text-center text-yellow-700 dark:text-yellow-400">{{ $row['open'] }}</td>
-                                <td class="px-4 py-3 text-center text-blue-700 dark:text-blue-400">{{ $row['in_progress'] }}</td>
-                                <td class="px-4 py-3 text-center text-purple-700 dark:text-purple-400">{{ $row['closed_pending_qa'] }}</td>
-                                <td class="px-4 py-3 text-center text-green-700 dark:text-green-400">{{ $row['closed_acc'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+    <div class="bcard fu3" style="overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--bbor);">
+            <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0;">Breakdown per Departemen</h3>
         </div>
+        <div style="overflow-x:auto;">
+            <table class="btbl" style="min-width:500px;">
+                <thead>
+                    <tr>
+                        <th>Departemen</th>
+                        <th style="text-align:center;">Total</th>
+                        <th style="text-align:center;color:#e65100;">Open</th>
+                        <th style="text-align:center;color:#0d47a1;">In Progress</th>
+                        <th style="text-align:center;color:#6a1b9a;">Pending QA</th>
+                        <th style="text-align:center;color:#1b5e20;">Closed ACC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($perDepartemen as $row)
+                    <tr>
+                        <td style="font-weight:600;">{{ $row['nama'] }}</td>
+                        <td style="text-align:center;font-weight:700;">{{ $row['total'] }}</td>
+                        <td style="text-align:center;color:#e65100;">{{ $row['open'] }}</td>
+                        <td style="text-align:center;color:#0d47a1;">{{ $row['in_progress'] }}</td>
+                        <td style="text-align:center;color:#6a1b9a;">{{ $row['closed_pending_qa'] }}</td>
+                        <td style="text-align:center;color:#1b5e20;">{{ $row['closed_acc'] }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
     @else
-        <div class="text-center py-12 bg-white dark:bg-zinc-800 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Tidak ada temuan pada periode yang dipilih.</p>
-        </div>
+    <div class="bcard fu3" style="padding:40px;text-align:center;">
+        <span class="material-symbols-outlined" style="font-size:40px;opacity:.3;display:block;margin-bottom:8px;">inbox</span>
+        <p style="color:var(--btxt2);font-size:13.5px;margin:0;">Tidak ada temuan pada periode yang dipilih.</p>
+    </div>
     @endif
+
 </div>

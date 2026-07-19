@@ -1,94 +1,99 @@
-<div class="space-y-4 sm:space-y-6">
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
-            <h2 class="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">Daftar Semua Temuan</h2>
-            
-            <div class="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
-                <select wire:model.live="filterDepartemen" class="w-full sm:w-auto rounded-md border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-2 py-1.5">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departemens as $dept)
-                        <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
-                    @endforeach
-                </select>
+<div class="fu">
+    <div class="bph">
+        <div>
+            <h2 class="bph-title">Daftar Semua Temuan</h2>
+            <p class="bph-sub">Monitor seluruh temuan yang tercatat dalam sistem</p>
+        </div>
+    </div>
 
-                <select wire:model.live="filterStatus" class="w-full sm:w-auto rounded-md border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-2 py-1.5">
-                    <option value="">Semua Status</option>
-                    <option value="open">Open</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="closed_pending_qa">Pending QA</option>
-                    <option value="closed_acc">Closed (ACC)</option>
-                </select>
-            </div>
+    <div class="bcard" style="padding:20px;">
+        {{-- Filter Row --}}
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <select wire:model.live="filterDepartemen" class="binput" style="width:auto;min-width:160px;">
+                <option value="">Semua Departemen</option>
+                @foreach($departemens as $dept)
+                    <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                @endforeach
+            </select>
+            <select wire:model.live="filterStatus" class="binput" style="width:auto;min-width:140px;">
+                <option value="">Semua Status</option>
+                <option value="open">Open</option>
+                <option value="in_progress">In Progress</option>
+                <option value="closed_pending_qa">Pending QA</option>
+                <option value="closed_acc">Closed (ACC)</option>
+            </select>
         </div>
 
-        <div class="overflow-x-auto -mx-4 sm:mx-0">
-            <div class="min-w-[600px] sm:min-w-0">
-            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
-                <thead class="bg-zinc-50 dark:bg-zinc-800/50">
+        {{-- Table --}}
+        <div style="overflow-x:auto;">
+            <table class="btbl" style="min-width:600px;">
+                <thead>
                     <tr>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Tgl Temuan</th>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Departemen & Area</th>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">PIC</th>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Aksi</th>
+                        <th>Tgl Temuan</th>
+                        <th>Departemen & Area</th>
+                        <th>PIC</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
+                <tbody>
                     @forelse($temuans as $t)
-                        <tr>
-                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
-                                {{ $t->tanggal_temuan->format('d M Y') }}
-                            </td>
-                            <td class="px-3 sm:px-6 py-3 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
-                                <div class="font-medium">{{ $t->departemen->nama_departemen ?? '-' }}</div>
-                                <div class="text-xs text-zinc-500">{{ $t->sub_area }}</div>
-                            </td>
-                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
-                                {{ $t->pic->name ?? '-' }}
-                            </td>
-                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm">
-                                @php
-                                    $statusClass = match($t->status) {
-                                        'open'              => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-                                        'in_progress'       => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-                                        'closed_pending_qa' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-                                        'closed_acc'        => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-                                        default             => 'bg-gray-100 text-gray-800',
-                                    };
-                                    $statusText = match($t->status) {
-                                        'open'              => 'Open',
-                                        'in_progress'       => 'In Progress',
-                                        'closed_pending_qa' => 'Pending QA',
-                                        'closed_acc'        => 'Closed (ACC)',
-                                        default             => $t->status,
-                                    };
-                                @endphp
-                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusClass }}">
-                                    {{ $statusText }}
-                                </span>
-                            </td>
-                            <td class="px-3 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm text-zinc-900 dark:text-zinc-100">
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('temuan.detail', $t->id) }}"
-                                       class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Detail</a>
-                                    <span class="text-zinc-300 dark:text-zinc-600">|</span>
-                                    <a href="{{ route('export.pdf.temuan', $t->id) }}"
-                                       target="_blank"
-                                       title="Export PDF Temuan #{{ $t->id }}"
-                                       class="text-red-600 dark:text-red-400 hover:underline text-xs">PDF</a>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td style="white-space:nowrap;">{{ $t->tanggal_temuan->format('d M Y') }}</td>
+                        <td>
+                            <div style="font-weight:600;">{{ $t->departemen->nama_departemen ?? '-' }}</div>
+                            <div style="font-size:12px;color:var(--btxt2);">{{ $t->sub_area }}</div>
+                        </td>
+                        <td style="white-space:nowrap;">{{ $t->pic->name ?? '-' }}</td>
+                        <td>
+                            @php
+                                $badgeClass = match($t->status) {
+                                    'open'              => 'bbadge-open',
+                                    'in_progress'       => 'bbadge-progress',
+                                    'closed_pending_qa' => 'bbadge-pending',
+                                    'closed_acc'        => 'bbadge-closed',
+                                    default             => '',
+                                };
+                                $badgeText = match($t->status) {
+                                    'open'              => 'Open',
+                                    'in_progress'       => 'In Progress',
+                                    'closed_pending_qa' => 'Pending QA',
+                                    'closed_acc'        => 'Closed (ACC)',
+                                    default             => $t->status,
+                                };
+                            @endphp
+                            <span class="bbadge {{ $badgeClass }}">{{ $badgeText }}</span>
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <a href="{{ route('temuan.detail', $t->id) }}"
+                                   class="bbtn bbtn-primary bbtn-sm">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">visibility</span>
+                                    Detail
+                                </a>
+                                <a href="{{ route('export.pdf.temuan', $t->id) }}"
+                                   target="_blank"
+                                   class="bbtn bbtn-danger bbtn-sm">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">picture_as_pdf</span>
+                                    PDF
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-sm text-zinc-500">Tidak ada data temuan.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.4;">inbox</span>
+                            Tidak ada data temuan
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
-            </div>
         </div>
-        <div class="mt-4">
+
+        <div style="margin-top:16px;">
             {{ $temuans->links('vendor.pagination.tailwind') }}
         </div>
+    </div>
 </div>

@@ -68,15 +68,21 @@ class GrafikTemuan extends Component
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
         return view('livewire.grafik-temuan', [
-            'departemens' => $departemens,
-            'chartLabels' => $chartDataGrouped->keys()->toJson(),
-            'chartData' => $chartDataGrouped->values()->toJson(),
-            'klausulLabels' => $chartKlausulGrouped->keys()->toJson(),
-            'klausulData' => $chartKlausulGrouped->values()->toJson(),
-            'statusLabels' => json_encode(array_keys($chartStatusGrouped)),
-            'statusData' => json_encode(array_values($chartStatusGrouped)),
-            'subAreaLabels' => $chartSubAreaGrouped->keys()->toJson(),
-            'subAreaData' => $chartSubAreaGrouped->values()->toJson(),
+            'departemens'    => $departemens,
+            'chartLabels'    => $chartDataGrouped->keys()->toJson(),
+            'chartData'      => $chartDataGrouped->values()->toJson(),
+            'klausulLabels'  => $chartKlausulGrouped->keys()->toJson(),
+            'klausulData'    => $chartKlausulGrouped->values()->toJson(),
+            'statusLabels'   => json_encode(array_keys($chartStatusGrouped)),
+            'statusData'     => json_encode(array_values($chartStatusGrouped)),
+            'subAreaLabels'  => $chartSubAreaGrouped->keys()->toJson(),
+            'subAreaData'    => $chartSubAreaGrouped->values()->toJson(),
+            // Stat counts for cards
+            'totalTemuan'    => $allTemuan->count(),
+            'totalOpen'      => $chartStatusGrouped['Open'],
+            'totalInProgress'=> $chartStatusGrouped['In Progress'],
+            'totalPendingQa' => $chartStatusGrouped['Pending QA'],
+            'totalClosedAcc' => $chartStatusGrouped['Closed (ACC)'],
         ]);
     }
 }

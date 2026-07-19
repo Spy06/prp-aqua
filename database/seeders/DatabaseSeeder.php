@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             DepartemenSeeder::class,
             KlausulPrpSeeder::class,
             KaryawanUserSeeder::class,
+            SubAreaSeeder::class,
         ]);
     }
 }

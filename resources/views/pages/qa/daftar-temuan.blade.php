@@ -1,5 +1,5 @@
-<x-layouts::app :title="__('Dashboard')">
+<x-layouts::app :title="__('Daftar Temuan')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 py-2">
-        <livewire:grafik-temuan />
+        <livewire:daftar-temuan-q-a />
     </div>
 </x-layouts::app>

@@ -109,8 +109,14 @@
                     <a class="flex items-center gap-md px-md py-sm cursor-pointer transition-all {{ request()->routeIs('qa.dashboard') ? 'bg-secondary-container text-on-secondary-container font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high' }} rounded-lg"
                         href="{{ route('qa.dashboard') }}" wire:navigate>
                         <span
-                            class="material-symbols-outlined {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">dashboard</span>
-                        <span class="font-label-md text-label-md">Dashboard Temuan</span>
+                            class="material-symbols-outlined {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">bar_chart</span>
+                        <span class="font-label-md text-label-md">Grafik Temuan</span>
+                    </a>
+                    <a class="flex items-center gap-md px-md py-sm cursor-pointer transition-all {{ request()->routeIs('qa.daftar-temuan') ? 'bg-secondary-container text-on-secondary-container font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high' }} rounded-lg"
+                        href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                        <span
+                            class="material-symbols-outlined {{ request()->routeIs('qa.daftar-temuan') ? 'filled-icon' : '' }}">list_alt</span>
+                        <span class="font-label-md text-label-md">Daftar Temuan</span>
                     </a>
                     <a class="flex items-center gap-md px-md py-sm cursor-pointer transition-all {{ request()->routeIs('qa.rekap') ? 'bg-secondary-container text-on-secondary-container font-semibold' : 'text-on-surface-variant hover:bg-surface-container-high' }} rounded-lg"
                         href="{{ route('qa.rekap') }}" wire:navigate>
@@ -198,8 +204,14 @@
                     <a href="{{ route('qa.dashboard') }}" wire:navigate
                         class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.dashboard') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
                         <span
-                            class="material-symbols-outlined text-[22px] {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">dashboard</span>
-                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Dashboard</span>
+                            class="material-symbols-outlined text-[22px] {{ request()->routeIs('qa.dashboard') ? 'filled-icon' : '' }}">bar_chart</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Grafik</span>
+                    </a>
+                    <a href="{{ route('qa.daftar-temuan') }}" wire:navigate
+                        class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.daftar-temuan') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">
+                        <span
+                            class="material-symbols-outlined text-[22px] {{ request()->routeIs('qa.daftar-temuan') ? 'filled-icon' : '' }}">list_alt</span>
+                        <span class="text-[9px] mt-0.5 font-semibold whitespace-nowrap">Daftar</span>
                     </a>
                     <a href="{{ route('qa.rekap') }}" wire:navigate
                         class="flex flex-col items-center justify-center shrink-0 min-w-[72px] h-full px-1 {{ request()->routeIs('qa.rekap') ? 'text-primary border-t-2 border-primary -mt-px' : 'text-on-surface-variant' }} transition-colors">

@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     // Role QA — Dashboard, Rekap, Master Data
     Route::middleware(['role:qa'])->group(function () {
         Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
+        Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
         Route::view('/qa/rekap', 'pages.qa.rekap')->name('qa.rekap');
         Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
         Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');

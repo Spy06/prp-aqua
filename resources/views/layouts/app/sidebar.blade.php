@@ -16,7 +16,10 @@
                         {{-- Menu QA --}}
                         <flux:sidebar.group :heading="__('QA Dashboard')" class="grid">
                             <flux:sidebar.item icon="chart-bar" :href="route('qa.dashboard')" :current="request()->routeIs('qa.dashboard')" wire:navigate>
-                                Dashboard Temuan
+                                Grafik Temuan
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="list-bullet" :href="route('qa.daftar-temuan')" :current="request()->routeIs('qa.daftar-temuan')" wire:navigate>
+                                Daftar Temuan
                             </flux:sidebar.item>
                             <flux:sidebar.item icon="calendar-days" :href="route('qa.rekap')" :current="request()->routeIs('qa.rekap')" wire:navigate>
                                 Rekap Periode

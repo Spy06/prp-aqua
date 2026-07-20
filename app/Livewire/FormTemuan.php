@@ -45,6 +45,11 @@ class FormTemuan extends Component
         $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
     }
 
+    public function updatedDepartemenId()
+    {
+        $this->sub_area = null;
+    }
+
     public function updatedPicSearch()
     {
         if (strlen($this->picSearch) >= 2) {
@@ -152,9 +157,15 @@ class FormTemuan extends Component
 
     public function render()
     {
+        $subAreas = [];
+        if ($this->departemen_id) {
+            $subAreas = \App\Models\SubArea::where('departemen_id', $this->departemen_id)->orderBy('nama_sub_area')->get();
+        }
+
         return view('livewire.form-temuan', [
             'departemens' => Departemen::orderBy('nama_departemen')->get(),
             'klausuls'    => \App\Models\KlausulPrp::orderBy('id')->get(),
+            'subAreas'    => $subAreas,
         ]);
     }
 }

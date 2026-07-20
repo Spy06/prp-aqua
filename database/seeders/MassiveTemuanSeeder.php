@@ -33,6 +33,9 @@ class MassiveTemuanSeeder extends Seeder
         $chunkSize = 1000; // Insert per 1000 baris agar RAM tidak penuh
         $dataToInsert = [];
 
+        // Fetch all sub areas grouped by departemen_id
+        $subAreasData = \App\Models\SubArea::all()->groupBy('departemen_id')->toArray();
+
         // Pre-encrypt string untuk deskripsi agar tidak memberatkan Crypt di setiap loop
         // Secara teknis setiap deskripsi harus berbeda, namun untuk dummy ini kita bisa gunakan beberapa variasi
         $dummyDescriptions = [
@@ -53,13 +56,17 @@ class MassiveTemuanSeeder extends Seeder
             // Karena data harus dibagi ke 4 akun, kita pastikan pelapor disebar rata
             $pelaporId = $karyawans[$i % count($karyawans)];
             $picId = $karyawans[array_rand($karyawans)];
+            
+            $deptId = $departemens[array_rand($departemens)];
+            $deptSubAreas = isset($subAreasData[$deptId]) ? $subAreasData[$deptId] : [];
+            $subAreaName = count($deptSubAreas) > 0 ? $deptSubAreas[array_rand($deptSubAreas)]['nama_sub_area'] : 'Area Dummy';
 
             $dataToInsert[] = [
                 'tanggal_temuan'   => $randomDate->format('Y-m-d'),
                 'pelapor_id'       => $pelaporId,
                 'pic_id'           => $picId,
-                'departemen_id'    => $departemens[array_rand($departemens)],
-                'sub_area'         => 'Area Dummy ' . rand(1, 100),
+                'departemen_id'    => $deptId,
+                'sub_area'         => $subAreaName,
                 'klausul_id'       => !empty($klausuls) ? $klausuls[array_rand($klausuls)] : null,
                 'foto_temuan_path' => null,
                 'deskripsi'        => $dummyDescriptions[array_rand($dummyDescriptions)],

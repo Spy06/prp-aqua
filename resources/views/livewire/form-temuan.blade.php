@@ -43,7 +43,7 @@
                         {{-- Departemen --}}
                         <div>
                             <label class="blabel" for="departemen">Departemen <span style="color:var(--error);">*</span></label>
-                            <select wire:model="departemen_id" id="departemen" class="binput">
+                            <select wire:model.live="departemen_id" id="departemen" class="binput">
                                 <option value="">Pilih Departemen</option>
                                 @foreach($departemens as $dept)
                                     <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
@@ -55,7 +55,12 @@
                         {{-- Sub Area --}}
                         <div>
                             <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
-                            <input wire:model="sub_area" id="subarea" placeholder="Contoh: Line A Packaging" type="text" class="binput" />
+                            <select wire:model="sub_area" id="subarea" class="binput" {{ empty($departemen_id) ? 'disabled' : '' }}>
+                                <option value="">Pilih Sub Area</option>
+                                @foreach($subAreas as $area)
+                                    <option value="{{ $area->nama_sub_area }}">{{ $area->nama_sub_area }}</option>
+                                @endforeach
+                            </select>
                             @error('sub_area') <span class="berr">{{ $message }}</span> @enderror
                         </div>
 

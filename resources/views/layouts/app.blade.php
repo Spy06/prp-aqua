@@ -2,13 +2,12 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else { document.documentElement.classList.remove('dark'); }
+        document.documentElement.classList.remove('dark');
+        if (localStorage.getItem('theme') === 'dark') {
+            localStorage.removeItem('theme');
+        }
         document.addEventListener('livewire:navigated', () => {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else { document.documentElement.classList.remove('dark'); }
+            document.documentElement.classList.remove('dark');
         });
     </script>
     <meta charset="utf-8" />
@@ -39,25 +38,6 @@
             --warning: #e65100;
             --warning-light: #fff3e0;
         }
-        .dark {
-            --bsur: #0f172a;
-            --bcard: #1e293b;
-            --bside: #0f172a;
-            --bbor: #334155;
-            --btxt: #f1f5f9;
-            --btxt2: #94a3b8;
-            --bp-light: rgba(59,130,246,0.15);
-            --bs-light: rgba(139,92,246,0.15);
-            --bp: #60a5fa;
-            --bp-dark: #3b82f6;
-            --bs: #a78bfa;
-            --success: #22c55e;
-            --success-light: rgba(34,197,94,0.15);
-            --error: #ef4444;
-            --error-light: rgba(239,68,68,0.15);
-            --warning: #f59e0b;
-            --warning-light: rgba(245,158,11,0.15);
-        }
 
         * { box-sizing: border-box; }
         body {
@@ -74,39 +54,13 @@
             height: 68px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 24px;
-            position: fixed; top: 0; left: 0; right: 0;
+            position: fixed; top: 0; left: 250px; right: 0;
             z-index: 40;
             box-shadow: 0 1px 12px rgba(0,0,0,0.05);
             transition: left 0.3s ease;
         }
-        .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
-        .logo-box {
-            width: 36px; height: 36px;
-            background: linear-gradient(135deg, #1976d2, #42a5f5);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(25,118,210,0.3);
-        }
-        .logo-box span { color: #fff; font-size: 18px; }
-        .logo-text h1 { font-size: 15px; font-weight: 700; color: var(--bp); letter-spacing: -0.2px; margin: 0; }
-        .logo-text p { font-size: 9.5px; color: var(--btxt2); margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
-
-        .qtop-toggle {
-            width: 34px; height: 34px; border-radius: 8px;
-            background: var(--bp-light); color: var(--bp-dark);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; border: none; outline: none;
-        }
-        .qtop-toggle:hover { background: var(--bp-dark); color: #fff; }
 
         .qtop-act { display: flex; align-items: center; gap: 10px; }
-        .qtop-icon-btn {
-            width: 34px; height: 34px; border-radius: 8px;
-            background: var(--bp-light); color: var(--bp-dark);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; border: none; outline: none;
-        }
-        .qtop-icon-btn:hover { background: var(--bp-dark); color: #fff; }
 
         .qtop-profile-pill {
             display: flex; align-items: center; gap: 8px;
@@ -129,16 +83,27 @@
             height: 100vh; position: fixed; left: 0; top: 0;
             display: flex; flex-direction: column;
             z-index: 50; border-right: 1px solid var(--bbor);
-            transition: transform 0.3s ease; overflow: hidden;
+            overflow: hidden;
         }
         .qs-header {
             height: 68px; display: flex; align-items: center;
             padding: 0 20px; border-bottom: 1px solid var(--bbor); flex-shrink: 0;
         }
+        .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
+        .logo-box {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(25,118,210,0.3);
+        }
+        .logo-box span { color: #fff; font-size: 18px; }
+        .logo-text h1 { font-size: 15px; font-weight: 700; color: var(--bp); letter-spacing: -0.2px; margin: 0; }
+        .logo-text p { font-size: 9.5px; color: var(--btxt2); margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
+
         .qs-content { flex: 1; overflow-y: auto; padding: 16px 12px; }
         .qs-content::-webkit-scrollbar { width: 3px; }
         .qs-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
-        .dark .qs-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
 
         .qs-section-label {
             font-size: 10.5px; font-weight: 700; color: var(--btxt2);
@@ -183,37 +148,21 @@
         .qs-logout:hover { background: var(--error-light); color: var(--error); }
 
         /* ── Layout Wrapper ── */
-        .qmain { min-height: 100vh; padding-top: 68px; transition: margin-left 0.3s ease; }
+        .qmain { min-height: 100vh; padding-top: 68px; margin-left: 250px; }
         .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
-
-        .sidebar-open .qs { transform: translateX(0); }
-        .sidebar-open .qtop { left: 250px; }
-        .sidebar-open .qmain { margin-left: 250px; }
-        .sidebar-closed .qs { transform: translateX(-250px); }
-        .sidebar-closed .qtop { left: 0; }
-        .sidebar-closed .qmain { margin-left: 0; }
 
         /* ── Responsive ── */
         @media (max-width: 960px) {
-            .qtop, .sidebar-open .qtop, .sidebar-closed .qtop {
-                left: 0 !important; right: 0 !important; padding: 0 16px; height: 60px;
-            }
-            .logo-text p { display: none; }
-            .qmain, .sidebar-open .qmain, .sidebar-closed .qmain {
-                margin-left: 0 !important; padding-top: 60px;
-            }
+            .qtop { left: 0 !important; right: 0 !important; padding: 0 16px; height: 60px; }
+            .qmain { margin-left: 0 !important; padding-top: 60px; }
             .qcontent { padding: 16px; }
-            .sidebar-open .qs { transform: translateX(0); }
-            .sidebar-closed .qs { transform: translateX(-250px); }
+            .qs { display: none; }
         }
         @media (max-width: 640px) {
-            .qtop, .sidebar-open .qtop, .sidebar-closed .qtop { padding: 0 12px; height: 56px; }
+            .qtop { padding: 0 12px; height: 56px; }
             .qmain { padding-top: 56px; }
             .qcontent { padding: 12px; }
             .qtop-profile-pill .name { display: none; }
-            .logo-box { width: 30px; height: 30px; }
-            .logo-box span { font-size: 16px; }
-            .logo-text h1 { font-size: 14px; }
         }
 
         /* ── Berry Cards ── */
@@ -267,10 +216,6 @@
         .sbadge-progress { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
         .sbadge-pending { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
         .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
-        .dark .sbadge-open { background: rgba(245,158,11,0.15); color: #fde68a; border-color: rgba(245,158,11,0.3); }
-        .dark .sbadge-progress { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
-        .dark .sbadge-pending { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
-        .dark .sbadge-closed { background: rgba(34,197,94,0.15); color: #86efac; border-color: rgba(34,197,94,0.3); }
 
         /* ── Buttons ── */
         .bbtn {
@@ -287,8 +232,6 @@
             border: 1.5px solid var(--bbor) !important;
         }
         .bbtn-secondary:hover { background: var(--bp-light); color: var(--bp-dark); }
-        .dark .bbtn-secondary { background: #334155; color: #f1f5f9; border-color: #475569 !important; }
-        .dark .bbtn-secondary:hover { background: #475569; }
         .bbtn-success { background: #2e7d32; color: #fff; }
         .bbtn-success:hover { background: #1b5e20; transform: translateY(-1px); }
         .bbtn-danger { background: #c62828; color: #fff; }
@@ -305,10 +248,7 @@
             outline: none; font-family: inherit;
         }
         .binput:focus { border-color: var(--bp); box-shadow: 0 0 0 3px rgba(25,118,210,0.12); }
-        .dark .binput { background: #0f172a; color: #f1f5f9; border-color: #334155; }
-        .dark .binput:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,0.15); }
         .binput:disabled { background: var(--bsur); color: var(--btxt2); cursor: not-allowed; opacity: 0.8; }
-        .dark .binput:disabled { background: #1e293b; color: #64748b; }
         .blabel { display: block; font-size: 12px; font-weight: 600; color: var(--btxt2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .berr { font-size: 11.5px; color: var(--error); margin-top: 4px; font-weight: 500; }
 
@@ -318,10 +258,6 @@
         .balert-error { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .balert-warn { background: #fff3e0; color: #e65100; border-color: #ffe0b2; }
         .balert-info { background: #e3f2fd; color: #1565c0; border-color: #bbdefb; }
-        .dark .balert-success { background: rgba(34,197,94,0.12); color: #86efac; border-color: rgba(34,197,94,0.3); }
-        .dark .balert-error { background: rgba(239,68,68,0.12); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
-        .dark .balert-warn { background: rgba(245,158,11,0.12); color: #fde68a; border-color: rgba(245,158,11,0.3); }
-        .dark .balert-info { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
 
         /* ── Info Fields ── */
         .inf-label { font-size: 10.5px; font-weight: 700; color: var(--btxt2); text-transform: uppercase; letter-spacing: 0.9px; margin-bottom: 4px; }
@@ -331,15 +267,11 @@
             white-space: pre-wrap; background: var(--bsur);
             padding: 12px 14px; border-radius: 10px; border: 1px solid var(--bbor);
         }
-        .dark .inf-text { background: #0f172a; }
 
         /* ── Urgency Banners ── */
         .urgency-overdue { background: #ffebee; border-bottom: 1px solid #ffcdd2; color: #c62828; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
         .urgency-soon { background: #fff3e0; border-bottom: 1px solid #ffe0b2; color: #e65100; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
         .urgency-pending { background: #f3e5f5; border-bottom: 1px solid #e1bee7; color: #6a1b9a; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
-        .dark .urgency-overdue { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
-        .dark .urgency-soon { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.35); color: #fde68a; }
-        .dark .urgency-pending { background: rgba(167,139,250,0.15); border-color: rgba(167,139,250,0.35); color: #ddd6fe; }
 
         /* ── Temuan Cards (list view) ── */
         .tcard {
@@ -389,30 +321,13 @@
     </style>
     @livewireStyles
 </head>
-<body x-data="{ sidebarOpen: window.innerWidth > 960, mobileOpen: false }" :class="sidebarOpen ? 'sidebar-open' : 'sidebar-closed'">
+<body>
 
     {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
-        <div class="logo-area">
-            <div class="logo-box">
-                <span class="material-symbols-outlined">factory</span>
-            </div>
-            <div class="logo-text">
-                <h1>SIVERA</h1>
-                <p>Verifikasi PRP</p>
-            </div>
-        </div>
-
-        <div style="display:flex;align-items:center;flex:1;">
-            <button @click="if(window.innerWidth > 960) { sidebarOpen = !sidebarOpen } else { mobileOpen = !mobileOpen }" class="qtop-toggle" title="Toggle Sidebar">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
-        </div>
+        <div style="flex:1;"></div>
 
         <div class="qtop-act">
-            <button onclick="toggleTheme()" class="qtop-icon-btn" title="Ganti Tema">
-                <span class="material-symbols-outlined" style="font-size:18px;">dark_mode</span>
-            </button>
             @auth
             <div class="qtop-profile-pill">
                 <div class="qtop-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
@@ -423,7 +338,7 @@
     </header>
 
     {{-- ═══ SIDEBAR ═══ --}}
-    <aside class="qs" :style="window.innerWidth <= 960 ? (mobileOpen ? 'transform:translateX(0)' : 'transform:translateX(-250px)') : ''">
+    <aside class="qs">
         <div class="qs-header">
             <div class="logo-area">
                 <div class="logo-box">
@@ -475,11 +390,6 @@
         </div>
     </aside>
 
-    {{-- Mobile Backdrop --}}
-    <div x-show="mobileOpen" @click="mobileOpen = false"
-         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:45;"
-         x-transition.opacity></div>
-
     {{-- ═══ MAIN CONTENT ═══ --}}
     <div class="qmain">
         <main class="qcontent">
@@ -507,18 +417,15 @@
     </dialog>
 
     <script>
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark'); localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark'); localStorage.theme = 'dark';
-            }
-        }
-        document.addEventListener('livewire:navigated', () => {
-            if (localStorage.theme === 'dark') document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
-        });
         (function () {
+            document.documentElement.classList.remove('dark');
+            if (localStorage.getItem('theme') === 'dark') {
+                localStorage.removeItem('theme');
+            }
+            document.addEventListener('livewire:navigated', () => {
+                document.documentElement.classList.remove('dark');
+            });
+
             let pendingTarget = null, bypassing = false;
             window.confirm = function (message) {
                 if (bypassing) return true;

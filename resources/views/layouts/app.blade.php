@@ -157,6 +157,7 @@
             .qmain { margin-left: 0 !important; padding-top: 60px; }
             .qcontent { padding: 16px; }
             .qs { display: none; }
+            .mobile-logout { display: block !important; }
         }
         @media (max-width: 640px) {
             .qtop { padding: 0 12px; height: 56px; }
@@ -219,11 +220,11 @@
 
         /* ── Buttons ── */
         .bbtn {
-            display: inline-flex; align-items: center; gap: 6px;
+            display: inline-flex; align-items: center; gap: 6px; justify-content: center;
             padding: 10px 18px; border-radius: 10px; font-size: 13px;
             font-weight: 600; cursor: pointer; border: none;
             transition: all 0.2s; text-decoration: none; font-family: inherit;
-            white-space: nowrap;
+            text-align: center;
         }
         .bbtn-primary { background: var(--bp); color: #fff; box-shadow: 0 4px 12px rgba(25,118,210,0.25); }
         .bbtn-primary:hover { background: var(--bp-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25,118,210,0.35); }
@@ -329,9 +330,18 @@
 
         <div class="qtop-act">
             @auth
-            <div class="qtop-profile-pill">
-                <div class="qtop-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <span class="name">{{ auth()->user()->name }}</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="qtop-profile-pill">
+                    <div class="qtop-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                    <span class="name">{{ auth()->user()->name }}</span>
+                </div>
+                <!-- Mobile Logout Button -->
+                <form method="POST" action="{{ route('logout') }}" class="mobile-logout" style="display:none; margin: 0;">
+                    @csrf
+                    <button type="submit" class="bbtn bbtn-secondary bbtn-sm" style="padding: 6px 8px; border-color: var(--error) !important; color: var(--error);" title="Sign Out">
+                        <span class="material-symbols-outlined" style="font-size: 18px; margin: 0;">logout</span>
+                    </button>
+                </form>
             </div>
             @endauth
         </div>

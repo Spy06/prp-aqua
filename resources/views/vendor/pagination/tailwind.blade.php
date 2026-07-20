@@ -13,7 +13,7 @@
         </p>
 
         {{-- Nomor halaman --}}
-        <div class="flex items-center gap-1 flex-wrap justify-center">
+        <div class="flex items-center gap-2 flex-wrap justify-center">
 
             {{-- Tombol Sebelumnya --}}
             @if ($paginator->onFirstPage())

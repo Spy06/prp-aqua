@@ -170,7 +170,7 @@
                 </div>
 
                 {{-- Form Actions --}}
-                <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:20px;margin-top:20px;border-top:1px solid var(--bbor);">
+                <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;padding-top:20px;margin-top:20px;border-top:1px solid var(--bbor);">
                     <a href="{{ route('beranda') }}" wire:navigate class="bbtn bbtn-secondary">
                         <span class="material-symbols-outlined" style="font-size:18px;">close</span>
                         Batal

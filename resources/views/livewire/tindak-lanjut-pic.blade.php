@@ -162,14 +162,14 @@
         </div>
 
         {{-- Status Flow Indicator --}}
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;">
-            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'open' ? 'background:#fff3e0;color:#e65100;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Open</span>
-            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
-            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'in_progress' ? 'background:#e3f2fd;color:#1565c0;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">In Progress</span>
-            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
-            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'closed_pending_qa' ? 'background:#f3e5f5;color:#6a1b9a;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Pending QA</span>
-            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
-            <span style="padding:4px 10px;border-radius:6px;background:var(--bsur);color:var(--btxt2);">ACC (QA)</span>
+        <div style="display:flex;align-items:center;gap:3px;flex-wrap:nowrap;margin-bottom:14px;font-size:10.5px;">
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'open' ? 'background:#fff3e0;color:#e65100;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Open</span>
+            <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'in_progress' ? 'background:#e3f2fd;color:#1565c0;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">In Progress</span>
+            <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'closed_pending_qa' ? 'background:#f3e5f5;color:#6a1b9a;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Pending QA</span>
+            <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;background:var(--bsur);color:var(--btxt2);">ACC (QA)</span>
         </div>
 
         {{-- Tombol Transisi --}}
@@ -213,9 +213,9 @@
             @endif
         </div>
 
-        <p style="font-size:12px;color:var(--btxt2);margin-top:12px;display:flex;align-items:center;gap:5px;">
-            <span class="material-symbols-outlined" style="font-size:14px;">lock</span>
-            Status <em>Closed ACC</em> hanya bisa diset oleh QA setelah verifikasi.
+        <p style="font-size:11.5px;color:var(--btxt2);margin-top:12px;display:flex;align-items:flex-start;gap:5px;flex-wrap:nowrap;">
+            <span class="material-symbols-outlined" style="font-size:14px;flex-shrink:0;position:relative;top:2px;">lock</span>
+            <span>Status <em>Closed ACC</em> hanya bisa diset oleh QA setelah verifikasi.</span>
         </p>
     </div>
     @endif

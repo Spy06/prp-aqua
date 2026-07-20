@@ -91,11 +91,17 @@ class MasterKaryawan extends Component
         $this->resetPage();
     }
 
+    public function toggleStatus(string $nik): void
+    {
+        $this->toggleAktif($nik);
+    }
+
     public function toggleAktif(string $nik): void
     {
         $k = Karyawan::findOrFail($nik);
         $k->update(['status_aktif' => !$k->status_aktif]);
-        session()->flash('success', "Status karyawan {$k->nama} berhasil diubah.");
+        $statusStr = $k->status_aktif ? 'diaktifkan' : 'dinonaktifkan';
+        session()->flash('success', "Status karyawan {$k->nama} berhasil {$statusStr}.");
     }
 
     public function hapus(string $nik): void

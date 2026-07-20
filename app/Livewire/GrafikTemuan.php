@@ -56,15 +56,22 @@ class GrafikTemuan extends Component
             'Closed (ACC)' => $allTemuan->where('status', 'closed_acc')->count(),
         ];
 
-        // 4. Sub Area Chart (Filtered by Departemen)
+        // 4. Sub Area Chart (Filtered by Departemen - Top 10 Sub Areas)
         $subAreaQuery = Temuan::query();
         if ($this->filterDepartemenSubArea) {
             $subAreaQuery->where('departemen_id', $this->filterDepartemenSubArea);
         }
         $subAreaFiltered = $subAreaQuery->get();
-        $chartSubAreaGrouped = $subAreaFiltered->groupBy('sub_area')->mapWithKeys(function ($group) {
-            return [$group->first()->sub_area => $group->count()];
-        });
+        $chartSubAreaGrouped = $subAreaFiltered->groupBy('sub_area')
+            ->mapWithKeys(function ($group) {
+                $rawName = $group->first()->sub_area ?? 'N/A';
+                $shortName = str_replace('Area Dummy ', 'Area ', $rawName);
+                return [$shortName => $group->count()];
+            })
+            ->sortByDesc(function ($count) {
+                return $count;
+            })
+            ->take(10);
 
 
         $this->dispatch('chart-updated', [

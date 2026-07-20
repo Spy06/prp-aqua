@@ -1,42 +1,39 @@
-<div class="space-y-6" id="tindak-lanjut-pic-form">
+<div style="display:flex;flex-direction:column;gap:20px;" id="tindak-lanjut-pic-form">
 
     {{-- Flash Messages --}}
     @if(session('status_success'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 text-sm">
-            <flux:icon.check-circle variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('status_success') }}
+        <div class="balert balert-success">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">check_circle</span>
+            <span>{{ session('status_success') }}</span>
         </div>
     @endif
-
     @if(session('status_error'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 text-sm">
-            <flux:icon.exclamation-triangle variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('status_error') }}
+        <div class="balert balert-error">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">error</span>
+            <span>{{ session('status_error') }}</span>
         </div>
     @endif
-
     @if(session('detail_success'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 text-sm">
-            <flux:icon.check-circle variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('detail_success') }}
+        <div class="balert balert-info">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">info</span>
+            <span>{{ session('detail_success') }}</span>
         </div>
     @endif
-
     @if(session('foto_success'))
-        <div class="flex items-center gap-2 p-3 rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700 text-teal-700 dark:text-teal-300 text-sm">
-            <flux:icon.photo variant="solid" class="w-4 h-4 shrink-0" />
-            {{ session('foto_success') }}
+        <div class="balert balert-success">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">photo</span>
+            <span>{{ session('foto_success') }}</span>
         </div>
     @endif
 
-    {{-- Status saat ini --}}
+    {{-- Status Saat Ini --}}
     @php
-        $statusBadgeClass = match($currentStatus) {
-            'open'              => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-            'in_progress'       => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-            'closed_pending_qa' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-            'closed_acc'        => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-            default             => 'bg-gray-100 text-gray-800',
+        $statusClass = match($currentStatus) {
+            'open'              => 'sbadge-open',
+            'in_progress'       => 'sbadge-progress',
+            'closed_pending_qa' => 'sbadge-pending',
+            'closed_acc'        => 'sbadge-closed',
+            default             => 'sbadge-progress',
         };
         $statusText = match($currentStatus) {
             'open'              => 'Open',
@@ -46,218 +43,184 @@
             default             => $currentStatus,
         };
     @endphp
-
-    <div class="flex items-center gap-3">
-        <span class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Status tindak lanjut:</span>
-        <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusBadgeClass }}">{{ $statusText }}</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:13px;font-weight:600;color:var(--btxt2);">Status tindak lanjut:</span>
+        <span class="sbadge {{ $statusClass }}" style="font-size:11.5px;">{{ $statusText }}</span>
     </div>
 
     {{-- Section 1: Detail Tindak Lanjut --}}
-    <div class="space-y-4">
-        <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide border-b border-zinc-100 dark:border-zinc-700 pb-2">
-            Detail Tindak Lanjut
-        </h4>
+    <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--bbor);">
+            <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">edit_note</span>
+            <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Detail Tindak Lanjut</span>
+        </div>
 
         {{-- Tindakan / Action --}}
-        <div>
-            <label for="action" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Tindakan Perbaikan <span class="text-red-500">*</span>
-            </label>
-            <textarea id="action"
-                      wire:model="action"
-                      rows="4"
-                      placeholder="Jelaskan tindakan perbaikan yang dilakukan atau direncanakan..."
-                      class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
-                      {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }}></textarea>
-            @error('action')
-                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-            @enderror
+        <div style="margin-bottom:14px;">
+            <label class="blabel" for="action">Tindakan Perbaikan <span style="color:var(--error);">*</span></label>
+            <textarea id="action" wire:model="action" rows="4"
+                placeholder="Jelaskan tindakan perbaikan yang dilakukan atau direncanakan..."
+                class="binput" style="resize:vertical;"
+                {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }}></textarea>
+            @error('action') <span class="berr">{{ $message }}</span> @enderror
         </div>
 
         {{-- Due Date --}}
-        <div>
-            <label for="due_date" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Due Date <span class="text-red-500">*</span>
-            </label>
-            <input type="date"
-                   id="due_date"
-                   wire:model="due_date"
-                   class="w-full rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                   {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }} />
-            @error('due_date')
-                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-            @enderror
+        <div style="margin-bottom:14px;">
+            <label class="blabel" for="due_date">Due Date <span style="color:var(--error);">*</span></label>
+            <input type="date" id="due_date" wire:model="due_date" class="binput"
+                {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }} />
+            @error('due_date') <span class="berr">{{ $message }}</span> @enderror
         </div>
 
         @if(!in_array($currentStatus, ['closed_pending_qa', 'closed_acc']))
-            <div class="flex justify-end">
-                <button wire:click="simpanDetail"
-                        wire:loading.attr="disabled"
-                        id="btn-simpan-detail"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition disabled:opacity-50">
-                    <span wire:loading.remove wire:target="simpanDetail">
-                        <flux:icon.check variant="outline" class="w-4 h-4" />
-                    </span>
-                    <span wire:loading wire:target="simpanDetail">
-                        <flux:icon.arrow-path class="w-4 h-4 animate-spin" />
-                    </span>
-                    Simpan Detail
-                </button>
-            </div>
+        <div style="display:flex;justify-content:flex-end;">
+            <button wire:click="simpanDetail" wire:loading.attr="disabled" id="btn-simpan-detail" class="bbtn bbtn-primary">
+                <span wire:loading.remove wire:target="simpanDetail" class="material-symbols-outlined" style="font-size:18px;">save</span>
+                <span wire:loading wire:target="simpanDetail" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
+                Simpan Detail
+            </button>
+        </div>
         @endif
     </div>
 
     {{-- Section 2: Foto Bukti --}}
-    <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-700">
-        <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide pb-1">
-            Foto Bukti
+    <div style="padding-top:16px;border-top:1.5px solid var(--bbor);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">photo_camera</span>
+            <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Foto Bukti</span>
             @if(empty($foto_bukti_path))
-                <span class="ml-1 text-xs font-normal text-orange-500 normal-case">(Wajib sebelum closed)</span>
+                <span style="font-size:11.5px;color:#e65100;font-weight:600;">(Wajib sebelum closed)</span>
             @else
-                <span class="ml-1 text-xs font-normal text-green-600 dark:text-green-400 normal-case">✓ Sudah diupload</span>
+                <span style="font-size:11.5px;color:#2e7d32;font-weight:600;">✓ Sudah diupload</span>
             @endif
-        </h4>
+        </div>
 
         {{-- Tampilkan foto yang sudah ada --}}
         @if($foto_bukti_path)
-            <div class="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}"
-                     alt="Foto bukti tindak lanjut"
-                     class="w-full max-h-64 object-contain bg-zinc-50 dark:bg-zinc-900" />
-            </div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-bottom:14px;">
+            <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}"
+                 alt="Foto bukti tindak lanjut"
+                 style="width:100%;max-height:220px;object-fit:contain;background:var(--bsur);" />
+        </div>
         @endif
 
-        {{-- Upload foto baru (hanya jika belum closed_acc) --}}
+        {{-- Upload foto baru --}}
         @if($currentStatus !== 'closed_acc')
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    {{ $foto_bukti_path ? 'Ganti Foto Bukti' : 'Upload Foto Bukti' }}
-                    <span class="text-xs font-normal text-zinc-500 ml-1">(JPG/PNG, maks. 5MB)</span>
-                </label>
+        <div>
+            <label class="blabel">
+                {{ $foto_bukti_path ? 'Ganti Foto Bukti' : 'Upload Foto Bukti' }}
+                <span style="font-size:10.5px;font-weight:400;color:var(--btxt2);text-transform:none;">(JPG/PNG, maks. 5MB)</span>
+            </label>
 
-                <div class="flex items-start gap-3">
-                    <div class="flex-1">
-                        <input type="file"
-                               id="foto-bukti-gallery"
-                               wire:model="foto_bukti"
-                               accept="image/*"
-                               class="hidden" />
-                        <input type="file"
-                               id="foto-bukti-camera"
-                               wire:model="foto_bukti"
-                               accept="image/*"
-                               capture="environment"
-                               class="hidden" />
+            <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" accept="image/*" style="display:none;" />
+            <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
 
-                        <div class="flex gap-2">
-                            <label for="foto-bukti-camera"
-                                   class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition select-none">
-                                <span class="material-symbols-outlined text-sm leading-none">photo_camera</span>
-                                Ambil Foto
-                            </label>
-                            <label for="foto-bukti-gallery"
-                                   class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-sm font-semibold rounded-lg border border-zinc-300 dark:border-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition select-none">
-                                <span class="material-symbols-outlined text-sm leading-none">photo_library</span>
-                                Dari Galeri
-                            </label>
-                        </div>
-
-                        @error('foto_bukti')
-                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-
-                        {{-- Preview sebelum upload --}}
-                        @if($foto_bukti)
-                            <div class="mt-2 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                                <img src="{{ $foto_bukti->temporaryUrl() }}"
-                                     alt="Preview foto bukti"
-                                     class="w-full max-h-40 object-contain bg-zinc-50 dark:bg-zinc-900" />
-                            </div>
-                        @endif
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:200px;">
+                    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+                        <label for="foto-bukti-camera"
+                               style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bp);color:#fff;font-size:12.5px;font-weight:600;border-radius:8px;user-select:none;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
+                            Ambil Foto
+                        </label>
+                        <label for="foto-bukti-gallery"
+                               style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bsur);color:var(--btxt);font-size:12.5px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);user-select:none;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
+                            Dari Galeri
+                        </label>
                     </div>
+                    @error('foto_bukti') <span class="berr">{{ $message }}</span> @enderror
 
-                    <button wire:click="uploadFoto"
-                            wire:loading.attr="disabled"
-                            id="btn-upload-foto"
-                            class="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition disabled:opacity-50">
-                        <span wire:loading.remove wire:target="uploadFoto">
-                            <flux:icon.arrow-up-tray variant="outline" class="w-4 h-4" />
-                        </span>
-                        <span wire:loading wire:target="uploadFoto">
-                            <flux:icon.arrow-path class="w-4 h-4 animate-spin" />
-                        </span>
-                        Upload
-                    </button>
+                    {{-- Preview sebelum upload --}}
+                    @if($foto_bukti)
+                    <div style="border-radius:8px;overflow:hidden;border:1px solid var(--bbor);margin-top:8px;">
+                        <img src="{{ $foto_bukti->temporaryUrl() }}"
+                             alt="Preview foto bukti"
+                             style="width:100%;max-height:160px;object-fit:contain;background:var(--bsur);" />
+                    </div>
+                    @endif
                 </div>
+
+                <button wire:click="uploadFoto" wire:loading.attr="disabled" id="btn-upload-foto"
+                    class="bbtn bbtn-success" style="flex-shrink:0;align-self:flex-start;">
+                    <span wire:loading.remove wire:target="uploadFoto" class="material-symbols-outlined" style="font-size:18px;">upload</span>
+                    <span wire:loading wire:target="uploadFoto" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
+                    Upload
+                </button>
             </div>
+        </div>
         @endif
     </div>
 
     {{-- Section 3: Ubah Status --}}
     @if(!in_array($currentStatus, ['closed_acc']))
-        <div class="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-700">
-            <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide pb-1">
-                Ubah Status
-            </h4>
-
-            {{-- Petunjuk status flow --}}
-            <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-                <span class="px-2 py-0.5 rounded {{ $currentStatus === 'open' ? 'bg-yellow-100 text-yellow-800 font-semibold' : 'bg-zinc-100 dark:bg-zinc-700' }}">Open</span>
-                <flux:icon.arrow-right class="w-3 h-3" />
-                <span class="px-2 py-0.5 rounded {{ $currentStatus === 'in_progress' ? 'bg-blue-100 text-blue-800 font-semibold' : 'bg-zinc-100 dark:bg-zinc-700' }}">In Progress</span>
-                <flux:icon.arrow-right class="w-3 h-3" />
-                <span class="px-2 py-0.5 rounded {{ $currentStatus === 'closed_pending_qa' ? 'bg-purple-100 text-purple-800 font-semibold' : 'bg-zinc-100 dark:bg-zinc-700' }}">Pending QA</span>
-                <flux:icon.arrow-right class="w-3 h-3" />
-                <span class="px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 text-zinc-400">ACC (QA)</span>
-            </div>
-
-            {{-- Tombol transisi status --}}
-            <div class="flex flex-wrap gap-3">
-                @if($currentStatus === 'open')
-                    {{-- open → in_progress --}}
-                    <button wire:click="ubahStatus('in_progress')"
-                            wire:loading.attr="disabled"
-                            wire:confirm="Ubah status ke In Progress?"
-                            id="btn-status-in-progress"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition disabled:opacity-50">
-                        <flux:icon.play variant="solid" class="w-4 h-4" />
-                        Mulai Pengerjaan (In Progress)
-                    </button>
-                @elseif($currentStatus === 'in_progress')
-                    {{-- in_progress → closed_pending_qa (WAJIB ada foto bukti) --}}
-                    <div class="w-full">
-                        @if(empty($foto_bukti_path))
-                            <div class="p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 text-xs mb-3">
-                                <strong>⚠ Foto bukti wajib diupload</strong> sebelum Anda bisa menutup laporan untuk verifikasi QA.
-                            </div>
-                        @endif
-
-                        <button wire:click="ubahStatus('closed_pending_qa')"
-                                wire:loading.attr="disabled"
-                                wire:confirm="Selesaikan dan kirim ke QA untuk verifikasi? Pastikan foto bukti sudah diupload."
-                                id="btn-status-pending-qa"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition disabled:opacity-50"
-                                {{ empty($foto_bukti_path) ? 'disabled' : '' }}>
-                            <flux:icon.paper-airplane variant="solid" class="w-4 h-4" />
-                            Selesai & Kirim ke QA
-                        </button>
-
-                        @if(empty($foto_bukti_path))
-                            <p class="text-xs text-orange-500 mt-1">Upload foto bukti terlebih dahulu untuk mengaktifkan tombol ini.</p>
-                        @endif
-                    </div>
-                @elseif($currentStatus === 'closed_pending_qa')
-                    <div class="flex items-center gap-2 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300 text-sm">
-                        <flux:icon.clock variant="outline" class="w-4 h-4 shrink-0" />
-                        <span>Menunggu verifikasi QA. Anda tidak dapat mengubah status lebih lanjut.</span>
-                    </div>
-                @endif
-            </div>
-
-            <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
-                <flux:icon.lock-closed variant="outline" class="w-3 h-3 inline" />
-                Status <em>Closed ACC</em> hanya bisa diset oleh QA setelah verifikasi.
-            </p>
+    <div style="padding-top:16px;border-top:1.5px solid var(--bbor);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">change_circle</span>
+            <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Ubah Status</span>
         </div>
+
+        {{-- Status Flow Indicator --}}
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;">
+            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'open' ? 'background:#fff3e0;color:#e65100;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Open</span>
+            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
+            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'in_progress' ? 'background:#e3f2fd;color:#1565c0;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">In Progress</span>
+            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
+            <span style="padding:4px 10px;border-radius:6px;{{ $currentStatus === 'closed_pending_qa' ? 'background:#f3e5f5;color:#6a1b9a;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Pending QA</span>
+            <span class="material-symbols-outlined" style="font-size:14px;color:var(--btxt2);">arrow_forward</span>
+            <span style="padding:4px 10px;border-radius:6px;background:var(--bsur);color:var(--btxt2);">ACC (QA)</span>
+        </div>
+
+        {{-- Tombol Transisi --}}
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            @if($currentStatus === 'open')
+                <button wire:click="ubahStatus('in_progress')" wire:loading.attr="disabled"
+                    wire:confirm="Ubah status ke In Progress?"
+                    id="btn-status-in-progress" class="bbtn bbtn-primary">
+                    <span class="material-symbols-outlined" style="font-size:18px;">play_arrow</span>
+                    Mulai Pengerjaan (In Progress)
+                </button>
+            @elseif($currentStatus === 'in_progress')
+                <div style="width:100%;">
+                    @if(empty($foto_bukti_path))
+                    <div class="balert balert-warn" style="margin-bottom:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">warning</span>
+                        <span><strong>⚠ Foto bukti wajib diupload</strong> sebelum menutup laporan untuk verifikasi QA.</span>
+                    </div>
+                    @endif
+
+                    <button wire:click="ubahStatus('closed_pending_qa')" wire:loading.attr="disabled"
+                        wire:confirm="Selesaikan dan kirim ke QA untuk verifikasi? Pastikan foto bukti sudah diupload."
+                        id="btn-status-pending-qa" class="bbtn bbtn-purple"
+                        {{ empty($foto_bukti_path) ? 'disabled' : '' }}>
+                        <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                        Selesai & Kirim ke QA
+                    </button>
+
+                    @if(empty($foto_bukti_path))
+                    <p style="font-size:12px;color:#e65100;margin-top:8px;display:flex;align-items:center;gap:4px;">
+                        <span class="material-symbols-outlined" style="font-size:15px;">lock</span>
+                        Upload foto bukti terlebih dahulu untuk mengaktifkan tombol ini.
+                    </p>
+                    @endif
+                </div>
+            @elseif($currentStatus === 'closed_pending_qa')
+                <div class="balert balert-info" style="width:100%;">
+                    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">schedule</span>
+                    <span>Menunggu verifikasi QA. Anda tidak dapat mengubah status lebih lanjut.</span>
+                </div>
+            @endif
+        </div>
+
+        <p style="font-size:12px;color:var(--btxt2);margin-top:12px;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:14px;">lock</span>
+            Status <em>Closed ACC</em> hanya bisa diset oleh QA setelah verifikasi.
+        </p>
+    </div>
     @endif
+
+    <style>
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </div>

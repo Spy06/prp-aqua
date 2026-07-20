@@ -117,34 +117,34 @@
     {{-- Summary Stat Cards --}}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;" class="fu2">
         <div class="bstat">
-            <div class="bstat-icon" style="background:linear-gradient(135deg,#ede7f6,#d1c4e9);">
-                <span class="material-symbols-outlined fil" style="color:#5e35b1;font-size:24px;">assignment</span>
+            <div class="bstat-icon" style="background:var(--bs-light);">
+                <span class="material-symbols-outlined fil" style="color:var(--bs);font-size:24px;">assignment</span>
             </div>
             <div><div class="bstat-val">{{ $total }}</div><div class="bstat-lbl">Total</div></div>
         </div>
         <div class="bstat">
-            <div class="bstat-icon" style="background:#fff3e0;">
-                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:24px;">error</span>
+            <div class="bstat-icon" style="background:rgba(245, 158, 11, 0.15);">
+                <span class="material-symbols-outlined fil" style="color:#f59e0b;font-size:24px;">error</span>
             </div>
-            <div><div class="bstat-val" style="color:#e65100;">{{ $perStatus['open'] }}</div><div class="bstat-lbl">Open</div></div>
+            <div><div class="bstat-val" style="color:#f59e0b;">{{ $perStatus['open'] }}</div><div class="bstat-lbl">Open</div></div>
         </div>
         <div class="bstat">
-            <div class="bstat-icon" style="background:#e3f2fd;">
-                <span class="material-symbols-outlined fil" style="color:#0d47a1;font-size:24px;">pending</span>
+            <div class="bstat-icon" style="background:var(--bp-light);">
+                <span class="material-symbols-outlined fil" style="color:var(--bp);font-size:24px;">pending</span>
             </div>
-            <div><div class="bstat-val" style="color:#0d47a1;">{{ $perStatus['in_progress'] }}</div><div class="bstat-lbl">In Progress</div></div>
+            <div><div class="bstat-val" style="color:var(--bp);">{{ $perStatus['in_progress'] }}</div><div class="bstat-lbl">In Progress</div></div>
         </div>
         <div class="bstat">
-            <div class="bstat-icon" style="background:#f3e5f5;">
-                <span class="material-symbols-outlined fil" style="color:#6a1b9a;font-size:24px;">hourglass_top</span>
+            <div class="bstat-icon" style="background:var(--bs-light);">
+                <span class="material-symbols-outlined fil" style="color:var(--bs);font-size:24px;">hourglass_top</span>
             </div>
-            <div><div class="bstat-val" style="color:#6a1b9a;">{{ $perStatus['closed_pending_qa'] }}</div><div class="bstat-lbl">Pending QA</div></div>
+            <div><div class="bstat-val" style="color:var(--bs);">{{ $perStatus['closed_pending_qa'] }}</div><div class="bstat-lbl">Pending QA</div></div>
         </div>
         <div class="bstat">
-            <div class="bstat-icon" style="background:#e8f5e9;">
-                <span class="material-symbols-outlined fil" style="color:#1b5e20;font-size:24px;">task_alt</span>
+            <div class="bstat-icon" style="background:rgba(16, 185, 129, 0.15);">
+                <span class="material-symbols-outlined fil" style="color:var(--success);font-size:24px;">task_alt</span>
             </div>
-            <div><div class="bstat-val" style="color:#1b5e20;">{{ $perStatus['closed_acc'] }}</div><div class="bstat-lbl">Closed ACC</div></div>
+            <div><div class="bstat-val" style="color:var(--success);">{{ $perStatus['closed_acc'] }}</div><div class="bstat-lbl">Closed ACC</div></div>
         </div>
     </div>
 
@@ -160,10 +160,10 @@
                     <tr>
                         <th>Departemen</th>
                         <th style="text-align:center;">Total</th>
-                        <th style="text-align:center;color:#e65100;">Open</th>
-                        <th style="text-align:center;color:#0d47a1;">In Progress</th>
-                        <th style="text-align:center;color:#6a1b9a;">Pending QA</th>
-                        <th style="text-align:center;color:#1b5e20;">Closed ACC</th>
+                        <th style="text-align:center;color:#f59e0b;">Open</th>
+                        <th style="text-align:center;color:var(--bp);">In Progress</th>
+                        <th style="text-align:center;color:var(--bs);">Pending QA</th>
+                        <th style="text-align:center;color:var(--success);">Closed ACC</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -171,10 +171,10 @@
                     <tr>
                         <td style="font-weight:600;">{{ $row['nama'] }}</td>
                         <td style="text-align:center;font-weight:700;">{{ $row['total'] }}</td>
-                        <td style="text-align:center;color:#e65100;">{{ $row['open'] }}</td>
-                        <td style="text-align:center;color:#0d47a1;">{{ $row['in_progress'] }}</td>
-                        <td style="text-align:center;color:#6a1b9a;">{{ $row['closed_pending_qa'] }}</td>
-                        <td style="text-align:center;color:#1b5e20;">{{ $row['closed_acc'] }}</td>
+                        <td style="text-align:center;color:#f59e0b;font-weight:600;">{{ $row['open'] }}</td>
+                        <td style="text-align:center;color:var(--bp);font-weight:600;">{{ $row['in_progress'] }}</td>
+                        <td style="text-align:center;color:var(--bs);font-weight:600;">{{ $row['closed_pending_qa'] }}</td>
+                        <td style="text-align:center;color:var(--success);font-weight:600;">{{ $row['closed_acc'] }}</td>
                     </tr>
                     @endforeach
                 </tbody>

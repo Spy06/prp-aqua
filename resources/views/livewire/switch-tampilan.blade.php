@@ -1,45 +1,55 @@
-<div x-data="{ showForm: false }" class="flex flex-col gap-6">
-    <!-- Header Dasbor -->
-    <section class="flex flex-col gap-1 pt-2 mb-2">
-        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Selamat {{ \Carbon\Carbon::now()->timezone('Asia/Jakarta')->hour < 11 ? 'Pagi' : (\Carbon\Carbon::now()->timezone('Asia/Jakarta')->hour < 15 ? 'Siang' : (\Carbon\Carbon::now()->timezone('Asia/Jakarta')->hour < 18 ? 'Sore' : 'Malam')) }}, {{ auth()->user()->name }}</h2>
-        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Catat temuan baru untuk menjaga standar area kerja.</p>
-    </section>
+<div x-data="{ showForm: false }">
 
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <!-- Tab Pills -->
-        <div class="flex items-center p-1.5 bg-slate-100 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-inner">
-            <button 
-                wire:click="setTab('pelapor')" 
-                class="{{ $tab === 'pelapor' ? 'bg-white dark:bg-slate-800 shadow-sm text-cyan-700 dark:text-cyan-400 font-bold' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 font-medium' }} px-5 py-2 text-sm rounded-lg transition-all">
-                Pelapor
-            </button>
-            <button 
-                wire:click="setTab('pic')" 
-                class="{{ $tab === 'pic' ? 'bg-white dark:bg-slate-800 shadow-sm text-cyan-700 dark:text-cyan-400 font-bold' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 font-medium' }} px-5 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                PIC
-                <!-- Badge: jumlah temuan open/in_progress milik user sebagai PIC -->
-                @if($picBadge > 0)
-                    <span class="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white shadow-sm">{{ $picBadge }}</span>
-                @else
-                    <span class="rounded-full bg-slate-200 px-2 py-0.5 text-xs font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-400">0</span>
-                @endif
-            </button>
+    {{-- Greeting Header --}}
+    <div class="bph fu">
+        <div>
+            @php
+                $hour = \Carbon\Carbon::now()->timezone('Asia/Jakarta')->hour;
+                $greeting = $hour < 11 ? 'Pagi' : ($hour < 15 ? 'Siang' : ($hour < 18 ? 'Sore' : 'Malam'));
+            @endphp
+            <h2 class="bph-title">Selamat {{ $greeting }}, {{ auth()->user()->name }}!</h2>
+            <p class="bph-sub">Catat temuan baru untuk menjaga standar area kerja.</p>
         </div>
 
-        @if ($tab === 'pelapor')
-            <button @click="showForm = !showForm" class="flex items-center gap-2 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-900/30 dark:text-cyan-400 dark:hover:bg-cyan-900/50 px-4 py-2 rounded-xl font-bold text-sm transition-colors border border-cyan-200 dark:border-cyan-800">
-                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;" x-text="showForm ? 'remove' : 'add'"></span>
+        @if($tab === 'pelapor')
+            <button @click="showForm = !showForm"
+                class="bbtn"
+                :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
+                <span class="material-symbols-outlined fil" style="font-size:18px;"
+                    x-text="showForm ? 'close' : 'add'"></span>
                 <span x-text="showForm ? 'Tutup Form' : 'Lapor Temuan Baru'"></span>
             </button>
         @endif
     </div>
 
+    {{-- Tab Switcher --}}
+    <div style="display:flex;align-items:center;gap:0;background:var(--bsur);padding:5px;border-radius:12px;border:1px solid var(--bbor);display:inline-flex;margin-bottom:20px;" class="fu1">
+        <button wire:click="setTab('pelapor')"
+            style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;
+            {{ $tab === 'pelapor' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
+            <span class="material-symbols-outlined {{ $tab === 'pelapor' ? 'fil' : '' }}" style="font-size:16px;vertical-align:-3px;margin-right:4px;">person</span>
+            Pelapor
+        </button>
+        <button wire:click="setTab('pic')"
+            style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;
+            {{ $tab === 'pic' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
+            <span class="material-symbols-outlined {{ $tab === 'pic' ? 'fil' : '' }}" style="font-size:16px;">assignment_ind</span>
+            PIC
+            @if($picBadge > 0)
+                <span style="background:#c62828;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">{{ $picBadge }}</span>
+            @else
+                <span style="background:var(--bbor);color:var(--btxt2);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">0</span>
+            @endif
+        </button>
+    </div>
+
+    {{-- Content --}}
     <div>
-        @if ($tab === 'pelapor')
-            <div x-show="showForm" x-collapse x-cloak class="mb-8">
+        @if($tab === 'pelapor')
+            {{-- Form Toggle --}}
+            <div x-show="showForm" x-collapse x-cloak style="margin-bottom:24px;">
                 <livewire:form-temuan />
             </div>
-            
             <livewire:daftar-temuan-pelapor />
         @else
             <livewire:daftar-temuan-p-i-c />

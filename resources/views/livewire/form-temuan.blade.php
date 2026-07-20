@@ -1,157 +1,195 @@
 <div>
-    @if (session()->has('success'))
-        <div class="mb-lg p-md bg-[#e6f4ea] text-[#137333] border border-[#ceead6] rounded-lg font-body-md shadow-sm">
-            {{ session('success') }}
+    {{-- Flash Messages --}}
+    @if(session()->has('success'))
+        <div class="balert balert-success fu" style="margin-bottom:20px;">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">check_circle</span>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+    @if(session()->has('error'))
+        <div class="balert balert-error fu" style="margin-bottom:20px;">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">error</span>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
-    @if (session()->has('error'))
-        <div class="mb-lg p-md bg-error-container text-on-error-container border border-[var(--color-error)] rounded-lg font-body-md shadow-sm">
-            {{ session('error') }}
+    {{-- Page Header --}}
+    <div class="bph fu">
+        <div>
+            <h2 class="bph-title">Buat Laporan Temuan</h2>
+            <p class="bph-sub">Laporkan kondisi ketidaksesuaian PRP di area produksi.</p>
         </div>
-    @endif
-
-    <div class="mb-lg">
-        <h3 class="font-headline-lg text-headline-lg text-on-background mb-xs">Buat Temuan Baru</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant">Laporkan kondisi ketidaksesuaian PRP di area produksi.</p>
     </div>
 
-    <!-- Form Container -->
-    <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] p-lg border border-outline-variant">
-        <form wire:submit="submit" class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-            <!-- Left Column -->
-            <div class="flex flex-col gap-md">
-                
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface" for="departemen">Departemen <span class="text-error">*</span></label>
-                    <select wire:model="departemen_id" id="departemen" class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
-                        <option value="">Pilih Departemen</option>
-                        @foreach($departemens as $dept)
-                            <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
-                        @endforeach
-                    </select>
-                    @error('departemen_id') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
+    {{-- Form Card --}}
+    <div class="bcard fu1">
+        <div class="bcard-header">
+            <div class="bcard-hicon" style="background:#e3f2fd;">
+                <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">edit_note</span>
+            </div>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:var(--btxt);">Form Laporan Baru</div>
+                <div style="font-size:12px;color:var(--btxt2);">Isi semua field yang bertanda *</div>
+            </div>
+        </div>
 
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface" for="subarea">Sub Area <span class="text-error">*</span></label>
-                    <input wire:model="sub_area" id="subarea" placeholder="Contoh: Line A Packaging" type="text" class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" />
-                    @error('sub_area') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
+        <div class="bcard-body">
+            <form wire:submit="submit">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
 
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface" for="klausul">Klausul PRP <span class="text-error">*</span></label>
-                    <select wire:model="klausul_id" id="klausul" class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
-                        <option value="">Pilih Klausul Referensi</option>
-                        @foreach($klausuls as $klausul)
-                            <option value="{{ $klausul->id }}">{{ $klausul->kode_klausul }} — {{ $klausul->nama_klausul }}</option>
-                        @endforeach
-                    </select>
-                    @error('klausul_id') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
+                    {{-- ── KOLOM KIRI ── --}}
+                    <div style="display:flex;flex-direction:column;gap:16px;">
 
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface">Upload Foto <span class="text-error">*</span></label>
-                    <div class="relative border-2 border-dashed border-outline-variant rounded-lg p-md flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-variant transition-colors cursor-pointer group">
-                        {{-- Input tanpa capture (gallery) — hidden, dipicu tombol --}}
-                        <input type="file" id="foto-gallery" wire:model="foto_temuan" accept="image/*"
-                               class="hidden" />
-                        {{-- Input dengan capture=environment (kamera belakang) — hidden, dipicu tombol --}}
-                        <input type="file" id="foto-camera" wire:model="foto_temuan" accept="image/*"
-                               capture="environment" class="hidden" />
+                        {{-- Departemen --}}
+                        <div>
+                            <label class="blabel" for="departemen">Departemen <span style="color:var(--error);">*</span></label>
+                            <select wire:model="departemen_id" id="departemen" class="binput">
+                                <option value="">Pilih Departemen</option>
+                                @foreach($departemens as $dept)
+                                    <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                                @endforeach
+                            </select>
+                            @error('departemen_id') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
 
-                        @if ($foto_temuan)
-                            <img src="{{ $foto_temuan->temporaryUrl() }}" class="h-32 object-contain rounded-md shadow-sm pointer-events-none">
-                        @else
-                            <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2">add_a_photo</span>
-                            <p class="font-body-sm text-on-surface-variant text-sm mb-3">Pilih metode upload foto</p>
-                        @endif
+                        {{-- Sub Area --}}
+                        <div>
+                            <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
+                            <input wire:model="sub_area" id="subarea" placeholder="Contoh: Line A Packaging" type="text" class="binput" />
+                            @error('sub_area') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
 
-                        <div class="flex gap-2 mt-2">
-                            <label for="foto-camera"
-                                   class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg hover:opacity-90 transition select-none">
-                                <span class="material-symbols-outlined text-sm leading-none">photo_camera</span>
-                                Ambil Foto
-                            </label>
-                            <label for="foto-gallery"
-                                   class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high text-on-surface text-xs font-semibold rounded-lg border border-outline-variant hover:bg-surface-variant transition select-none">
-                                <span class="material-symbols-outlined text-sm leading-none">photo_library</span>
-                                Dari Galeri
-                            </label>
+                        {{-- Klausul PRP --}}
+                        <div>
+                            <label class="blabel" for="klausul">Klausul PRP <span style="color:var(--error);">*</span></label>
+                            <select wire:model="klausul_id" id="klausul" class="binput">
+                                <option value="">Pilih Klausul Referensi</option>
+                                @foreach($klausuls as $klausul)
+                                    <option value="{{ $klausul->id }}">{{ $klausul->kode_klausul }} — {{ $klausul->nama_klausul }}</option>
+                                @endforeach
+                            </select>
+                            @error('klausul_id') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
+
+                        {{-- Upload Foto --}}
+                        <div>
+                            <label class="blabel">Upload Foto Temuan <span style="color:var(--error);">*</span></label>
+                            <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:140px;gap:10px;">
+                                <input type="file" id="foto-gallery" wire:model="foto_temuan" accept="image/*" style="display:none;" />
+                                <input type="file" id="foto-camera" wire:model="foto_temuan" accept="image/*" capture="environment" style="display:none;" />
+
+                                @if ($foto_temuan)
+                                    <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-height:120px;border-radius:8px;object-fit:contain;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                                @else
+                                    <span class="material-symbols-outlined" style="font-size:36px;color:var(--btxt2);">add_a_photo</span>
+                                    <p style="font-size:12.5px;color:var(--btxt2);margin:0;text-align:center;">Pilih metode upload foto temuan</p>
+                                @endif
+
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                                    <label for="foto-camera" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;transition:opacity .2s;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
+                                        Ambil Foto
+                                    </label>
+                                    <label for="foto-gallery" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);transition:opacity .2s;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
+                                        Dari Galeri
+                                    </label>
+                                </div>
+                            </div>
+                            @error('foto_temuan') <span class="berr">{{ $message }}</span> @enderror
+                            <div wire:loading wire:target="foto_temuan" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
+                                Mengunggah foto...
+                            </div>
                         </div>
                     </div>
-                    @error('foto_temuan') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
-                <div wire:loading wire:target="foto_temuan" class="font-body-sm text-primary mt-1">Mengunggah foto...</div>
-            </div>
 
-            <!-- Right Column -->
-            <div class="flex flex-col gap-md">
-                
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface" for="deskripsi">Deskripsi Temuan <span class="text-error">*</span></label>
-                    <textarea wire:model="deskripsi" id="deskripsi" placeholder="Jelaskan secara detail ketidaksesuaian yang ditemukan..." rows="4" class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none"></textarea>
-                    @error('deskripsi') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
+                    {{-- ── KOLOM KANAN ── --}}
+                    <div style="display:flex;flex-direction:column;gap:16px;">
 
-                <div class="flex flex-col gap-xs">
-                    <label class="font-label-md text-label-md text-on-surface" for="saran">Saran & Masukan (Opsional)</label>
-                    <textarea wire:model="saran" id="saran" placeholder="Saran perbaikan..." rows="3" class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none"></textarea>
-                    @error('saran') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="flex flex-col gap-xs relative">
-                    <label class="font-label-md text-label-md text-on-surface" for="pic">Person In Charge (PIC) <span class="text-error">*</span></label>
-                    
-                    @if($pic_id)
-                        <div class="flex items-center justify-between p-3 border border-outline-variant bg-surface-container-low rounded-lg shadow-sm">
-                            <span class="font-title-md text-on-surface flex items-center gap-2">
-                                <span class="material-symbols-outlined text-primary filled-icon">check_circle</span>
-                                {{ $picSearch }}
-                            </span>
-                            <button type="button" wire:click="clearPic" class="font-label-md text-error hover:text-error-container transition-colors">Batal</button>
+                        {{-- Deskripsi --}}
+                        <div>
+                            <label class="blabel" for="deskripsi">Deskripsi Temuan <span style="color:var(--error);">*</span></label>
+                            <textarea wire:model="deskripsi" id="deskripsi"
+                                placeholder="Jelaskan secara detail kondisi ketidaksesuaian yang ditemukan..."
+                                rows="5" class="binput" style="resize:vertical;"></textarea>
+                            @error('deskripsi') <span class="berr">{{ $message }}</span> @enderror
                         </div>
-                    @else
-                        <div class="relative">
-                            <span class="material-symbols-outlined absolute left-md top-1/2 transform -translate-y-1/2 text-outline-variant">search</span>
-                            <input wire:model.live.debounce.300ms="picSearch" id="pic" placeholder="Cari nama atau NIK PIC..." type="text" class="w-full bg-surface border border-outline-variant rounded-lg pl-xl pr-md py-sm font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" />
+
+                        {{-- Saran --}}
+                        <div>
+                            <label class="blabel" for="saran">Saran & Masukan <span style="font-size:10px;font-weight:400;color:var(--btxt2);">(Opsional)</span></label>
+                            <textarea wire:model="saran" id="saran" placeholder="Saran perbaikan kondisi ini..."
+                                rows="3" class="binput" style="resize:vertical;"></textarea>
+                            @error('saran') <span class="berr">{{ $message }}</span> @enderror
                         </div>
-                        
-                        @if(count($picResults) > 0)
-                            <div class="absolute top-full left-0 right-0 mt-1 z-20 bg-surface shadow-lg rounded-lg border border-outline-variant max-h-60 overflow-auto">
-                                <ul class="py-2">
-                                    @foreach($picResults as $result)
-                                        <li>
-                                            <button type="button" wire:click="selectPic({{ $result->id }}, '{{ addslashes($result->name ?? $result->nik) }}')" 
-                                                class="w-full text-left px-md py-sm hover:bg-surface-container-low transition-colors border-b border-outline-variant/50 last:border-0">
-                                                <div class="font-title-md text-on-surface">{{ $result->name ?? 'User' }}</div>
-                                                <div class="font-body-sm text-on-surface-variant mt-1">NIK: {{ $result->nik }}</div>
+
+                        {{-- PIC Search --}}
+                        <div style="position:relative;">
+                            <label class="blabel" for="pic">Person In Charge (PIC) <span style="color:var(--error);">*</span></label>
+
+                            @if($pic_id)
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1.5px solid #a5d6a7;border-radius:10px;background:#e8f5e9;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">check_circle</span>
+                                        <span style="font-size:13.5px;font-weight:600;color:#2e7d32;">{{ $picSearch }}</span>
+                                    </div>
+                                    <button type="button" wire:click="clearPic" style="font-size:12.5px;color:var(--error);background:none;border:none;cursor:pointer;font-weight:600;font-family:inherit;">
+                                        Ganti
+                                    </button>
+                                </div>
+                            @else
+                                <div style="position:relative;">
+                                    <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--btxt2);">search</span>
+                                    <input wire:model.live.debounce.300ms="picSearch" id="pic"
+                                        placeholder="Cari nama atau NIK PIC..."
+                                        type="text" class="binput" style="padding-left:38px;" />
+                                </div>
+
+                                @if(count($picResults) > 0)
+                                    <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:20;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.1);overflow:hidden;max-height:200px;overflow-y:auto;">
+                                        @foreach($picResults as $result)
+                                            <button type="button"
+                                                wire:click="selectPic({{ $result->id }}, '{{ addslashes($result->name ?? $result->nik) }}')"
+                                                style="width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--bbor);cursor:pointer;font-family:inherit;transition:background .15s;"
+                                                onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
+                                                <div style="font-size:13.5px;font-weight:600;color:var(--btxt);">{{ $result->name ?? 'User' }}</div>
+                                                <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">NIK: {{ $result->nik }}</div>
                                             </button>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @elseif(strlen($picSearch) >= 2)
-                            <div class="absolute top-full left-0 right-0 mt-1 z-20 bg-surface shadow-lg rounded-lg border border-outline-variant p-4 font-body-sm text-on-surface-variant text-center">
-                                Tidak ada PIC yang ditemukan.
-                            </div>
-                        @endif
-                    @endif
-                    @error('pic_id') <span class="font-body-sm text-error mt-1">{{ $message }}</span> @enderror
+                                        @endforeach
+                                    </div>
+                                @elseif(strlen($picSearch) >= 2)
+                                    <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:20;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);">
+                                        Tidak ada PIC yang ditemukan.
+                                    </div>
+                                @endif
+                            @endif
+                            @error('pic_id') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Footer Actions -->
-            <div class="md:col-span-2 flex justify-end gap-md pt-md border-t border-outline-variant mt-sm">
-                <a href="{{ route('beranda') }}" wire:navigate class="px-lg py-sm rounded-lg font-title-md text-title-md text-primary bg-secondary-container hover:bg-surface-variant transition-colors flex items-center justify-center">
-                    Batal
-                </a>
-                <button type="submit" wire:loading.attr="disabled" class="px-lg py-sm rounded-lg font-title-md text-title-md text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] flex items-center gap-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed">
-                    <span wire:loading.remove wire:target="submit" class="material-symbols-outlined">send</span>
-                    <span wire:loading.remove wire:target="submit">Kirim Laporan</span>
-                    <span wire:loading wire:target="submit">Menyimpan...</span>
-                </button>
-            </div>
-        </form>
+                {{-- Form Actions --}}
+                <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:20px;margin-top:20px;border-top:1px solid var(--bbor);">
+                    <a href="{{ route('beranda') }}" wire:navigate class="bbtn bbtn-secondary">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                        Batal
+                    </a>
+                    <button type="submit" wire:loading.attr="disabled" class="bbtn bbtn-primary">
+                        <span wire:loading.remove wire:target="submit" class="material-symbols-outlined" style="font-size:18px;">send</span>
+                        <span wire:loading wire:target="submit" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
+                        <span wire:loading.remove wire:target="submit">Kirim Laporan</span>
+                        <span wire:loading wire:target="submit">Menyimpan...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <style>
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @media (max-width: 640px) {
+            form > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+        }
+    </style>
 </div>

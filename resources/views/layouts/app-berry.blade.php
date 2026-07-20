@@ -13,50 +13,46 @@
     </script>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>{{ $title ?? 'QA — SIVERA' }}</title>
+    <title>{{ $title ?? 'SIVERA — Sistem Verifikasi PRP' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bp: #2196f3;       /* primary main (blue) */
-            --bp-light: #e3f2fd; /* primary light */
-            --bp-dark: #1e88e5;  /* primary dark */
-            
-            --bs: #673ab7;       /* secondary main (purple) */
-            --bs-light: #ede7f6; /* secondary light */
-            --bs-dark: #5e35b1;  /* secondary dark */
-            
-            --bsur: #eef2f6;     /* body background */
-            --bcard: #ffffff;    /* card / paper background */
-            --bside: #ffffff;    /* sidebar background */
-            --bbor: #e3e8ef;     /* border / divider */
-            
-            --btxt: #364152;     /* text primary */
-            --btxt2: #697586;    /* text secondary */
-            
+            --bp: #2196f3;
+            --bp-light: #e3f2fd;
+            --bp-dark: #1e88e5;
+            --bs: #673ab7;
+            --bs-light: #ede7f6;
+            --bs-dark: #5e35b1;
+            --bsur: #eef2f6;
+            --bcard: #ffffff;
+            --bside: #ffffff;
+            --bbor: #e3e8ef;
+            --btxt: #1a1f2e;
+            --btxt2: #697586;
+            --bp-light: #e3f2fd;
+            --bs-light: #ede7f6;
             --success: #00c853;
-            --success-light: #b9f6ca;
-            --warning: #ffc107;
-            --warning-light: #fff8e1;
+            --success-light: #e8f5e9;
             --error: #d84315;
             --error-light: #fbe9e7;
+            --warning: #ffc107;
+            --warning-light: #fff8e1;
         }
         .dark {
-            --bsur: #0f172a;     /* Slate-900 smooth eye-pleasing dark background */
-            --bcard: #1e293b;    /* Slate-800 soft card surface */
-            --bside: #0f172a;    /* Slate-900 matching sidebar */
-            --bbor: #334155;     /* Slate-700 soft divider border */
-            
-            --btxt: #f8fafc;     /* Slate-50 soft ivory text (no harsh glare) */
-            --btxt2: #94a3b8;    /* Slate-400 secondary text */
-            
+            --bsur: #0f172a;
+            --bcard: #1e293b;
+            --bside: #0f172a;
+            --bbor: #334155;
+            --btxt: #f8fafc;
+            --btxt2: #94a3b8;
             --bp-light: rgba(59, 130, 246, 0.15);
             --bs-light: rgba(139, 92, 246, 0.15);
             --bp: #60a5fa;
             --bs: #a78bfa;
         }
-        
+
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bsur); color: var(--btxt); margin: 0; min-height: 100vh; overflow-x: hidden; }
 
@@ -75,7 +71,6 @@
             box-shadow: 0 1px 10px rgba(0,0,0,.03);
             transition: left 0.3s ease;
         }
-        
         .logo-area {
             display: flex;
             align-items: center;
@@ -83,66 +78,31 @@
             width: 240px;
             flex-shrink: 0;
         }
-        
         .logo-box {
             width: 38px; height: 38px;
-            background: linear-gradient(135deg, #7c4dff, #673ab7);
+            background: linear-gradient(135deg, #2196f3, #1565c0);
             border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(103, 58, 183, 0.35);
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.35);
         }
         .logo-box span { color: #fff; font-size: 20px; }
-        .logo-text h1 { font-size: 16px; font-weight: 700; color: var(--bs); letter-spacing: -0.3px; margin: 0; }
-        .dark .logo-text h1 { color: #b39ddb; }
+        .logo-text h1 { font-size: 16px; font-weight: 700; color: var(--bp); letter-spacing: -0.3px; margin: 0; }
+        .dark .logo-text h1 { color: #93c5fd; }
         .logo-text p { font-size: 10px; color: var(--btxt2); margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Toggle Menu Button (Round-square avatar styling) */
         .qtop-toggle {
             width: 34px; height: 34px;
             border-radius: 8px;
-            background: var(--bs-light);
-            color: var(--bs-dark);
+            background: var(--bp-light);
+            color: var(--bp-dark);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s ease-in-out;
             border: none; outline: none;
         }
-        .qtop-toggle:hover {
-            background: var(--bs-dark);
-            color: #fff;
-        }
-        .dark .qtop-toggle {
-            color: #b39ddb;
-        }
-        .dark .qtop-toggle:hover {
-            background: var(--bs);
-            color: #fff;
-        }
+        .qtop-toggle:hover { background: var(--bp-dark); color: #fff; }
+        .dark .qtop-toggle { color: #93c5fd; }
+        .dark .qtop-toggle:hover { background: var(--bp); color: #fff; }
 
-        /* Search Section */
-        .qtop-search {
-            display: flex; align-items: center;
-            background: var(--bsur);
-            border-radius: 12px;
-            padding: 8px 14px;
-            gap: 8px;
-            margin-left: 20px;
-            width: 100%; max-width: 300px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-        .qtop-search:focus-within {
-            background: var(--bcard);
-            border-color: var(--bp);
-            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
-        }
-        .qtop-search input {
-            background: transparent; border: none; outline: none;
-            color: var(--btxt); font-size: 13.5px; width: 100%;
-            font-family: inherit;
-        }
-        .qtop-search span { color: var(--btxt2); font-size: 18px; }
-
-        /* Topbar Actions */
         .qtop-act { display: flex; align-items: center; gap: 12px; }
         .qtop-icon-btn {
             width: 34px; height: 34px;
@@ -153,33 +113,27 @@
             cursor: pointer; transition: all 0.2s;
             border: none; outline: none;
         }
-        .qtop-icon-btn:hover {
-            background: var(--bp-dark);
-            color: #fff;
-        }
-        
-        /* User Profile Display (Static Pill) */
+        .qtop-icon-btn:hover { background: var(--bp-dark); color: #fff; }
+
         .qtop-profile-pill {
             display: flex; align-items: center; gap: 8px;
             padding: 5px 14px 5px 5px;
-            background: var(--bs-light);
+            background: var(--bp-light);
             border-radius: 24px;
             border: none; cursor: default;
-            color: var(--bs-dark);
+            color: var(--bp-dark);
             font-family: inherit;
             user-select: none;
         }
         .qtop-profile-pill .qs-av {
             width: 28px; height: 28px;
-            background: var(--bs);
+            background: var(--bp);
             color: #fff;
             font-weight: 700; font-size: 12px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
         }
-        .qtop-profile-pill .name {
-            font-size: 13px; font-weight: 600;
-        }
+        .qtop-profile-pill .name { font-size: 13px; font-weight: 600; }
 
         /* ── Sidebar Drawer ── */
         .qs {
@@ -212,7 +166,7 @@
         .qs-content::-webkit-scrollbar { width: 3px; }
         .qs-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
         .dark .qs-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
-        
+
         .qs-group-label {
             font-size: 11px; font-weight: 700;
             color: var(--btxt);
@@ -236,17 +190,10 @@
             text-decoration: none;
             margin-bottom: 4px;
         }
-        .qs-item:hover {
-            background: var(--bs-light);
-            color: var(--bs-dark);
-        }
-        .qs-item.active {
-            background: var(--bs-light);
-            color: var(--bs-dark);
-            font-weight: 600;
-        }
+        .qs-item:hover { background: var(--bp-light); color: var(--bp-dark); }
+        .qs-item.active { background: var(--bp-light); color: var(--bp-dark); font-weight: 600; }
         .qs-item span.ic { font-size: 20px; width: 22px; text-align: center; }
-        
+
         .qs-footer {
             padding: 16px;
             border-top: 1px solid var(--bbor);
@@ -259,6 +206,14 @@
             border: 1px solid var(--bbor);
             margin-bottom: 8px;
         }
+        .qs-av {
+            width: 34px; height: 34px;
+            background: var(--bp);
+            color: #fff; font-weight: 700; font-size: 13px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
         .qs-footer .qs-action {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 12px; border-radius: 8px;
@@ -266,29 +221,16 @@
             transition: all 0.2s; cursor: pointer; width: 100%;
             background: none; border: none; text-align: left; font-family: inherit;
         }
-        .qs-footer .qs-action:hover {
-            background: var(--error-light);
-            color: var(--error);
-        }
+        .qs-footer .qs-action:hover { background: var(--error-light); color: var(--error); }
 
         /* ── Main Layout Spacing ── */
-        .qmain-wrapper {
-            min-height: 100vh;
-            padding-top: 80px;
-            transition: margin-left 0.3s ease;
-        }
-        .qcontent-container {
-            padding: 24px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        .qmain-wrapper { min-height: 100vh; padding-top: 80px; transition: margin-left 0.3s ease; }
+        .qcontent-container { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
         /* ── Sidebar Open/Closed States ── */
         .sidebar-open .qs { transform: translateX(0); }
         .sidebar-open .qtop { left: 260px; }
         .sidebar-open .qmain-wrapper { margin-left: 260px; }
-
         .sidebar-closed .qs { transform: translateX(-260px); }
         .sidebar-closed .qtop { left: 0; }
         .sidebar-closed .qmain-wrapper { margin-left: 0; }
@@ -301,166 +243,131 @@
             .logo-text p { display: none; }
             .qmain-wrapper, .sidebar-open .qmain-wrapper, .sidebar-closed .qmain-wrapper { margin-left: 0 !important; padding-top: 64px; }
             .qcontent-container { padding: 16px; }
-            
             .sidebar-open .qs { transform: translateX(0); }
             .sidebar-closed .qs { transform: translateX(-260px); }
         }
-
         @media (max-width: 640px) {
             .qtop, .sidebar-open .qtop, .sidebar-closed .qtop { padding: 0 12px; height: 58px; }
             .qtop-act { gap: 8px; }
-            .qtop-icon-btn { width: 32px; height: 32px; }
+            .qtop-icon-btn { width: 30px; height: 30px; }
             .qtop-profile-pill { padding: 4px; }
             .qtop-profile-pill .name { display: none; }
-            .logo-box { width: 32px; height: 32px; }
-            .logo-box span { font-size: 18px; }
+            .logo-box { width: 30px; height: 30px; }
+            .logo-box span { font-size: 16px; }
             .logo-text h1 { font-size: 14px; }
-            
             .qmain-wrapper { padding-top: 58px; }
             .qcontent-container { padding: 12px; }
-            
-            .bcard { padding: 14px !important; border-radius: 10px; }
-            .bph { margin-bottom: 14px; gap: 8px; flex-direction: column; align-items: flex-start; }
-            .bph-title { font-size: 17px; }
-            .bph-sub { font-size: 12px; }
-            
-            .berry-stat { padding: 14px !important; border-radius: 10px; }
-            .stat-avatar { width: 34px; height: 34px; margin-bottom: 8px; }
-            .stat-avatar span { font-size: 18px; }
-            .stat-title { font-size: 11.5px; margin-bottom: 2px; }
-            .stat-num { font-size: 22px; }
-            
-            .bstat { padding: 12px; gap: 10px; border-radius: 10px; }
-            .bstat-icon { width: 38px; height: 38px; border-radius: 8px; }
-            .bstat-val { font-size: 18px; }
-            .bstat-lbl { font-size: 11px; }
-
-            .btbl th, .btbl td { padding: 10px 12px; font-size: 12px; }
-            
-            .bbtn { padding: 8px 14px; font-size: 12px; border-radius: 8px; width: 100%; justify-content: center; }
-            .bbtn-sm { padding: 5px 10px !important; font-size: 11.5px !important; width: auto; }
-
-            .binput { padding: 9px 12px; font-size: 12.5px; border-radius: 8px; }
-            .blabel { font-size: 11.5px; }
-
-            /* Force form grid stacking on narrow screens */
-            div[style*="grid-template-columns"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-
-        /* ── Earning & Order Card Abstract Circle Decorations ── */
-        .earning-card {
-            background: linear-gradient(135deg, var(--bs-dark) 0%, var(--bs) 100%);
-            color: #fff !important;
-            position: relative;
-            overflow: hidden;
-            border: none !important;
-            border-radius: 12px;
-        }
-        .earning-card::after {
-            content: "";
-            position: absolute;
-            width: 210px; height: 210px;
-            background: var(--bs-dark);
-            border-radius: 50%;
-            top: -85px; right: -95px;
-            opacity: 0.5;
-        }
-        .earning-card::before {
-            content: "";
-            position: absolute;
-            width: 210px; height: 210px;
-            background: var(--bs-dark);
-            border-radius: 50%;
-            top: -125px; right: -15px;
-            opacity: 0.25;
-        }
-        
-        .blue-card {
-            background: linear-gradient(135deg, var(--bp-dark) 0%, var(--bp) 100%);
-            color: #fff !important;
-            position: relative;
-            overflow: hidden;
-            border: none !important;
-            border-radius: 12px;
-        }
-        .blue-card::after {
-            content: "";
-            position: absolute;
-            width: 210px; height: 210px;
-            background: var(--bp-dark);
-            border-radius: 50%;
-            top: -85px; right: -95px;
-            opacity: 0.5;
-        }
-        .blue-card::before {
-            content: "";
-            position: absolute;
-            width: 210px; height: 210px;
-            background: var(--bp-dark);
-            border-radius: 50%;
-            top: -125px; right: -15px;
-            opacity: 0.25;
+            .bcard-body { padding: 14px !important; }
+            .bph { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; }
+            .bstat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .bstat { padding: 12px; gap: 10px; }
+            .bstat-icon { width: 38px; height: 38px; }
+            .bstat-val { font-size: 20px; }
         }
 
         /* ── Standard Berry Cards ── */
         .bcard {
             background: var(--bcard);
             border: 1px solid var(--bbor);
-            border-radius: 12px;
+            border-radius: 14px;
             box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.06);
+            overflow: hidden;
             transition: box-shadow 0.25s, transform 0.25s;
         }
-        .bcard:hover {
-            box-shadow: 0 6px 20px rgba(94, 53, 177, 0.08);
-            transform: translateY(-1px);
+        .bcard:hover { box-shadow: 0 6px 20px rgba(33, 150, 243, 0.08); }
+        .bcard-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--bbor);
+            display: flex; align-items: center; gap: 12px;
+            background: var(--bsur);
         }
+        .bcard-header-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .bcard-body { padding: 20px; }
 
-        /* ── Stat cards ── */
+        /* ── Stat Cards ── */
+        .bstat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 1024px) { .bstat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .bstat-grid { grid-template-columns: 1fr 1fr; gap: 8px; } }
+
         .bstat {
             background: var(--bcard);
             border: 1px solid var(--bbor);
             border-radius: 12px;
-            padding: 20px;
-            display: flex; align-items: center; gap: 16px;
+            padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
             box-shadow: 0 2px 14px 0 rgba(32, 40, 45, 0.04);
             transition: all 0.25s;
         }
-        .bstat:hover {
-            box-shadow: 0 6px 20px rgba(103, 58, 183, 0.1);
-            transform: translateY(-2px);
-        }
+        .bstat:hover { box-shadow: 0 6px 20px rgba(33, 150, 243, 0.1); transform: translateY(-2px); }
         .bstat-icon {
-            width: 52px; height: 52px;
+            width: 48px; height: 48px;
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
         .bstat-val { font-size: 26px; font-weight: 700; color: var(--btxt); line-height: 1; }
-        .bstat-lbl { font-size: 12.5px; color: var(--btxt2); margin-top: 3px; font-weight: 500; }
+        .bstat-lbl { font-size: 12px; color: var(--btxt2); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* ── Berry Table ── */
-        .btbl { width: 100%; border-collapse: collapse; }
-        .btbl thead tr { background: var(--bp-light); }
-        .dark .btbl thead tr { background: #334155; }
-        .btbl th {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--bp-dark);
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            white-space: nowrap;
-            border-bottom: 1px solid var(--bbor);
+        /* ── Temuan Cards ── */
+        .temuan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
         }
-        .dark .btbl th { color: #93c5fd; }
-        .btbl tbody tr { border-bottom: 1px solid var(--bbor); transition: background .15s; }
-        .btbl tbody tr:last-child { border-bottom: none; }
-        .btbl tbody tr:hover { background: rgba(103, 58, 183, 0.03); }
-        .dark .btbl tbody tr:hover { background: rgba(59, 130, 246, 0.08); }
-        .btbl td { padding: 14px 16px; font-size: 13.5px; color: var(--btxt); vertical-align: middle; }
+        @media (max-width: 1024px) { .temuan-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .temuan-grid { grid-template-columns: 1fr; gap: 12px; } }
+
+        .temuan-card {
+            background: var(--bcard);
+            border: 1px solid var(--bbor);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.25s; text-decoration: none;
+        }
+        .temuan-card:hover {
+            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+            transform: translateY(-2px);
+            border-color: var(--bp);
+        }
+        .temuan-card-body { padding: 16px; flex: 1; }
+        .temuan-card-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--bbor);
+            background: var(--bsur);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; color: var(--btxt2);
+        }
+
+        /* ── Page Header ── */
+        .bph { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+        .bph-title { font-size: 22px; font-weight: 700; color: var(--btxt); letter-spacing: -0.3px; margin: 0; }
+        .bph-sub { font-size: 13px; color: var(--btxt2); margin-top: 4px; font-weight: 500; }
+
+        /* ── Status Badges ── */
+        .sbadge {
+            display: inline-flex; align-items: center;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+            text-transform: uppercase; border: 1px solid transparent;
+        }
+        .sbadge-open { background: #fff8e1; color: #b06000; border-color: #fde293; }
+        .sbadge-progress { background: var(--bp-light); color: var(--bp-dark); border-color: rgba(33, 150, 243, 0.2); }
+        .sbadge-pending { background: #fce8e6; color: #c5221f; border-color: #f2b8b5; }
+        .sbadge-closed { background: #e6f4ea; color: #137333; border-color: #ceead6; }
+        .dark .sbadge-open { background: rgba(245, 158, 11, 0.18); color: #fde68a; border-color: rgba(245,158,11,0.3); }
+        .dark .sbadge-progress { background: rgba(59, 130, 246, 0.18); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+        .dark .sbadge-pending { background: rgba(239, 68, 68, 0.18); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+        .dark .sbadge-closed { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; border-color: rgba(16,185,129,0.3); }
 
         /* ── Buttons ── */
         .bbtn {
@@ -471,67 +378,81 @@
             text-decoration: none; font-family: inherit;
             white-space: nowrap;
         }
-        .bbtn-primary { background: var(--bs); color: #fff; box-shadow: 0 4px 12px rgba(103, 58, 183, 0.25); }
-        .bbtn-primary:hover { background: var(--bs-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(103, 58, 183, 0.35); }
-        
-        .bbtn-secondary { background: var(--bsur); color: var(--btxt); border: 1px solid var(--bbor)!important; }
-        .bbtn-secondary:hover { background: var(--bs-light); color: var(--bs-dark); border-color: var(--bs-light)!important; }
-        .dark .bbtn-secondary { background: #334155; color: #f8fafc; border-color: #475569!important; }
-        .dark .bbtn-secondary:hover { background: #475569; color: #ffffff; }
-
-        .bbtn-success { background: var(--success); color: #fff; box-shadow: 0 4px 12px rgba(0, 200, 83, 0.2); }
+        .bbtn-primary { background: var(--bp); color: #fff; box-shadow: 0 4px 12px rgba(33, 150, 243, 0.25); }
+        .bbtn-primary:hover { background: var(--bp-dark); transform: translateY(-1px); }
+        .bbtn-secondary { background: var(--bsur); color: var(--btxt); border: 1.5px solid var(--bbor) !important; }
+        .bbtn-secondary:hover { background: var(--bp-light); color: var(--bp-dark); }
+        .dark .bbtn-secondary { background: #334155; color: #f8fafc; border-color: #475569 !important; }
+        .dark .bbtn-secondary:hover { background: #475569; }
+        .bbtn-success { background: var(--success); color: #fff; }
         .bbtn-success:hover { background: #00a142; transform: translateY(-1px); }
-        
-        .bbtn-danger { background: var(--error); color: #fff; box-shadow: 0 4px 12px rgba(216, 67, 21, 0.2); }
+        .bbtn-danger { background: var(--error); color: #fff; }
         .bbtn-danger:hover { background: #b73214; transform: translateY(-1px); }
-        .bbtn-sm { padding: 6px 12px!important; font-size: 12px!important; border-radius: 8px; }
+        .bbtn-sm { padding: 6px 12px !important; font-size: 12px !important; border-radius: 8px; }
+        @media (max-width: 640px) {
+            .bbtn { padding: 9px 14px; font-size: 12.5px; border-radius: 8px; }
+            .bbtn-sm { width: auto !important; }
+        }
 
-        /* ── Badges ── */
-        .bbadge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
-        .bbadge-open { background: var(--warning-light); color: #b78103; }
-        .bbadge-progress { background: var(--bp-light); color: var(--bp-dark); }
-        .bbadge-pending { background: var(--bs-light); color: var(--bs-dark); }
-        .bbadge-closed { background: var(--success-light); color: #007d32; }
-        .dark .bbadge-open { background: rgba(245, 158, 11, 0.18); color: #fde68a; }
-        .dark .bbadge-closed { background: rgba(16, 185, 129, 0.18); color: #a7f3d0; }
-        .dark .bbadge-progress { background: rgba(59, 130, 246, 0.18); color: #bfdbfe; }
-        .dark .bbadge-pending { background: rgba(139, 92, 246, 0.18); color: #ddd6fe; }
-
-        /* ── Inputs ── */
-        .binput { width: 100%; padding: 11px 16px; border: 1.5px solid var(--bbor); border-radius: 12px; font-size: 13.5px; color: var(--btxt); background: var(--bcard); transition: border-color .2s, box-shadow .2s; outline: none; font-family: inherit; }
-        .binput:focus { border-color: var(--bs); box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.15); }
+        /* ── Form Inputs ── */
+        .binput {
+            width: 100%; padding: 11px 16px; border: 1.5px solid var(--bbor);
+            border-radius: 12px; font-size: 13.5px; color: var(--btxt);
+            background: var(--bcard); transition: border-color .2s, box-shadow .2s;
+            outline: none; font-family: inherit;
+        }
+        .binput:focus { border-color: var(--bp); box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15); }
         .dark .binput { background: #0f172a; color: #f8fafc; border-color: #334155; }
         .dark .binput:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2); }
-        .blabel { display: block; font-size: 12px; font-weight: 600; color: var(--btxt2); margin-bottom: 6px; }
+        .dark .binput:disabled { background: #1e293b; color: #64748b; }
+        .binput:disabled { background: var(--bsur); color: var(--btxt2); cursor: not-allowed; }
+        .blabel { display: block; font-size: 12px; font-weight: 600; color: var(--btxt2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
         .berr-msg { font-size: 11.5px; color: var(--error); margin-top: 4px; font-weight: 500; }
 
         /* ── Alerts ── */
-        .balert { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 16px; border: 1px solid transparent; }
+        .balert { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: 12px; font-size: 13px; border: 1px solid transparent; }
         .balert-success { background: var(--success-light); border-color: rgba(0, 200, 83, 0.2); color: #007d32; }
         .balert-error { background: var(--error-light); border-color: rgba(216, 67, 21, 0.2); color: #b73214; }
         .balert-warn { background: var(--warning-light); border-color: rgba(255, 193, 7, 0.2); color: #b78103; }
+        .balert-info { background: var(--bp-light); border-color: rgba(33, 150, 243, 0.2); color: var(--bp-dark); }
         .dark .balert-success { background: rgba(16, 185, 129, 0.15); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.35); }
         .dark .balert-warn { background: rgba(245, 158, 11, 0.15); color: #fde68a; border-color: rgba(245, 158, 11, 0.35); }
         .dark .balert-error { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
+        .dark .balert-info { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border-color: rgba(59, 130, 246, 0.3); }
 
-        /* ── Page Header ── */
-        .bph { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-        .bph-title { font-size: 22px; font-weight: 700; color: var(--btxt); letter-spacing: -0.3px; margin: 0; }
-        .bph-sub { font-size: 13px; color: var(--btxt2); margin-top: 4px; font-weight: 500; }
+        /* ── Urgency Banners ── */
+        .urgency-overdue { background: #fce8e6; border-bottom: 1px solid #f2b8b5; color: #c5221f; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+        .urgency-soon { background: #fff8e1; border-bottom: 1px solid #fde293; color: #b06000; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+        .urgency-pending { background: #f3e8fd; border-bottom: 1px solid #e9d2fc; color: #6b1cb0; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+        .dark .urgency-overdue { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+        .dark .urgency-soon { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.3); color: #fde68a; }
+        .dark .urgency-pending { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.3); color: #ddd6fe; }
+
+        /* ── Info Field ── */
+        .info-field { margin-bottom: 16px; }
+        .info-label { font-size: 11px; font-weight: 700; color: var(--btxt2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+        .info-value { font-size: 14px; font-weight: 600; color: var(--btxt); }
+        .info-text { font-size: 13.5px; color: var(--btxt); line-height: 1.6; white-space: pre-wrap; background: var(--bsur); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--bbor); }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--btxt2); margin-bottom: 20px; }
+        .breadcrumb a { color: var(--btxt2); text-decoration: none; transition: color 0.15s; }
+        .breadcrumb a:hover { color: var(--bp); }
+        .breadcrumb .sep { font-size: 16px; }
+        .breadcrumb .current { color: var(--btxt); font-weight: 600; }
 
         /* ── Animations ── */
-        @keyframes slideInLeft { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .fu { animation: fadeUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
         .fu1 { animation: fadeUp 0.4s 0.05s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
         .fu2 { animation: fadeUp 0.4s 0.1s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
         .fu3 { animation: fadeUp 0.4s 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
-        .fu4 { animation: fadeUp 0.4s 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
 
         /* ── Misc ── */
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fil { font-variation-settings: 'FILL' 1; }
         .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
     @livewireStyles
 </head>
@@ -540,30 +461,25 @@
     {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
         <div class="logo-area">
-            {{-- Logo Section --}}
             <div class="logo-box">
-                <span class="material-symbols-outlined">verified_user</span>
+                <span class="material-symbols-outlined">factory</span>
             </div>
             <div class="logo-text">
-                <h1>SIVERA QA</h1>
-                <p>Internal System</p>
+                <h1>SIVERA</h1>
+                <p>Verifikasi PRP</p>
             </div>
         </div>
-        
+
         <div style="display:flex;align-items:center;flex:1;">
-            {{-- Sidebar Toggle Button --}}
             <button @click="if(window.innerWidth > 960) { sidebarOpen = !sidebarOpen } else { mobileOpen = !mobileOpen }" class="qtop-toggle" title="Toggle Sidebar">
                 <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
 
         <div class="qtop-act">
-            {{-- Theme Toggle --}}
             <button onclick="toggleTheme()" class="qtop-icon-btn" title="Toggle Theme">
                 <span class="material-symbols-outlined" style="font-size:18px;">dark_mode</span>
             </button>
-
-            {{-- Static User Profile Display --}}
             @auth
             <div class="qtop-profile-pill">
                 <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
@@ -575,11 +491,10 @@
 
     {{-- ═══ SIDEBAR DRAWER ═══ --}}
     <aside class="qs" :style="window.innerWidth <= 960 ? (mobileOpen ? 'transform:translateX(0)' : 'transform:translateX(-260px)') : ''">
-        {{-- Sidebar Logo Area --}}
         <div class="qs-header">
             <div class="logo-area">
                 <div class="logo-box">
-                    <span class="material-symbols-outlined">verified_user</span>
+                    <span class="material-symbols-outlined">factory</span>
                 </div>
                 <div class="logo-text">
                     <h1>SIVERA</h1>
@@ -588,49 +503,31 @@
             </div>
         </div>
 
-        {{-- Sidebar Menu Content --}}
         <div class="qs-content">
-            <span class="qs-group-label">Dashboard</span>
-            <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
-                <span>Grafik Temuan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                <span>Daftar Temuan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
-                <span>Rekap Periode</span>
-            </a>
-
-            <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
-            <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">group</span>
-                <span>Karyawan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">domain</span>
-                <span>Departemen</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">rule</span>
-                <span>Klausul PRP</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">manage_accounts</span>
-                <span>Akun User</span>
-            </a>
+            @auth
+                @if(auth()->user()->role === 'pelapor')
+                    <span class="qs-group-label">Menu</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">home</span>
+                        <span>Beranda</span>
+                    </a>
+                @elseif(auth()->user()->role === 'pic')
+                    <span class="qs-group-label">Menu</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">assignment</span>
+                        <span>Temuan Saya</span>
+                    </a>
+                @endif
+            @endauth
         </div>
 
-        {{-- Sidebar Footer with logout and user detail --}}
         <div class="qs-footer">
             @auth
             <div class="qs-user">
                 <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="overflow:hidden;flex:1;">
-                    <div class="qs-uname truncate" style="color:var(--btxt);font-size:13px;font-weight:600;">{{ auth()->user()->name }}</div>
-                    <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">QA Admin</div>
+                    <div class="truncate" style="color:var(--btxt);font-size:13px;font-weight:600;">{{ auth()->user()->name }}</div>
+                    <div style="color:var(--btxt2);font-size:11px;text-transform:capitalize;">{{ auth()->user()->role }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('logout') }}" style="width:100%;">
@@ -644,8 +541,8 @@
         </div>
     </aside>
 
-    {{-- Close sidebar backdrop on mobile --}}
-    <div x-show="mobileOpen" @click="mobileOpen = false" class="lg:hidden fixed inset-0 bg-black/40 z-40 transition-opacity"></div>
+    {{-- Mobile Backdrop --}}
+    <div x-show="mobileOpen" @click="mobileOpen = false" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:40;" x-transition></div>
 
     {{-- ═══ MAIN LAYOUT WRAPPER ═══ --}}
     <div class="qmain-wrapper">
@@ -659,8 +556,8 @@
         style="position:fixed;inset:0;margin:auto;border-radius:16px;border:1px solid var(--bbor);background:var(--bcard);padding:24px;max-width:380px;width:90%;color:var(--btxt);outline:none;box-shadow:0 24px 60px rgba(0,0,0,.15);"
         class="backdrop:bg-black/40 backdrop:backdrop-blur-sm">
         <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">
-            <div style="width:40px;height:40px;border-radius:10px;background:var(--bs-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <span class="material-symbols-outlined" style="color:var(--bs-dark);font-size:22px;">help</span>
+            <div style="width:40px;height:40px;border-radius:10px;background:var(--bp-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span class="material-symbols-outlined" style="color:var(--bp-dark);font-size:22px;">help</span>
             </div>
             <div>
                 <h3 style="font-size:15px;font-weight:700;margin:0 0 6px;color:var(--btxt);">Konfirmasi Aksi</h3>

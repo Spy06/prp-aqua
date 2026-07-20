@@ -125,7 +125,7 @@
                                 <button wire:click="toggleStatus('{{ $k->nik }}')"
                                         wire:confirm="Ubah status aktif karyawan '{{ $k->nama }}'?"
                                         title="Toggle Status"
-                                        class="bbtn bbtn-sm" style="padding:5px 8px!important;background:{{ $k->status_aktif ? '#fff3e0' : '#e8f5e9' }};color:{{ $k->status_aktif ? '#e65100' : '#1b5e20' }};border:1px solid {{ $k->status_aktif ? '#ffcc80' : '#a5d6a7' }};">
+                                        class="bbtn bbtn-sm {{ $k->status_aktif ? 'bbadge-open' : 'bbadge-closed' }}" style="padding:5px 8px!important; cursor:pointer;">
                                     <span class="material-symbols-outlined" style="font-size:15px;">{{ $k->status_aktif ? 'person_off' : 'person' }}</span>
                                 </button>
                             </div>

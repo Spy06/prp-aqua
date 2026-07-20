@@ -1,42 +1,37 @@
-<div class="bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-amber-200 dark:border-amber-700/50 overflow-hidden mt-6">
-    <div class="px-6 py-4 border-b border-amber-100 dark:border-amber-900/30 flex items-center gap-3 bg-amber-50/50 dark:bg-amber-900/10">
-        <div class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
-            <flux:icon.shield-check variant="outline" class="w-5 h-5 text-amber-600 dark:text-amber-400" />
+<div class="bcard" style="border-left:4px solid #f59e0b;margin-top:20px;">
+    <div class="bcard-header">
+        <div class="bcard-hicon" style="background:#fff8e1;">
+            <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">shield_check</span>
         </div>
         <div>
-            <h2 class="text-base font-semibold text-amber-900 dark:text-amber-100">Verifikasi QA</h2>
-            <p class="text-xs text-amber-700 dark:text-amber-300">Tinjau tindak lanjut PIC dan berikan keputusan</p>
+            <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi QA</div>
+            <div style="font-size:12px;color:var(--btxt2);">Tinjau tindak lanjut PIC dan berikan keputusan</div>
         </div>
     </div>
 
-    <div class="p-6">
-        <form wire:submit.prevent="tolak" class="space-y-4">
+    <div class="bcard-body">
+        <form wire:submit.prevent="tolak" style="display:flex;flex-direction:column;gap:16px;">
             <div>
-                <label for="catatan_qa" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Catatan QA (Wajib diisi jika menolak)</label>
-                <textarea 
-                    wire:model="catatan_qa" 
-                    id="catatan_qa" 
-                    rows="3" 
-                    class="block w-full rounded-md border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                <label class="blabel" for="catatan_qa">
+                    Catatan QA
+                    <span style="font-size:10px;font-weight:400;color:var(--btxt2);text-transform:none;">(Wajib diisi jika menolak)</span>
+                </label>
+                <textarea wire:model="catatan_qa" id="catatan_qa" rows="3"
                     placeholder="Tulis alasan jika bukti kurang jelas atau tindakan tidak sesuai..."
-                ></textarea>
-                @error('catatan_qa') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    class="binput" style="resize:vertical;"></textarea>
+                @error('catatan_qa')
+                    <span class="berr">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="flex items-center gap-3 pt-2">
-                <button 
-                    type="button" 
-                    wire:click="setujui" 
-                    class="inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                >
-                    <flux:icon.check class="w-4 h-4 mr-2" /> Setujui (Closed)
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <button type="button" wire:click="setujui" class="bbtn bbtn-success">
+                    <span class="material-symbols-outlined fil" style="font-size:18px;">check_circle</span>
+                    Setujui (Closed ACC)
                 </button>
-
-                <button 
-                    type="submit" 
-                    class="inline-flex justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                    <flux:icon.x-mark class="w-4 h-4 mr-2" /> Tolak (Kembali ke In Progress)
+                <button type="submit" class="bbtn bbtn-danger">
+                    <span class="material-symbols-outlined fil" style="font-size:18px;">cancel</span>
+                    Tolak (Kembali ke In Progress)
                 </button>
             </div>
         </form>

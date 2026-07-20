@@ -77,11 +77,49 @@
         .stat-avatar span { color: #fff; font-size: 24px; }
         .stat-content { position: relative; z-index: 2; }
         .stat-title { font-size: 13.5px; font-weight: 500; opacity: 0.85; margin: 0 0 6px; }
-        .stat-num { font-size: 30px; font-weight: 700; margin: 0; line-height: 1.1; }
+        .berry-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 1200px) {
+            .berry-stat-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .berry-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        }
+        @media (max-width: 480px) {
+            .berry-stat-grid { grid-template-columns: 1fr; gap: 8px; }
+        }
+
+        /* 2x2 Symmetric Responsive Grid Layout */
+        .charts-2x2-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .chart-card-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            min-height: 420px;
+        }
+
+        @media (max-width: 991.98px) {
+            .charts-2x2-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .chart-card-box {
+                min-height: auto;
+            }
+        }
     </style>
 
     {{-- Stat Cards Grid (Berry style gradient blocks) --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+    <div class="berry-stat-grid">
         <div class="berry-stat stat-purple fu">
             <div class="stat-avatar">
                 <span class="material-symbols-outlined fil">assignment</span>
@@ -129,11 +167,11 @@
         </div>
     </div>
 
-    {{-- Charts Grid --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;">
+    {{-- Charts 2x2 Grid (2 Atas, 2 Bawah) --}}
+    <div class="charts-2x2-grid">
 
         {{-- Chart: Departemen --}}
-        <div class="bcard fu" style="padding:24px;"
+        <div class="bcard fu" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;"
              data-labels="{{ $chartLabels }}"
              data-values="{{ $chartData }}"
              x-data="{
@@ -183,7 +221,7 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Departemen</p>
-            <div style="width:100%;height:260px;"><canvas x-ref="canvas"></canvas></div>
+            <div style="width:100%; height:320px; flex:1;"><canvas x-ref="canvas"></canvas></div>
         </div>
 
         {{-- Chart: Status Doughnut (SHADCN Donut Chart Replica) --}}
@@ -426,7 +464,7 @@
         </div>
 
         {{-- Chart: Klausul --}}
-        <div class="bcard fu2" style="padding:24px;"
+        <div class="bcard fu2" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;"
              data-labels="{{ $klausulLabels }}"
              data-values="{{ $klausulData }}"
              x-data="{
@@ -476,11 +514,11 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Klausul PRP</p>
-            <div style="width:100%;height:260px;"><canvas x-ref="canvas"></canvas></div>
+            <div style="width:100%; height:320px; flex:1;"><canvas x-ref="canvas"></canvas></div>
         </div>
 
         {{-- Chart: Sub Area --}}
-        <div class="bcard fu3" style="padding:24px;">
+        <div class="bcard fu3" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;">
                 <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0;">Temuan tiap Sub Area</p>
                 <select wire:model.live="filterDepartemenSubArea" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
@@ -489,7 +527,7 @@
                     @endforeach
                 </select>
             </div>
-            <div style="width:100%;height:260px;"
+            <div style="width:100%; height:320px; flex:1;"
                  data-labels="{{ $subAreaLabels }}"
                  data-values="{{ $subAreaData }}"
                  x-data="{
@@ -521,7 +559,7 @@
                                  },
                                  scales: {
                                      y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 30, minRotation: 0 } }
                                  }
                              }
                          });

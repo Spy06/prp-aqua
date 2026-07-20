@@ -1,33 +1,32 @@
-<div class="max-w-4xl mx-auto space-y-6" id="detail-temuan-container">
-    {{-- Header + Breadcrumb --}}
-    <div class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant">
-        <a href="{{ route('beranda') }}" class="hover:text-primary transition-colors">Beranda</a>
-        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-        <span class="text-on-surface font-semibold">Temuan #{{ $temuan->id }}</span>
+<div style="max-width:900px;margin:0 auto;" id="detail-temuan-container">
+
+    {{-- Breadcrumb --}}
+    <div class="breadcrumb fu">
+        <a href="{{ route('beranda') }}">Beranda</a>
+        <span class="material-symbols-outlined sep" style="font-size:16px;">chevron_right</span>
+        <span style="color:var(--btxt);font-weight:600;">Temuan #{{ $temuan->id }}</span>
     </div>
 
     {{-- Card: Info Temuan --}}
-    <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
-        {{-- Card Header --}}
-        <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-primary-container text-[20px]">description</span>
+    <div class="bcard fu1" style="margin-bottom:20px;">
+        <div class="bcard-header" style="justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="bcard-hicon" style="background:#e3f2fd;">
+                    <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">description</span>
                 </div>
                 <div>
-                    <h1 class="font-title-md text-title-md text-on-surface">Detail Temuan PRP #{{ $temuan->id }}</h1>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Dilaporkan {{ $temuan->created_at->diffForHumans() }}</p>
+                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Detail Temuan PRP #{{ $temuan->id }}</div>
+                    <div style="font-size:12px;color:var(--btxt2);">Dilaporkan {{ $temuan->created_at->diffForHumans() }}</div>
                 </div>
             </div>
-
             {{-- Status Badge --}}
             @php
-                $statusBadgeClass = match($temuan->status) {
-                    'open'              => 'bg-[#fef7e0] text-[#b06000] border-[#fde293]',
-                    'in_progress'       => 'bg-secondary-container text-on-secondary-container border-outline-variant',
-                    'closed_pending_qa' => 'bg-[#fce8e6] text-[#c5221f] border-[#f2b8b5]',
-                    'closed_acc'        => 'bg-[#e6f4ea] text-[#137333] border-[#ceead6]',
-                    default             => 'bg-surface-variant text-on-surface-variant border-outline-variant',
+                $statusClass = match($temuan->status) {
+                    'open'              => 'sbadge-open',
+                    'in_progress'       => 'sbadge-progress',
+                    'closed_pending_qa' => 'sbadge-pending',
+                    'closed_acc'        => 'sbadge-closed',
+                    default             => 'sbadge-progress',
                 };
                 $statusText = match($temuan->status) {
                     'open'              => 'Open',
@@ -37,187 +36,186 @@
                     default             => $temuan->status,
                 };
             @endphp
-            <span class="px-3 py-1 font-label-md text-label-md rounded-full border {{ $statusBadgeClass }}">
-                {{ $statusText }}
-            </span>
+            <span class="sbadge {{ $statusClass }}" style="font-size:12px;padding:5px 14px;">{{ $statusText }}</span>
         </div>
 
-        {{-- Card Body: Info Grid --}}
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {{-- Kolom Kiri --}}
-            <div class="space-y-4">
+        <div class="bcard-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                {{-- Kolom Kiri --}}
                 <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Tanggal Temuan</p>
-                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->tanggal_temuan->format('d F Y') }}</p>
-                </div>
-
-                <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Departemen</p>
-                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->departemen->nama_departemen ?? '-' }}</p>
-                </div>
-
-                <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Sub Area</p>
-                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->sub_area }}</p>
-                </div>
-
-                <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Klausul PRP</p>
-                    <p class="font-body-md text-body-md text-on-surface font-semibold">
-                        {{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}
-                    </p>
-                </div>
-
-                <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Pelapor</p>
-                    <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->pelapor->name ?? '-' }}</p>
-                </div>
-
-                <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">PIC yang Ditunjuk</p>
-                    <div class="flex items-center gap-2 mt-1">
-                        <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary text-xs font-bold">
-                            {{ substr($temuan->pic->name ?? '?', 0, 1) }}
+                    <div class="info-row">
+                        <div class="inf-label">Tanggal Temuan</div>
+                        <div class="inf-value">{{ $temuan->tanggal_temuan->format('d F Y') }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="inf-label">Departemen</div>
+                        <div class="inf-value">{{ $temuan->departemen->nama_departemen ?? '-' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="inf-label">Sub Area</div>
+                        <div class="inf-value">{{ $temuan->sub_area }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="inf-label">Klausul PRP</div>
+                        <div class="inf-value" style="font-size:13px;">
+                            {{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}
                         </div>
-                        <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $temuan->pic->name ?? '-' }}</p>
-                        @if($isPic)
-                            <span class="px-1.5 py-0.5 font-label-md text-[10px] bg-primary-container text-on-primary-container rounded border border-primary/20">Anda</span>
-                        @endif
+                    </div>
+                    <div class="info-row">
+                        <div class="inf-label">Pelapor</div>
+                        <div class="inf-value">{{ $temuan->pelapor->name ?? '-' }}</div>
+                    </div>
+                    <div class="info-row" style="margin-bottom:0;">
+                        <div class="inf-label">PIC yang Ditunjuk</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--bp);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                {{ substr($temuan->pic->name ?? '?', 0, 1) }}
+                            </div>
+                            <div class="inf-value">{{ $temuan->pic->name ?? '-' }}</div>
+                            @if($isPic)
+                                <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e3f2fd;color:#1565c0;border-radius:6px;border:1px solid rgba(25,118,210,0.2);">Anda</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Kolom Kanan: Deskripsi + Foto --}}
-            <div class="space-y-4">
+                {{-- Kolom Kanan --}}
                 <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Deskripsi Temuan</p>
-                    <p class="font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $temuan->deskripsi }}</p>
-                </div>
-
-                @if($temuan->saran)
-                    <div>
-                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Saran & Masukan (Langsung ke QA)</p>
-                        <p class="font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $temuan->saran }}</p>
+                    <div class="info-row">
+                        <div class="inf-label">Deskripsi Temuan</div>
+                        <div class="inf-text">{{ $temuan->deskripsi }}</div>
                     </div>
-                @endif
 
-                @if($temuan->foto_temuan_path)
-                    <div>
-                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-2">Foto Temuan</p>
-                        <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low">
+                    @if($temuan->saran)
+                    <div class="info-row">
+                        <div class="inf-label">Saran & Masukan</div>
+                        <div class="inf-text" style="background:#fff8e1;border-color:#ffe082;">{{ $temuan->saran }}</div>
+                    </div>
+                    @endif
+
+                    @if($temuan->foto_temuan_path)
+                    <div class="info-row" style="margin-bottom:0;">
+                        <div class="inf-label">Foto Temuan</div>
+                        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-top:6px;">
                             <img src="{{ asset('storage/' . $temuan->foto_temuan_path) }}"
                                  alt="Foto temuan PRP"
-                                 class="w-full max-h-72 object-contain" />
+                                 style="width:100%;max-height:260px;object-fit:contain;background:var(--bsur);" />
                         </div>
                     </div>
-                @endif
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- Card: Tindak Lanjut (info ringkas, selalu ditampilkan) --}}
+    {{-- Card: Tindak Lanjut (info ringkas) --}}
     @php $tl = $temuan->tindakLanjut; @endphp
     @if($tl)
-        <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
-            <div class="px-6 py-4 border-b border-outline-variant flex items-center gap-3 bg-surface-container-low">
-                <div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-secondary-container text-[20px]">task_alt</span>
-                </div>
-                <h2 class="font-title-md text-title-md text-on-surface">Tindak Lanjut</h2>
+    <div class="bcard fu2" style="margin-bottom:20px;">
+        <div class="bcard-header">
+            <div class="bcard-hicon" style="background:#e8f5e9;">
+                <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">task_alt</span>
             </div>
-
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <div>
-                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Tindakan Perbaikan</p>
+            <div style="font-size:15px;font-weight:700;color:var(--btxt);">Tindak Lanjut</div>
+        </div>
+        <div class="bcard-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                <div>
+                    <div class="info-row">
+                        <div class="inf-label">Tindakan Perbaikan</div>
                         @if($tl->action)
-                            <p class="font-body-md text-body-md text-on-surface whitespace-pre-wrap bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">{{ $tl->action }}</p>
+                            <div class="inf-text">{{ $tl->action }}</div>
                         @else
-                            <p class="font-body-sm text-body-sm text-on-surface-variant italic">Belum diisi</p>
+                            <div style="font-size:13px;color:var(--btxt2);font-style:italic;">Belum diisi</div>
                         @endif
                     </div>
-
-                    <div>
-                        <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Due Date</p>
+                    <div class="info-row" style="margin-bottom:0;">
+                        <div class="inf-label">Due Date</div>
                         @if($tl->due_date)
                             @php
                                 $isOverdue = $tl->due_date->lt(now()) && !in_array($temuan->status, ['closed_pending_qa', 'closed_acc']);
                             @endphp
-                            <p class="font-body-md text-body-md font-semibold {{ $isOverdue ? 'text-error' : 'text-on-surface' }}">
+                            <div class="inf-value" style="{{ $isOverdue ? 'color:var(--error);' : '' }}">
                                 {{ $tl->due_date->format('d F Y') }}
                                 @if($isOverdue)
-                                    <span class="font-label-md text-[10px] text-error border border-error/50 px-1 py-0.5 rounded ml-1">Overdue</span>
+                                    <span style="font-size:10px;font-weight:700;color:var(--error);border:1px solid currentColor;padding:1px 6px;border-radius:4px;margin-left:6px;">Overdue</span>
                                 @endif
-                            </p>
+                            </div>
                         @else
-                            <p class="font-body-sm text-body-sm text-on-surface-variant italic">Belum diisi</p>
+                            <div style="font-size:13px;color:var(--btxt2);font-style:italic;">Belum diisi</div>
                         @endif
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <div>
                     @if($tl->foto_bukti_path)
-                        <div>
-                            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-2">Foto Bukti</p>
-                            <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low">
-                                <img src="{{ asset('storage/' . $tl->foto_bukti_path) }}"
-                                     alt="Foto bukti tindak lanjut"
-                                     class="w-full max-h-48 object-contain" />
-                            </div>
+                    <div class="info-row">
+                        <div class="inf-label">Foto Bukti</div>
+                        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-top:6px;">
+                            <img src="{{ asset('storage/' . $tl->foto_bukti_path) }}"
+                                 alt="Foto bukti tindak lanjut"
+                                 style="width:100%;max-height:180px;object-fit:contain;background:var(--bsur);" />
                         </div>
+                    </div>
                     @else
-                        <div class="flex items-center gap-2 p-3 rounded-lg bg-[#fef7e0] border border-[#fde293] text-[#b06000] text-xs">
-                            <span class="material-symbols-outlined text-[16px] shrink-0">warning</span>
-                            Foto bukti belum diupload
-                        </div>
+                    <div class="balert balert-warn">
+                        <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">warning</span>
+                        Foto bukti belum diupload
+                    </div>
                     @endif
 
                     @if($tl->catatan_qa)
-                        <div>
-                            <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wide mb-1">Catatan QA</p>
-                            <div class="p-3 rounded-lg bg-surface-container-highest border border-outline-variant font-body-sm text-on-surface">
-                                {{ $tl->catatan_qa }}
-                            </div>
-                        </div>
+                    <div class="info-row" style="margin-top:14px;margin-bottom:0;">
+                        <div class="inf-label">Catatan QA</div>
+                        <div class="inf-text" style="background:#f3e5f5;border-color:#e1bee7;">{{ $tl->catatan_qa }}</div>
+                    </div>
                     @endif
                 </div>
             </div>
         </div>
+    </div>
     @endif
 
-    {{-- Panel: Form TindakLanjutPIC (hanya untuk PIC, selama belum closed_acc) --}}
+    {{-- Panel: Form TindakLanjutPIC --}}
     @if($showTindakLanjutForm)
-        <div class="bg-surface rounded-xl shadow-[0px_2px_4px_rgba(0,139,157,0.05),0px_4px_12px_rgba(0,0,0,0.03)] border border-outline-variant overflow-hidden">
-            <div class="px-6 py-4 border-b border-outline-variant flex items-center gap-3 bg-surface-container-low">
-                <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-primary-container text-[20px]">edit_document</span>
-                </div>
-                <div>
-                    <h2 class="font-title-md text-title-md text-on-surface">Form Tindak Lanjut PIC</h2>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">Isi detail tindakan perbaikan dan update status</p>
-                </div>
+    <div class="bcard fu3" style="margin-bottom:20px;">
+        <div class="bcard-header">
+            <div class="bcard-hicon" style="background:#e3f2fd;">
+                <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">edit_document</span>
             </div>
-
-            <div class="p-6">
-                <livewire:tindak-lanjut-p-i-c :temuanId="$temuan->id" :key="'tl-' . $temuan->id" />
+            <div>
+                <div style="font-size:15px;font-weight:700;color:var(--btxt);">Form Tindak Lanjut PIC</div>
+                <div style="font-size:12px;color:var(--btxt2);">Isi detail tindakan perbaikan dan update status</div>
             </div>
         </div>
+        <div class="bcard-body">
+            <livewire:tindak-lanjut-p-i-c :temuanId="$temuan->id" :key="'tl-' . $temuan->id" />
+        </div>
+    </div>
     @endif
 
-    {{-- Info: Read-only untuk Pelapor atau QA yang melihat --}}
+    {{-- Info: Pelapor (read-only) --}}
     @if($isPelapor && !$isPic)
-        <div class="flex items-center gap-2 p-4 rounded-lg bg-secondary-container border border-outline-variant text-on-secondary-container font-body-sm">
-            <span class="material-symbols-outlined text-[20px] shrink-0">info</span>
-            <span>Anda adalah pelapor temuan ini. Tindak lanjut dilakukan oleh PIC yang ditunjuk.</span>
-        </div>
+    <div class="balert balert-info fu3">
+        <span class="material-symbols-outlined" style="font-size:20px;flex-shrink:0;">info</span>
+        <span>Anda adalah pelapor temuan ini. Tindak lanjut dilakukan oleh PIC yang ditunjuk.</span>
+    </div>
     @endif
 
+    {{-- Panel: Verifikasi QA --}}
     @if($isQa && $temuan->status === 'closed_pending_qa')
         <livewire:verifikasi-q-a :temuan="$temuan" :key="'vqa-' . $temuan->id" />
     @elseif($isQa)
-        <div class="flex items-center gap-2 p-4 rounded-lg bg-[#fef7e0] border border-[#fde293] text-[#b06000] font-body-sm mt-6">
-            <span class="material-symbols-outlined text-[20px] shrink-0">shield</span>
-            <span>Verifikasi QA hanya bisa dilakukan saat status temuan adalah Pending QA (closed_pending_qa).</span>
-        </div>
+    <div class="balert balert-warn fu3" style="margin-top:16px;">
+        <span class="material-symbols-outlined" style="font-size:20px;flex-shrink:0;">shield</span>
+        <span>Verifikasi QA hanya bisa dilakukan saat status temuan adalah <strong>Pending QA</strong>.</span>
+    </div>
     @endif
+
+    <style>
+        .info-row { margin-bottom: 16px; }
+        @media (max-width: 640px) {
+            div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+        }
+    </style>
 </div>

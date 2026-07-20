@@ -25,6 +25,17 @@ class GrafikTemuan extends Component
         // 1. Departemen Chart
         $chartDataGrouped = $allTemuan->groupBy('departemen_id')->mapWithKeys(function ($group) {
             $deptName = $group->first()->departemen->nama_departemen ?? 'Tidak Diketahui';
+            $deptName = match(trim($deptName)) {
+                'Safety Health & Environment' => 'SHE',
+                'Safety Health & Environment (SHE)' => 'SHE',
+                'Engineering' => 'ENG',
+                'Corporate Social Responsibility' => 'CSR',
+                'Logistics' => 'LOG',
+                'Human Resource' => 'HR',
+                'Quality Assurance' => 'QA',
+                'Manufacturing' => 'MFG',
+                default => $deptName
+            };
             return [$deptName => $group->count()];
         });
 
@@ -33,6 +44,8 @@ class GrafikTemuan extends Component
             $klausul = $group->first()->klausul;
             $klausulLabel = $klausul ? $klausul->kode_klausul : 'Belum Ditentukan';
             return [$klausulLabel => $group->count()];
+        })->sortBy(function ($count, $key) {
+            return (int) $key;
         });
 
         // 3. Status Chart

@@ -138,7 +138,8 @@
              data-values="{{ $chartData }}"
              x-data="{
                  init() {
-                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const rawLabels = JSON.parse(this.$el.dataset.labels);
+                     const labels = rawLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                      const data = JSON.parse(this.$el.dataset.values);
                      Chart.register(ChartDataLabels);
                      let chart = new Chart(this.$refs.canvas, {
@@ -160,18 +161,19 @@
                              layout: { padding: { top: 20 } },
                              plugins: {
                                  legend: { display: false },
-                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter' } }
+                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter' } } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
                              }
                          }
                      });
                      this.$wire.on('chart-updated', (event) => {
                          const payload = Array.isArray(event) ? event[0] : event;
                          if (chart && payload) {
-                             chart.data.labels = JSON.parse(payload.deptLabels);
+                             const newLabels = JSON.parse(payload.deptLabels);
+                             chart.data.labels = newLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                              chart.data.datasets[0].data = JSON.parse(payload.deptData);
                              chart.options.scales.y.suggestedMax = Math.max(...chart.data.datasets[0].data) * 1.2;
                              chart.update();
@@ -308,7 +310,7 @@
                     
                     <!-- Circle 0: Open -->
                     <circle cx="100" cy="100" :r="radius"
-                            fill="transparent"
+                            fill="none" pointer-events="stroke"
                             :stroke="getSegmentProps(0).color"
                             :stroke-width="strokeWidth"
                             :stroke-dasharray="getSegmentProps(0).dasharray"
@@ -327,7 +329,7 @@
 
                     <!-- Circle 1: In Progress -->
                     <circle cx="100" cy="100" :r="radius"
-                            fill="transparent"
+                            fill="none" pointer-events="stroke"
                             :stroke="getSegmentProps(1).color"
                             :stroke-width="strokeWidth"
                             :stroke-dasharray="getSegmentProps(1).dasharray"
@@ -346,7 +348,7 @@
 
                     <!-- Circle 2: Pending QA -->
                     <circle cx="100" cy="100" :r="radius"
-                            fill="transparent"
+                            fill="none" pointer-events="stroke"
                             :stroke="getSegmentProps(2).color"
                             :stroke-width="strokeWidth"
                             :stroke-dasharray="getSegmentProps(2).dasharray"
@@ -365,7 +367,7 @@
 
                     <!-- Circle 3: Closed (ACC) -->
                     <circle cx="100" cy="100" :r="radius"
-                            fill="transparent"
+                            fill="none" pointer-events="stroke"
                             :stroke="getSegmentProps(3).color"
                             :stroke-width="strokeWidth"
                             :stroke-dasharray="getSegmentProps(3).dasharray"
@@ -429,7 +431,8 @@
              data-values="{{ $klausulData }}"
              x-data="{
                  init() {
-                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const rawLabels = JSON.parse(this.$el.dataset.labels);
+                     const labels = rawLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                      const data = JSON.parse(this.$el.dataset.values);
                      Chart.register(ChartDataLabels);
                      let chart = new Chart(this.$refs.canvas, {
@@ -443,7 +446,7 @@
                                  borderColor: 'rgb(33,150,243)',
                                  borderWidth: 0,
                                  borderRadius: 8,
-                                 barThickness: 24
+                                 barThickness: 14
                              }]
                          },
                          options: {
@@ -451,18 +454,19 @@
                              layout: { padding: { top: 20 } },
                              plugins: {
                                  legend: { display: false },
-                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter' } }
+                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter' } } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
                              }
                          }
                      });
                      this.$wire.on('chart-updated', (event) => {
                          const payload = Array.isArray(event) ? event[0] : event;
                          if (chart && payload) {
-                             chart.data.labels = JSON.parse(payload.klausulLabels);
+                             const newLabels = JSON.parse(payload.klausulLabels);
+                             chart.data.labels = newLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                              chart.data.datasets[0].data = JSON.parse(payload.klausulData);
                              chart.options.scales.y.suggestedMax = Math.max(...chart.data.datasets[0].data) * 1.2;
                              chart.update();
@@ -490,7 +494,8 @@
                  data-values="{{ $subAreaData }}"
                  x-data="{
                      init() {
-                         const labels = JSON.parse(this.$el.dataset.labels);
+                         const rawLabels = JSON.parse(this.$el.dataset.labels);
+                         const labels = rawLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                          const data = JSON.parse(this.$el.dataset.values);
                          Chart.register(ChartDataLabels);
                          let chart = new Chart(this.$refs.canvas, {
@@ -512,18 +517,19 @@
                                  layout: { padding: { top: 20 } },
                                  plugins: {
                                      legend: { display: false },
-                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter' } }
+                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
                                  },
                                  scales: {
                                      y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter' } } }
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
                                  }
                              }
                          });
                          this.$wire.on('chart-updated', (event) => {
                              const payload = Array.isArray(event) ? event[0] : event;
                              if (chart && payload) {
-                                 chart.data.labels = JSON.parse(payload.subAreaLabels);
+                                 const newLabels = JSON.parse(payload.subAreaLabels);
+                                 chart.data.labels = newLabels.map(l => (typeof l === 'string' && l.includes(' ')) ? l.split(' ') : l);
                                  chart.data.datasets[0].data = JSON.parse(payload.subAreaData);
                                  chart.options.scales.y.suggestedMax = Math.max(...chart.data.datasets[0].data) * 1.2;
                                  chart.update();

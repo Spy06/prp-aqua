@@ -199,11 +199,11 @@
                              layout: { padding: { top: 20 } },
                              plugins: {
                                  legend: { display: false },
-                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
+                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
                              }
                          }
                      });
@@ -492,11 +492,11 @@
                              layout: { padding: { top: 20 } },
                              plugins: {
                                  legend: { display: false },
-                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
+                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 0, minRotation: 0 } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
                              }
                          }
                      });
@@ -555,11 +555,11 @@
                                  layout: { padding: { top: 20 } },
                                  plugins: {
                                      legend: { display: false },
-                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 9 } }
+                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                                  },
                                  scales: {
                                      y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 30, minRotation: 0 } }
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
                                  }
                              }
                          });

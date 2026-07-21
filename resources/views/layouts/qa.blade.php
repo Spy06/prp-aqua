@@ -214,24 +214,15 @@
             width: 100%;
         }
 
+        .qtop-logo { display: none; }
+
         /* Mobile & Tablet Responsiveness */
         @media (max-width: 960px) {
             .qtop { left: 0 !important; right: 0 !important; padding: 0 16px; height: 64px; }
             .qmain-wrapper { margin-left: 0 !important; padding-top: 64px; }
             .qcontent-container { padding: 16px; }
-            
-            .mobile-menu-btn { display: inline-flex !important; align-items: center; justify-content: center; }
-            .mobile-logout { display: block !important; }
-            
-            .qs {
-                transform: translateX(-100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                display: flex !important;
-                box-shadow: 4px 0 24px rgba(0,0,0,0.15);
-            }
-            .qs.open {
-                transform: translateX(0);
-            }
+            .qs { display: none; }
+            .qtop-logo { display: flex !important; align-items: center; gap: 10px; }
         }
 
         @media (max-width: 640px) {
@@ -239,6 +230,10 @@
             .qtop-act { gap: 8px; }
             .qtop-profile-pill { padding: 4px; }
             .qtop-profile-pill .name { display: none; }
+            .qtop-logo .logo-box { width: 32px; height: 32px; border-radius: 8px; }
+            .qtop-logo .logo-box span { font-size: 16px; }
+            .qtop-logo .logo-text h1 { font-size: 14px; }
+            .qtop-logo .logo-text p { display: none; }
             
             .qmain-wrapper { padding-top: 58px; }
             .qcontent-container { padding: 12px; }
@@ -380,44 +375,35 @@
     </style>
     @livewireStyles
 </head>
-<body x-data="{ sidebarOpen: false }">
-
-    {{-- Mobile Sidebar Overlay --}}
-    <div x-show="sidebarOpen" x-transition.opacity 
-         class="mobile-sidebar-overlay" 
-         @click="sidebarOpen = false"
-         style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45;"></div>
+<body>
 
     {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
-        <div style="flex:1; display:flex; align-items:center;">
-            <button @click="sidebarOpen = true" class="mobile-menu-btn" style="display:none; background:none; border:none; color:var(--btxt); cursor:pointer; padding:4px; margin-left:-8px; margin-right:12px;">
-                <span class="material-symbols-outlined" style="font-size:26px;">menu</span>
-            </button>
+        <div class="logo-area qtop-logo">
+            <div class="logo-box">
+                <span class="material-symbols-outlined">verified_user</span>
+            </div>
+            <div class="logo-text">
+                <h1>SIVERA</h1>
+                <p>Internal System</p>
+            </div>
         </div>
+
+        <div style="flex:1;"></div>
 
         <div class="qtop-act">
             {{-- Static User Profile Display --}}
             @auth
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="qtop-profile-pill">
-                    <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                    <span class="name">{{ auth()->user()->name }}</span>
-                </div>
-                <!-- Mobile Logout Button -->
-                <form method="POST" action="{{ route('logout') }}" class="mobile-logout" style="display:none; margin: 0;">
-                    @csrf
-                    <button type="submit" class="bbtn bbtn-secondary bbtn-sm" style="padding: 6px 8px; border-color: var(--error) !important; color: var(--error);" title="Sign Out">
-                        <span class="material-symbols-outlined" style="font-size: 18px; margin: 0;">logout</span>
-                    </button>
-                </form>
+            <div class="qtop-profile-pill">
+                <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <span class="name">{{ auth()->user()->name }}</span>
             </div>
             @endauth
         </div>
     </header>
 
     {{-- ═══ SIDEBAR DRAWER ═══ --}}
-    <aside class="qs" :class="sidebarOpen ? 'open' : ''">
+    <aside class="qs">
         {{-- Sidebar Logo Area --}}
         <div class="qs-header">
             <div class="logo-area">
@@ -434,33 +420,33 @@
         {{-- Sidebar Menu Content --}}
         <div class="qs-content">
             <span class="qs-group-label">Dashboard</span>
-            <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
                 <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                 <span>Grafik Temuan</span>
             </a>
-            <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
                 <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
                 <span>Daftar Temuan</span>
             </a>
-            <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                 <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
                 <span>Rekap Periode</span>
             </a>
 
             <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
-            <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
                 <span class="material-symbols-outlined ic">group</span>
                 <span>Karyawan</span>
             </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
                 <span class="material-symbols-outlined ic">domain</span>
                 <span>Departemen</span>
             </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
                 <span class="material-symbols-outlined ic">rule</span>
                 <span>Klausul PRP</span>
             </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate @click="sidebarOpen = false">
+            <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
                 <span class="material-symbols-outlined ic">manage_accounts</span>
                 <span>Akun User</span>
             </a>

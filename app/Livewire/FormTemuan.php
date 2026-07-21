@@ -127,16 +127,15 @@ class FormTemuan extends Component
                 SendWhatsApp::dispatch($pic->no_whatsapp, $message);
             }
 
-            // 5. Kirim notifikasi WA ke QA jika ada Saran & Masukan
-            if (!empty($this->saran)) {
-                $qaUsers = User::where('role', 'qa')->get();
-                foreach ($qaUsers as $qa) {
-                    if ($qa->no_whatsapp) {
-                        $messageQA = "Halo QA, ada saran & masukan baru dari pelapor untuk Temuan #{$temuan->id}.\n"
-                                   . "Saran: \"{$this->saran}\"\n"
-                                   . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
-                        SendWhatsApp::dispatch($qa->no_whatsapp, $messageQA);
-                    }
+            // 5. Kirim notifikasi WA ke QA untuk setiap temuan baru
+            $qaUsers = User::where('role', 'qa')->get();
+            foreach ($qaUsers as $qa) {
+                if ($qa->no_whatsapp) {
+                    $messageQA = "Halo QA ({$qa->name}), ada laporan temuan PRP baru (#{$temuan->id}) diajukan oleh " . auth()->user()->name . ".\n"
+                               . "Sub Area: {$temuan->sub_area}\n"
+                               . (!empty($this->saran) ? "Saran: \"{$this->saran}\"\n" : "")
+                               . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
+                    SendWhatsApp::dispatch($qa->no_whatsapp, $messageQA);
                 }
             }
 

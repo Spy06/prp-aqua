@@ -151,6 +151,8 @@
         .qmain { min-height: 100vh; padding-top: 68px; margin-left: 250px; }
         .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
+        .qtop-logo { display: none; }
+
         /* ── Responsive ── */
         @media (max-width: 960px) {
             .qtop { left: 0 !important; right: 0 !important; padding: 0 16px; height: 60px; }
@@ -158,12 +160,17 @@
             .qcontent { padding: 16px; }
             .qs { display: none; }
             .mobile-logout { display: block !important; }
+            .qtop-logo { display: flex !important; align-items: center; gap: 10px; }
         }
         @media (max-width: 640px) {
             .qtop { padding: 0 12px; height: 56px; }
             .qmain { padding-top: 56px; }
             .qcontent { padding: 12px; }
             .qtop-profile-pill .name { display: none; }
+            .qtop-logo .logo-box { width: 32px; height: 32px; border-radius: 8px; }
+            .qtop-logo .logo-box span { font-size: 16px; }
+            .qtop-logo .logo-text h1 { font-size: 14px; }
+            .qtop-logo .logo-text p { display: none; }
         }
 
         /* ── Berry Cards ── */
@@ -220,11 +227,11 @@
 
         /* ── Buttons ── */
         .bbtn {
-            display: inline-flex; align-items: center; gap: 6px; justify-content: center;
+            display: inline-flex; align-items: center; gap: 6px;
             padding: 10px 18px; border-radius: 10px; font-size: 13px;
             font-weight: 600; cursor: pointer; border: none;
             transition: all 0.2s; text-decoration: none; font-family: inherit;
-            text-align: center;
+            white-space: nowrap;
         }
         .bbtn-primary { background: var(--bp); color: #fff; box-shadow: 0 4px 12px rgba(25,118,210,0.25); }
         .bbtn-primary:hover { background: var(--bp-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25,118,210,0.35); }
@@ -326,6 +333,16 @@
 
     {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
+        <div class="logo-area qtop-logo">
+            <div class="logo-box">
+                <span class="material-symbols-outlined">factory</span>
+            </div>
+            <div class="logo-text">
+                <h1>SIVERA</h1>
+                <p>Verifikasi PRP</p>
+            </div>
+        </div>
+
         <div style="flex:1;"></div>
 
         <div class="qtop-act">

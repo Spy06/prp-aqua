@@ -42,7 +42,12 @@
                         <td style="white-space:nowrap;">{{ $t->tanggal_temuan->format('d M Y') }}</td>
                         <td>
                             <div style="font-weight:600;">{{ $t->departemen->nama_departemen ?? '-' }}</div>
-                            <div style="font-size:12px;color:var(--btxt2);">{{ $t->sub_area }}</div>
+                            <div style="font-size:12px;color:var(--btxt2);">
+                                {{ $t->sub_area }}
+                                @if($t->sub_area === 'Others' && $t->detail_sub_area)
+                                    — {{ $t->detail_sub_area }}
+                                @endif
+                            </div>
                         </td>
                         <td style="white-space:nowrap;">{{ $t->pic->name ?? '-' }}</td>
                         <td>

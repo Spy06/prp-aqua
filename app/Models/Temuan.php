@@ -17,6 +17,7 @@ class Temuan extends Model
         'klausul_id',
         'departemen_id',
         'sub_area',
+        'detail_sub_area',
         'foto_temuan_path',
         'deskripsi',
         'saran',

@@ -87,6 +87,9 @@
                         <div class="tcard-sub">
                             <span class="material-symbols-outlined" style="font-size:14px;">location_on</span>
                             {{ $temuan->sub_area }}
+                            @if($temuan->sub_area === 'Others' && $temuan->detail_sub_area)
+                                <span> — {{ $temuan->detail_sub_area }}</span>
+                            @endif
                         </div>
                         <p class="tcard-desc">{{ $temuan->deskripsi }}</p>
                     </div>

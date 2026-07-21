@@ -53,7 +53,12 @@
                     </div>
                     <div class="info-row">
                         <div class="inf-label">Sub Area</div>
-                        <div class="inf-value">{{ $temuan->sub_area }}</div>
+                        <div class="inf-value">
+                            {{ $temuan->sub_area }}
+                            @if($temuan->sub_area === 'Others' && $temuan->detail_sub_area)
+                                <span style="color:var(--btxt2);font-weight:400;font-size:12.5px;">— {{ $temuan->detail_sub_area }}</span>
+                            @endif
+                        </div>
                     </div>
                     <div class="info-row">
                         <div class="inf-label">Klausul PRP</div>

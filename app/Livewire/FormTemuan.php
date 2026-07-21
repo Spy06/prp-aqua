@@ -23,6 +23,7 @@ class FormTemuan extends Component
     public $foto_temuan;
     public $deskripsi;
     public $saran = '';
+    public $detail_sub_area;
     
     // For PIC Search
     public $picSearch = '';
@@ -34,6 +35,7 @@ class FormTemuan extends Component
         'departemen_id'  => 'required|exists:departemen,id',
         'sub_area'       => 'required|string|max:255',
         'klausul_id'     => 'required|exists:klausul_prp,id',
+        'detail_sub_area'=> 'required_if:sub_area,Others|nullable|string|max:255',
         'foto_temuan'    => 'required|image|max:5120', // max 5MB
         'deskripsi'      => 'required|string',
         'saran'          => 'nullable|string',
@@ -48,6 +50,7 @@ class FormTemuan extends Component
     public function updatedDepartemenId()
     {
         $this->sub_area = null;
+        $this->detail_sub_area = null;
     }
 
     public function updatedPicSearch()
@@ -102,6 +105,7 @@ class FormTemuan extends Component
                 'pic_id'           => $this->pic_id,
                 'departemen_id'    => $this->departemen_id,
                 'sub_area'         => $this->sub_area,
+                'detail_sub_area'  => $this->sub_area === 'Others' ? $this->detail_sub_area : null,
                 'klausul_id'       => $this->klausul_id,
                 'foto_temuan_path' => $fotoPath,
                 'deskripsi'        => $this->deskripsi,
@@ -140,7 +144,7 @@ class FormTemuan extends Component
             }
 
             // Bersihkan form
-            $this->reset(['sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'saran', 'pic_id', 'picSearch']);
+            $this->reset(['sub_area', 'detail_sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'saran', 'pic_id', 'picSearch']);
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
             
             session()->flash('success', 'Laporan temuan berhasil dikirim!');
@@ -158,7 +162,10 @@ class FormTemuan extends Component
     {
         $subAreas = [];
         if ($this->departemen_id) {
-            $subAreas = \App\Models\SubArea::where('departemen_id', $this->departemen_id)->orderBy('nama_sub_area')->get();
+            $subAreas = \App\Models\SubArea::where('departemen_id', $this->departemen_id)
+                            ->orderByRaw("CASE WHEN nama_sub_area = 'Others' THEN 1 ELSE 0 END")
+                            ->orderBy('nama_sub_area')
+                            ->get();
         }
 
         return view('livewire.form-temuan', [

@@ -98,6 +98,9 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 24px;
         }
+        .charts-2x2-grid > div {
+            min-width: 0;
+        }
 
         .chart-card-box {
             display: flex;
@@ -198,12 +201,17 @@
                              responsive: true, maintainAspectRatio: false,
                              layout: { padding: { top: 20 } },
                              plugins: {
+                                 tooltip: {
+                                     callbacks: {
+                                         title: function(ctx) { return (ctx[0].label || '').replace(/,/g, ' '); }
+                                     }
+                                 },
                                  legend: { display: false },
                                  datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
                              }
                          }
                      });
@@ -221,7 +229,7 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Departemen</p>
-            <div style="width:100%; height:320px; flex:1;"><canvas x-ref="canvas"></canvas></div>
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvas"></canvas></div>
         </div>
 
         {{-- Chart: Status Doughnut (SHADCN Donut Chart Replica) --}}
@@ -491,12 +499,17 @@
                              responsive: true, maintainAspectRatio: false,
                              layout: { padding: { top: 20 } },
                              plugins: {
+                                 tooltip: {
+                                     callbacks: {
+                                         title: function(ctx) { return (ctx[0].label || '').replace(/,/g, ' '); }
+                                     }
+                                 },
                                  legend: { display: false },
                                  datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                              },
                              scales: {
                                  y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
                              }
                          }
                      });
@@ -514,7 +527,7 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Klausul PRP</p>
-            <div style="width:100%; height:320px; flex:1;"><canvas x-ref="canvas"></canvas></div>
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvas"></canvas></div>
         </div>
 
         {{-- Chart: Sub Area --}}
@@ -527,7 +540,7 @@
                     @endforeach
                 </select>
             </div>
-            <div style="width:100%; height:320px; flex:1;"
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"
                  data-labels="{{ $subAreaLabels }}"
                  data-values="{{ $subAreaData }}"
                  x-data="{
@@ -554,12 +567,17 @@
                                  responsive: true, maintainAspectRatio: false,
                                  layout: { padding: { top: 20 } },
                                  plugins: {
+                                     tooltip: {
+                                         callbacks: {
+                                             title: function(ctx) { return (ctx[0].label || '').replace(/,/g, ' '); }
+                                         }
+                                     },
                                      legend: { display: false },
                                      datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: window.innerWidth < 768 ? 7.5 : 9 } }
                                  },
                                  scales: {
                                      y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: true, maxRotation: 0, minRotation: 0 } }
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10 }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
                                  }
                              }
                          });

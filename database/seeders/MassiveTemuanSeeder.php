@@ -60,6 +60,7 @@ class MassiveTemuanSeeder extends Seeder
             $deptId = $departemens[array_rand($departemens)];
             $deptSubAreas = isset($subAreasData[$deptId]) ? $subAreasData[$deptId] : [];
             $subAreaName = count($deptSubAreas) > 0 ? $deptSubAreas[array_rand($deptSubAreas)]['nama_sub_area'] : 'Area Dummy';
+            $detailSubArea = $subAreaName === 'Others' ? 'Detail Khusus ' . mt_rand(100, 999) : null;
 
             $dataToInsert[] = [
                 'tanggal_temuan'   => $randomDate->format('Y-m-d'),
@@ -67,6 +68,7 @@ class MassiveTemuanSeeder extends Seeder
                 'pic_id'           => $picId,
                 'departemen_id'    => $deptId,
                 'sub_area'         => $subAreaName,
+                'detail_sub_area'  => $detailSubArea,
                 'klausul_id'       => !empty($klausuls) ? $klausuls[array_rand($klausuls)] : null,
                 'foto_temuan_path' => null,
                 'deskripsi'        => $dummyDescriptions[array_rand($dummyDescriptions)],

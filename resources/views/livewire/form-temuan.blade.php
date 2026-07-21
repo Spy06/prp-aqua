@@ -55,7 +55,7 @@
                         {{-- Sub Area --}}
                         <div>
                             <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
-                            <select wire:model="sub_area" id="subarea" class="binput" {{ empty($departemen_id) ? 'disabled' : '' }}>
+                            <select wire:model.live="sub_area" id="subarea" class="binput" {{ empty($departemen_id) ? 'disabled' : '' }}>
                                 <option value="">Pilih Sub Area</option>
                                 @foreach($subAreas as $area)
                                     <option value="{{ $area->nama_sub_area }}">{{ $area->nama_sub_area }}</option>
@@ -63,6 +63,15 @@
                             </select>
                             @error('sub_area') <span class="berr">{{ $message }}</span> @enderror
                         </div>
+
+                        {{-- Detail Sub Area (if Others) --}}
+                        @if($sub_area === 'Others')
+                        <div>
+                            <label class="blabel" for="detail_sub_area">Detail Sub Area <span style="color:var(--error);">*</span></label>
+                            <input type="text" wire:model="detail_sub_area" id="detail_sub_area" class="binput" placeholder="Masukkan nama detail area spesifik...">
+                            @error('detail_sub_area') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
 
                         {{-- Klausul PRP --}}
                         <div>

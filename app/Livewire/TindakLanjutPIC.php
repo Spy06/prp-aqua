@@ -103,6 +103,16 @@ class TindakLanjutPIC extends Component
     }
 
     /**
+     * Otomatis simpan foto saat file dipilih oleh PIC.
+     */
+    public function updatedFotoBukti(): void
+    {
+        if ($this->foto_bukti) {
+            $this->uploadFoto();
+        }
+    }
+
+    /**
      * Upload foto bukti.
      */
     public function uploadFoto(): void

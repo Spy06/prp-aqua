@@ -85,71 +85,57 @@
     </div>
 
     {{-- Section 2: Foto Bukti --}}
-    <div style="padding-top:16px;border-top:1.5px solid var(--bbor);">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+    <div style="padding-top:16px;border-top:1.5px solid var(--bbor);margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
             <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">photo_camera</span>
             <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Foto Bukti</span>
-            @if(empty($foto_bukti_path))
+            @if(empty($foto_bukti_path) && !$foto_bukti)
                 <span style="font-size:11.5px;color:#e65100;font-weight:600;">(Wajib sebelum closed)</span>
             @else
                 <span style="font-size:11.5px;color:#2e7d32;font-weight:600;">✓ Sudah diupload</span>
             @endif
         </div>
 
-        {{-- Tampilkan foto yang sudah ada --}}
-        @if($foto_bukti_path)
-        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-bottom:14px;">
-            <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}"
-                 alt="Foto bukti tindak lanjut"
-                 style="width:100%;max-height:220px;object-fit:contain;background:var(--bsur);" />
-        </div>
-        @endif
-
-        {{-- Upload foto baru --}}
         @if($currentStatus !== 'closed_acc')
         <div>
-            <label class="blabel">
-                {{ $foto_bukti_path ? 'Ganti Foto Bukti' : 'Upload Foto Bukti' }}
-                <span style="font-size:10.5px;font-weight:400;color:var(--btxt2);text-transform:none;">(JPG/PNG, maks. 5MB)</span>
-            </label>
+            <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:140px;gap:10px;">
+                <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" accept="image/*" style="display:none;" />
+                <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
 
-            <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" accept="image/*" style="display:none;" />
-            <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
+                @if ($foto_bukti)
+                    <img src="{{ $foto_bukti->temporaryUrl() }}" style="max-height:160px;border-radius:8px;object-fit:contain;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                @elseif ($foto_bukti_path)
+                    <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}" style="max-height:160px;border-radius:8px;object-fit:contain;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                @else
+                    <span class="material-symbols-outlined" style="font-size:36px;color:var(--btxt2);">add_a_photo</span>
+                    <p style="font-size:12.5px;color:var(--btxt2);margin:0;text-align:center;">Pilih metode upload foto bukti</p>
+                @endif
 
-            <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
-                <div style="flex:1;min-width:200px;">
-                    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-                        <label for="foto-bukti-camera"
-                               style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bp);color:#fff;font-size:12.5px;font-weight:600;border-radius:8px;user-select:none;">
-                            <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
-                            Ambil Foto
-                        </label>
-                        <label for="foto-bukti-gallery"
-                               style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bsur);color:var(--btxt);font-size:12.5px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);user-select:none;">
-                            <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
-                            Dari Galeri
-                        </label>
-                    </div>
-                    @error('foto_bukti') <span class="berr">{{ $message }}</span> @enderror
-
-                    {{-- Preview sebelum upload --}}
-                    @if($foto_bukti)
-                    <div style="border-radius:8px;overflow:hidden;border:1px solid var(--bbor);margin-top:8px;">
-                        <img src="{{ $foto_bukti->temporaryUrl() }}"
-                             alt="Preview foto bukti"
-                             style="width:100%;max-height:160px;object-fit:contain;background:var(--bsur);" />
-                    </div>
-                    @endif
+                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                    <label for="foto-bukti-camera" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;transition:opacity .2s;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
+                        Ambil Foto
+                    </label>
+                    <label for="foto-bukti-gallery" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);transition:opacity .2s;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
+                        Dari Galeri
+                    </label>
                 </div>
-
-                <button wire:click="uploadFoto" wire:loading.attr="disabled" id="btn-upload-foto"
-                    class="bbtn bbtn-success" style="flex-shrink:0;align-self:flex-start;">
-                    <span wire:loading.remove wire:target="uploadFoto" class="material-symbols-outlined" style="font-size:18px;">upload</span>
-                    <span wire:loading wire:target="uploadFoto" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
-                    Upload
-                </button>
+            </div>
+            @error('foto_bukti') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
+            <div wire:loading wire:target="foto_bukti" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
+                <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
+                Mengunggah foto...
             </div>
         </div>
+        @else
+            @if($foto_bukti_path)
+            <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);">
+                <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}"
+                     alt="Foto bukti tindak lanjut"
+                     style="width:100%;max-height:220px;object-fit:contain;background:var(--bsur);" />
+            </div>
+            @endif
         @endif
     </div>
 

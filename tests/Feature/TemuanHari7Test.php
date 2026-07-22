@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Queue;
-use App\Jobs\SendWhatsAppDummy;
+use App\Jobs\SendWhatsApp;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -175,7 +175,6 @@ test('MasterAkunUser: NIK tidak terdaftar atau tidak aktif harus ditolak', funct
         ->set('nik_baru', 'NIK999')
         ->set('role_baru', 'karyawan')
         ->set('no_whatsapp_baru', '6281234567890')
-        ->set('password_baru', 'password123')
         ->call('buatAkun')
         ->assertHasErrors(['nik_baru']);
 
@@ -185,7 +184,6 @@ test('MasterAkunUser: NIK tidak terdaftar atau tidak aktif harus ditolak', funct
         ->set('nik_baru', 'K201')
         ->set('role_baru', 'karyawan')
         ->set('no_whatsapp_baru', '6281234567890')
-        ->set('password_baru', 'password123')
         ->call('buatAkun')
         ->assertHasErrors(['nik_baru']);
 });
@@ -193,12 +191,12 @@ test('MasterAkunUser: NIK tidak terdaftar atau tidak aktif harus ditolak', funct
 // ===========================================================================
 // 6. Validasi login & registrasi publik
 // ===========================================================================
-test('Auth: login menggunakan NIK + password, registrasi publik tidak tersedia (404)', function () {
+test('Auth: login menggunakan NIK / Nama + password, registrasi publik tidak tersedia (404)', function () {
     $karyawan = testBuatKaryawan('K301', 'Karyawan Login');
 
     // Login sukses
-    $response = $this->post(route('login.store'), [
-        'nik' => 'K301',
+    $response = $this->post('/login', [
+        'name' => $karyawan->name,
         'password' => 'password',
     ]);
     $response->assertSessionHasNoErrors();
@@ -249,12 +247,12 @@ test('FormTemuan: lapor temuan dengan saran mengirimkan WA langsung ke QA', func
     $temuan = Temuan::latest()->first();
     expect($temuan->saran)->toBe('Harap diganti kabel berinsulasi ganda');
 
-    // Pastikan SendWhatsAppDummy di-dispatch ke nomor PIC (6281200000000) dan QA (6281200000001)
-    Queue::assertPushed(SendWhatsAppDummy::class, function ($job) {
+    // Pastikan SendWhatsApp di-dispatch ke nomor PIC (6281200000000) dan QA (6281200000001)
+    Queue::assertPushed(SendWhatsApp::class, function ($job) {
         return $job->to === '6281200000000'; // Ke PIC
     });
 
-    Queue::assertPushed(SendWhatsAppDummy::class, function ($job) use ($qa) {
+    Queue::assertPushed(SendWhatsApp::class, function ($job) use ($qa) {
         return $job->to === $qa->no_whatsapp; // Ke QA langsung
     });
 });
@@ -273,8 +271,12 @@ test('TindakLanjutPIC: QA tidak boleh mengakses atau mengisi form PIC', function
         ->test(\App\Livewire\DetailTemuan::class, ['temuan' => $temuan])
         ->assertSet('showTindakLanjutForm', false);
 
-    // 2. Pastikan jika QA memanggil langsung component TindakLanjutPIC akan diblokir (403)
+    // 2. Pastikan jika QA memanggil aksi simpanDetail di TindakLanjutPIC, data di DB tidak berubah
     Livewire::actingAs($qa)
         ->test(\App\Livewire\TindakLanjutPIC::class, ['temuanId' => $temuan->id])
-        ->assertStatus(403);
+        ->set('action', 'Percobaan ubah QA')
+        ->set('due_date', now()->addDays(2)->toDateString())
+        ->call('simpanDetail');
+
+    expect(TindakLanjut::where('temuan_id', $temuan->id)->first()->action)->toBeNull();
 });

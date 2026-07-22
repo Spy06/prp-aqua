@@ -3,11 +3,10 @@
 namespace App\Livewire;
 
 use App\Jobs\SendWhatsApp;
-use App\Models\KlausulPrp;
-use App\Models\TindakLanjut;
 use App\Models\Temuan;
+use App\Models\TindakLanjut;
 use App\Models\User;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,17 +15,15 @@ class TindakLanjutPIC extends Component
 {
     use WithFileUploads;
 
-    // Temuan yang sedang dibuka (di-pass dari DetailTemuan)
-    #[Locked]
     public int $temuanId;
 
-    // State form tindak lanjut
-    public string  $action       = '';
-    public ?string $due_date     = null;
-    public         $foto_bukti   = null; // Livewire temporary upload
-    public string  $status       = 'open';
+    // Field form tindak lanjut
+    public string  $action      = '';
+    public ?string $due_date    = null;
+    public         $foto_bukti  = []; // Livewire temporary upload (array or single)
+    public string  $status      = 'open';
 
-    // Untuk menampilkan existing foto
+    // Untuk menampilkan existing foto / file bukti (tersimpan sebagai JSON array atau string)
     public ?string $foto_bukti_path = null;
 
     // Status saat ini dari database (referensi, tidak bisa diubah langsung)
@@ -51,7 +48,6 @@ class TindakLanjutPIC extends Component
     public function mount(int $temuanId): void
     {
         $this->temuanId = $temuanId;
-        // Load data regardless — blade will only show action buttons if authorized
         $this->loadTindakLanjut();
     }
 
@@ -78,10 +74,18 @@ class TindakLanjutPIC extends Component
         }
     }
 
-    /**
-     * Validasi dan simpan perubahan tindak lanjut (klausul, action, due date)
-     * tanpa mengubah status.
-     */
+    public function getBuktiPaths(): array
+    {
+        if (empty($this->foto_bukti_path)) {
+            return [];
+        }
+        $decoded = json_decode($this->foto_bukti_path, true);
+        if (is_array($decoded)) {
+            return array_values($decoded);
+        }
+        return [$this->foto_bukti_path];
+    }
+
     public function simpanDetail(): void
     {
         if (!$this->authorizePic()) return;
@@ -102,85 +106,103 @@ class TindakLanjutPIC extends Component
         $this->dispatch('tindakLanjutUpdated');
     }
 
-    /**
-     * Otomatis simpan foto saat file dipilih oleh PIC.
-     */
     public function updatedFotoBukti(): void
     {
         if (!$this->authorizePic()) return;
-
-        try {
-            $this->validateOnly('foto_bukti', [
-                'foto_bukti' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
-            ], [
-                'foto_bukti.required' => 'Pilih file foto terlebih dahulu.',
-                'foto_bukti.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-                'foto_bukti.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-                'foto_bukti.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
-                'foto_bukti.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
-            ]);
-
-            if ($this->foto_bukti) {
-                $this->uploadFoto();
-            }
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            $this->foto_bukti = null;
-            throw $e;
-        }
+        $this->uploadFoto();
     }
 
-    /**
-     * Upload foto bukti.
-     */
     public function uploadFoto(): void
     {
         if (!$this->authorizePic()) return;
-        $this->validate([
-            'foto_bukti' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
-        ], [
-            'foto_bukti.required' => 'Pilih file foto terlebih dahulu.',
-            'foto_bukti.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-            'foto_bukti.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-            'foto_bukti.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
-            'foto_bukti.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
-        ]);
 
-        $path = $this->foto_bukti->store('bukti', 'public');
+        $files = is_array($this->foto_bukti) ? $this->foto_bukti : [$this->foto_bukti];
+        $files = array_filter($files);
+
+        if (empty($files)) {
+            $this->validate([
+                'foto_bukti' => 'required',
+            ], [
+                'foto_bukti.required' => 'Pilih file bukti terlebih dahulu.',
+            ]);
+            return;
+        }
+
+        $existing = $this->getBuktiPaths();
+        if (count($existing) + count($files) > 3) {
+            $this->addError('foto_bukti', 'Maksimal 3 file bukti yang dapat dikumpulkan.');
+            $this->foto_bukti = [];
+            return;
+        }
+
+        try {
+            $this->validate([
+                'foto_bukti.*' => 'required|file|mimes:jpg,jpeg,png,webp,pdf,doc,docx|max:3072',
+            ], [
+                'foto_bukti.*.file'     => 'File yang dipilih tidak valid.',
+                'foto_bukti.*.mimes'    => 'Format file harus berupa gambar (JPG, PNG, WEBP) atau dokumen (PDF, DOC, DOCX).',
+                'foto_bukti.*.max'      => 'Ukuran setiap file maksimal 3MB.',
+                'foto_bukti.*.uploaded' => 'Gagal mengunggah file. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (Gambar/PDF/Word).',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->foto_bukti = [];
+            throw $e;
+        }
+
+        $newPaths = [];
+        foreach ($files as $file) {
+            $newPaths[] = $file->store('bukti', 'public');
+        }
+
+        $allPaths = array_merge($existing, $newPaths);
+        $encoded = json_encode(array_values($allPaths));
 
         TindakLanjut::where('temuan_id', $this->temuanId)->update([
-            'foto_bukti_path' => $path,
+            'foto_bukti_path' => $encoded,
         ]);
 
-        $this->foto_bukti_path = $path;
-        $this->foto_bukti      = null;
+        $this->foto_bukti_path = $encoded;
+        $this->foto_bukti      = [];
 
-        session()->flash('foto_success', 'Foto bukti berhasil diupload.');
+        session()->flash('foto_success', 'File bukti berhasil diunggah.');
         $this->dispatch('tindakLanjutUpdated');
     }
 
-    /**
-     * Ubah status tindak lanjut.
-     * Aturan ketat:
-     * - PIC TIDAK bisa set closed_acc (hanya QA)
-     * - Tidak bisa loncat status (open → closed_pending_qa tanpa melewati in_progress)
-     * - closed_pending_qa WAJIB ada foto_bukti terlebih dahulu
-     */
+    public function hapusFotoBukti(int $index): void
+    {
+        if (!$this->authorizePic()) return;
+
+        $paths = $this->getBuktiPaths();
+        if (isset($paths[$index])) {
+            $fileToDelete = $paths[$index];
+            if (Storage::disk('public')->exists($fileToDelete)) {
+                Storage::disk('public')->delete($fileToDelete);
+            }
+
+            unset($paths[$index]);
+            $paths = array_values($paths);
+
+            $encoded = empty($paths) ? null : json_encode($paths);
+
+            TindakLanjut::where('temuan_id', $this->temuanId)->update([
+                'foto_bukti_path' => $encoded,
+            ]);
+
+            $this->foto_bukti_path = $encoded;
+            session()->flash('foto_success', 'File bukti berhasil dihapus.');
+            $this->dispatch('tindakLanjutUpdated');
+        }
+    }
+
     public function ubahStatus(string $statusBaru): void
     {
         if (!$this->authorizePic()) return;
-        // 1. Validasi: PIC tidak boleh set closed_acc
-        if ($statusBaru === 'closed_acc') {
-            session()->flash('status_error', 'Status closed_acc hanya bisa diset oleh QA.');
+
+        if (!in_array($statusBaru, $this->allowedStatuses)) {
+            session()->flash('status_error', 'Status tidak valid untuk PIC.');
             return;
         }
 
-        // 2. Validasi: status harus ada dalam daftar yang diizinkan
-        if (!in_array($statusBaru, $this->allowedStatuses, true)) {
-            session()->flash('status_error', 'Status tidak valid.');
-            return;
-        }
-
-        // 3. Refresh current status dari database (cegah race condition)
         $tl = TindakLanjut::where('temuan_id', $this->temuanId)->first();
         if (!$tl) {
             session()->flash('status_error', 'Data tindak lanjut tidak ditemukan.');
@@ -190,42 +212,34 @@ class TindakLanjutPIC extends Component
         $currentOrder = $this->statusOrder[$tl->status] ?? 0;
         $newOrder     = $this->statusOrder[$statusBaru] ?? 0;
 
-        // 4. Validasi: tidak boleh loncat lebih dari 1 level ke depan
         if ($newOrder > $currentOrder + 1) {
-            session()->flash('status_error', 'Tidak bisa loncat status. Selesaikan tahap sebelumnya terlebih dahulu.');
+            session()->flash('status_error', 'Transisi status tidak boleh meloncat. Lakukan secara berurutan.');
             return;
         }
 
-        // 5. Tidak boleh mundur ke status lebih rendah
         if ($newOrder < $currentOrder) {
             session()->flash('status_error', 'Status tidak bisa diundur dari ' . $tl->status . ' ke ' . $statusBaru . '.');
             return;
         }
 
-        // 6. Jika menuju closed_pending_qa: wajib ada detail dan foto bukti
         if ($statusBaru === 'closed_pending_qa') {
-            // Wajib sudah isi action & due_date
             if (empty($tl->action) || empty($tl->due_date)) {
                 session()->flash('status_error', 'Lengkapi tindakan dan due date terlebih dahulu sebelum menutup laporan.');
                 return;
             }
 
-            // WAJIB ada foto bukti
-            if (empty($tl->foto_bukti_path)) {
-                session()->flash('status_error', 'Foto bukti WAJIB diupload sebelum status bisa diubah ke Closed Pending QA.');
+            if (empty($this->getBuktiPaths())) {
+                session()->flash('status_error', 'File/Foto bukti WAJIB diupload (minimal 1 file) sebelum status bisa diubah ke Closed Pending QA.');
                 return;
             }
         }
 
-        // 7. Simpan perubahan status ke tabel tindak_lanjut dan temuan
         $tl->update(['status' => $statusBaru]);
-
         Temuan::where('id', $this->temuanId)->update(['status' => $statusBaru]);
 
         $this->currentStatus = $statusBaru;
         $this->status        = $statusBaru;
 
-        // 8. Jika statusBaru = closed_pending_qa → kirim notifikasi WA ke QA
         if ($statusBaru === 'closed_pending_qa') {
             $this->kirimNotifikasiQA();
         }
@@ -234,47 +248,49 @@ class TindakLanjutPIC extends Component
         $this->dispatch('tindakLanjutUpdated');
     }
 
-    /**
-     * Kirim notifikasi WA ke semua user berole 'qa'.
-     */
     protected function kirimNotifikasiQA(): void
     {
+        $temuan = Temuan::with(['departemen', 'pic'])->find($this->temuanId);
+        if (!$temuan) return;
+
         $qaUsers = User::where('role', 'qa')->get();
+        if ($qaUsers->isEmpty()) return;
+
+        $deptNama = $temuan->departemen->nama_departemen ?? '-';
+        $picNama  = $temuan->pic->name ?? '-';
+        $pesan    = "*[SIVERA] Tindak Lanjut Siap Diverifikasi QA*\n\n"
+            . "Status temuan berikut telah diubah oleh PIC menjadi *Closed (Pending QA)*:\n\n"
+            . "📌 *ID Temuan*: #" . $temuan->id . "\n"
+            . "🏢 *Departemen*: " . $deptNama . "\n"
+            . "📍 *Sub Area*: " . $temuan->sub_area . "\n"
+            . "👤 *PIC*: " . $picNama . "\n"
+            . "📝 *Deskripsi Temuan*: " . $temuan->deskripsi . "\n\n"
+            . "Mohon masuk ke aplikasi SIVERA untuk melakukan verifikasi dan verifikasi akhir.";
 
         foreach ($qaUsers as $qa) {
-            if ($qa->no_whatsapp) {
-                $link    = route('temuan.detail', ['temuan' => $this->temuanId]);
-                $message = "Temuan #{$this->temuanId} sudah ditindaklanjuti PIC dan menunggu verifikasi Anda. "
-                         . "Silakan cek: {$link}";
-
-                SendWhatsApp::dispatch($qa->no_whatsapp, $message);
+            if (!empty($qa->no_whatsapp)) {
+                SendWhatsApp::dispatch($qa->no_whatsapp, $pesan);
             }
         }
     }
 
-    protected function statusLabel(string $status): string
+    public function statusLabel(string $status): string
     {
-        return match($status) {
-            'open'               => 'Open',
-            'in_progress'        => 'In Progress',
-            'closed_pending_qa'  => 'Closed Pending QA',
-            'closed_acc'         => 'Closed (ACC)',
-            default              => $status,
+        return match ($status) {
+            'open'              => 'Open',
+            'in_progress'       => 'In Progress',
+            'closed_pending_qa' => 'Closed (Pending QA)',
+            'closed_acc'        => 'Closed ACC (Selesai)',
+            default             => ucfirst($status),
         };
     }
 
     public function render()
     {
-        // Refresh foto_bukti_path dari DB agar selalu up to date
-        $tl = TindakLanjut::where('temuan_id', $this->temuanId)->first();
-        if ($tl) {
-            $this->foto_bukti_path = $tl->foto_bukti_path;
-            $this->currentStatus   = $tl->status;
-            $this->status          = $tl->status;
-        }
+        $this->loadTindakLanjut();
 
         return view('livewire.tindak-lanjut-pic', [
-            'tindakLanjut' => $tl,
+            'buktiPaths' => $this->getBuktiPaths(),
         ]);
     }
 }

@@ -153,19 +153,53 @@
                 </div>
 
                 <div>
-                    @if($tl->foto_bukti_path)
+                    @php
+                        $buktiPaths = $tl->bukti_paths ?? [];
+                    @endphp
+                    @if(count($buktiPaths) > 0)
                     <div class="info-row">
-                        <div class="inf-label">Foto Bukti</div>
-                        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-top:6px;">
-                            <img src="{{ asset('storage/' . $tl->foto_bukti_path) }}"
-                                 alt="Foto bukti tindak lanjut"
-                                 style="width:100%;max-height:180px;object-fit:contain;background:var(--bsur);" />
+                        <div class="inf-label">File / Foto Bukti Tindak Lanjut ({{ count($buktiPaths) }} File)</div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:10px;margin-top:6px;">
+                            @foreach($buktiPaths as $index => $path)
+                                @php
+                                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp']);
+                                @endphp
+                                @if($isImage)
+                                    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);background:var(--bsur);display:flex;flex-direction:column;">
+                                        <img src="{{ asset('storage/' . $path) }}"
+                                             alt="Foto bukti tindak lanjut"
+                                             style="width:100%;height:140px;object-fit:cover;" />
+                                        <div style="padding:6px 10px;background:var(--bcard);border-top:1px solid var(--bbor);display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="font-size:11px;color:var(--btxt2);font-weight:600;">Foto #{{ $index + 1 }}</span>
+                                            <a href="{{ asset('storage/' . $path) }}" target="_blank" download style="font-size:11px;color:var(--bp);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:2px;">
+                                                <span class="material-symbols-outlined" style="font-size:14px;">download</span> Unduh
+                                            </a>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div style="display:flex;flex-direction:column;justify-content:space-between;padding:10px 12px;background:var(--bsur);border:1px solid var(--bbor);border-radius:10px;">
+                                        <div style="display:flex;align-items:center;gap:8px;overflow:hidden;margin-bottom:8px;">
+                                            <span class="material-symbols-outlined" style="font-size:26px;color:{{ $ext === 'pdf' ? '#c62828' : '#1565c0' }};flex-shrink:0;">
+                                                {{ $ext === 'pdf' ? 'picture_as_pdf' : 'description' }}
+                                            </span>
+                                            <div style="overflow:hidden;">
+                                                <div style="font-size:12px;font-weight:600;color:var(--btxt);" class="truncate">Dokumen #{{ $index + 1 }} (.{{ strtoupper($ext) }})</div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ asset('storage/' . $path) }}" target="_blank" download class="bbtn bbtn-secondary bbtn-sm" style="width:100%;justify-content:center;font-size:11px !important;">
+                                            <span class="material-symbols-outlined" style="font-size:14px;">download</span>
+                                            Buka / Unduh
+                                        </a>
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
                     </div>
                     @else
                     <div class="balert balert-warn">
                         <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">warning</span>
-                        Foto bukti belum diupload
+                        File / Foto bukti belum diupload
                     </div>
                     @endif
 

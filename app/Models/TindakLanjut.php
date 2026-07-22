@@ -35,6 +35,21 @@ class TindakLanjut extends Model
     }
 
     /**
+     * Accessor untuk daftar path file bukti (Mendukung hingga 3 file per temuan).
+     */
+    public function getBuktiPathsAttribute(): array
+    {
+        if (empty($this->foto_bukti_path)) {
+            return [];
+        }
+        $decoded = json_decode($this->foto_bukti_path, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+        return [$this->foto_bukti_path];
+    }
+
+    /**
      * Temuan yang ditindaklanjuti.
      */
     public function temuan(): BelongsTo

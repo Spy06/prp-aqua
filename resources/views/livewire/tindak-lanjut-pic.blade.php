@@ -1,141 +1,199 @@
-<div style="display:flex;flex-direction:column;gap:20px;" id="tindak-lanjut-pic-form">
-
-    {{-- Flash Messages --}}
-    @if(session('status_success'))
-        <div class="balert balert-success">
-            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">check_circle</span>
+<div>
+    {{-- Flash Notifications --}}
+    @if (session()->has('status_success'))
+        <div class="balert balert-success fu" style="margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
             <span>{{ session('status_success') }}</span>
         </div>
     @endif
-    @if(session('status_error'))
-        <div class="balert balert-error">
-            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">error</span>
+
+    @if (session()->has('status_error'))
+        <div class="balert balert-error fu" style="margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">error</span>
             <span>{{ session('status_error') }}</span>
         </div>
     @endif
-    @if(session('detail_success'))
-        <div class="balert balert-info">
-            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">info</span>
+
+    @if (session()->has('detail_success'))
+        <div class="balert balert-success fu" style="margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
             <span>{{ session('detail_success') }}</span>
         </div>
     @endif
-    @if(session('foto_success'))
-        <div class="balert balert-success">
-            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">photo</span>
+
+    @if (session()->has('foto_success'))
+        <div class="balert balert-success fu" style="margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
             <span>{{ session('foto_success') }}</span>
         </div>
     @endif
 
-    {{-- Status Saat Ini --}}
-    @php
-        $statusClass = match($currentStatus) {
-            'open'              => 'sbadge-open',
-            'in_progress'       => 'sbadge-progress',
-            'closed_pending_qa' => 'sbadge-pending',
-            'closed_acc'        => 'sbadge-closed',
-            default             => 'sbadge-progress',
-        };
-        $statusText = match($currentStatus) {
-            'open'              => 'Open',
-            'in_progress'       => 'In Progress',
-            'closed_pending_qa' => 'Closed Pending QA (Menunggu Verifikasi QA)',
-            'closed_acc'        => 'Closed — Disetujui QA',
-            default             => $currentStatus,
-        };
-    @endphp
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span style="font-size:13px;font-weight:600;color:var(--btxt2);">Status tindak lanjut:</span>
-        <span class="sbadge {{ $statusClass }}" style="font-size:11.5px;">{{ $statusText }}</span>
-    </div>
-
-    {{-- Section 1: Detail Tindak Lanjut --}}
-    <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--bbor);">
-            <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">edit_note</span>
-            <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Detail Tindak Lanjut</span>
+    @if (session()->has('foto_error'))
+        <div class="balert balert-error fu" style="margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">error</span>
+            <span>{{ session('foto_error') }}</span>
         </div>
+    @endif
 
-        {{-- Tindakan / Action --}}
-        <div style="margin-bottom:14px;">
-            <label class="blabel" for="action">Tindakan Perbaikan <span style="color:var(--error);">*</span></label>
-            <textarea id="action" wire:model="action" rows="4"
-                placeholder="Jelaskan tindakan perbaikan yang dilakukan atau direncanakan..."
-                class="binput" style="resize:vertical;"
-                {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }}></textarea>
-            @error('action') <span class="berr">{{ $message }}</span> @enderror
+    {{-- Header Banner Status --}}
+    <div style="background:var(--bsur);padding:14px 16px;border-radius:12px;border:1px solid var(--bbor);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+            <span style="font-size:11px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:0.5px;display:block;">Status Tindak Lanjut</span>
+            <span style="font-size:15px;font-weight:700;color:var(--btxt);margin-top:2px;display:inline-flex;align-items:center;gap:6px;">
+                @if($currentStatus === 'open')
+                    <span class="sbadge sbadge-open">Open</span>
+                @elseif($currentStatus === 'in_progress')
+                    <span class="sbadge sbadge-progress">In Progress</span>
+                @elseif($currentStatus === 'closed_pending_qa')
+                    <span class="sbadge sbadge-pending">Closed (Pending QA)</span>
+                @elseif($currentStatus === 'closed_acc')
+                    <span class="sbadge sbadge-closed">Closed ACC (Selesai)</span>
+                @endif
+            </span>
         </div>
-
-        {{-- Due Date --}}
-        <div style="margin-bottom:14px;">
-            <label class="blabel" for="due_date">Due Date <span style="color:var(--error);">*</span></label>
-            <input type="date" id="due_date" wire:model="due_date" class="binput"
-                {{ $currentStatus === 'closed_pending_qa' || $currentStatus === 'closed_acc' ? 'disabled' : '' }} />
-            @error('due_date') <span class="berr">{{ $message }}</span> @enderror
-        </div>
-
-        @if(!in_array($currentStatus, ['closed_pending_qa', 'closed_acc']))
-        <div style="display:flex;justify-content:flex-end;">
-            <button wire:click="simpanDetail" wire:loading.attr="disabled" id="btn-simpan-detail" class="bbtn bbtn-primary">
-                <span wire:loading.remove wire:target="simpanDetail" class="material-symbols-outlined" style="font-size:18px;">save</span>
-                <span wire:loading wire:target="simpanDetail" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
-                Simpan Detail
-            </button>
-        </div>
+        @if($currentStatus === 'closed_acc')
+            <span style="font-size:12px;color:#2e7d32;font-weight:600;background:#e8f5e9;padding:6px 12px;border-radius:8px;">
+                ✓ Laporan sudah diverifikasi ACC oleh QA
+            </span>
+        @elseif($currentStatus === 'closed_pending_qa')
+            <span style="font-size:12px;color:#c62828;font-weight:600;background:#ffebee;padding:6px 12px;border-radius:8px;">
+                ⏳ Menunggu verifikasi akhir QA
+            </span>
         @endif
     </div>
 
-    {{-- Section 2: Foto Bukti --}}
+    {{-- Section 1: Form Tindakan & Due Date --}}
+    <form wire:submit.prevent="simpanDetail" style="margin-bottom:20px;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+            {{-- Deskripsi Tindakan --}}
+            <div>
+                <label for="action" class="blabel">Rencana / Deskripsi Tindakan Perbaikan <span style="color:var(--error);">*</span></label>
+                @if($currentStatus !== 'closed_acc')
+                    <textarea id="action" wire:model.defer="action" class="binput" rows="4"
+                        placeholder="Jelaskan tindakan perbaikan yang dilakukan atau akan dilakukan..."></textarea>
+                    @error('action') <span class="berr">{{ $message }}</span> @enderror
+                @else
+                    <div class="inf-text">{{ $action ?: '-' }}</div>
+                @endif
+            </div>
+
+            {{-- Due Date --}}
+            <div>
+                <label for="due_date" class="blabel">Target Selesai (Due Date) <span style="color:var(--error);">*</span></label>
+                @if($currentStatus !== 'closed_acc')
+                    <input type="date" id="due_date" wire:model.defer="due_date" class="binput" style="max-width:240px;" />
+                    @error('due_date') <span class="berr">{{ $message }}</span> @enderror
+                @else
+                    <div class="inf-value" style="margin-top:4px;">
+                        {{ $due_date ? \Carbon\Carbon::parse($due_date)->format('d F Y') : '-' }}
+                    </div>
+                @endif
+            </div>
+
+            {{-- Tombol Simpan Detail (hanya tampil jika belum closed_acc) --}}
+            @if($currentStatus !== 'closed_acc')
+            <div>
+                <button type="submit" class="bbtn bbtn-secondary bbtn-sm">
+                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                    Simpan Detail
+                </button>
+            </div>
+            @endif
+        </div>
+    </form>
+
+    {{-- Section 2: File / Foto Bukti (Maksimal 3 File) --}}
     <div style="padding-top:16px;border-top:1.5px solid var(--bbor);margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-            <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">photo_camera</span>
-            <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">Foto Bukti</span>
-            @if(empty($foto_bukti_path) && !$foto_bukti)
-                <span style="font-size:11.5px;color:#e65100;font-weight:600;">(Wajib sebelum closed)</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="material-symbols-outlined" style="color:var(--bp);font-size:18px;">description</span>
+                <span style="font-size:13px;font-weight:700;color:var(--btxt);text-transform:uppercase;letter-spacing:0.5px;">File / Foto Bukti</span>
+                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;{{ count($buktiPaths) > 0 ? 'background:var(--bp-light);color:var(--bp-dark);' : 'background:#fff3e0;color:#e65100;' }}">
+                    {{ count($buktiPaths) }}/3 File
+                </span>
+            </div>
+
+            @if(count($buktiPaths) === 0)
+                <span style="font-size:11.5px;color:#e65100;font-weight:600;">(Wajib minimal 1 file sebelum closed)</span>
             @else
-                <span style="font-size:11.5px;color:#2e7d32;font-weight:600;">✓ Sudah diupload</span>
+                <span style="font-size:11.5px;color:#2e7d32;font-weight:600;">✓ Bukti diupload</span>
             @endif
         </div>
 
+        {{-- Grid Bukti Ter-upload --}}
+        @if(count($buktiPaths) > 0)
+            <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:12px;margin-bottom:14px;">
+                @foreach($buktiPaths as $index => $path)
+                    @php
+                        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                        $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp']);
+                    @endphp
+                    <div style="position:relative;background:var(--bcard);border:1.5px solid var(--bbor);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;flex-direction:column;">
+                        @if($isImage)
+                            <div style="height:120px;background:var(--bsur);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                <img src="{{ Storage::disk('public')->url($path) }}" style="width:100%;height:100%;object-fit:cover;">
+                            </div>
+                        @else
+                            <div style="height:120px;background:var(--bsur);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;gap:6px;text-align:center;">
+                                <span class="material-symbols-outlined" style="font-size:40px;color:{{ $ext === 'pdf' ? '#c62828' : '#1565c0' }};">
+                                    {{ $ext === 'pdf' ? 'picture_as_pdf' : 'description' }}
+                                </span>
+                                <span style="font-size:11px;font-weight:700;color:var(--btxt);text-transform:uppercase;">.{{ strtoupper($ext) }} File</span>
+                            </div>
+                        @endif
+
+                        <div style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;background:var(--bcard);border-top:1px solid var(--bbor);gap:6px;">
+                            <a href="{{ Storage::disk('public')->url($path) }}" target="_blank" download style="font-size:11.5px;font-weight:600;color:var(--bp);text-decoration:none;display:flex;align-items:center;gap:4px;overflow:hidden;">
+                                <span class="material-symbols-outlined" style="font-size:15px;">download</span>
+                                <span class="truncate">File #{{ $index + 1 }}</span>
+                            </a>
+
+                            @if($currentStatus !== 'closed_acc')
+                                <button type="button" wire:click="hapusFotoBukti({{ $index }})" wire:confirm="Hapus file bukti ini?" style="background:var(--error-light);color:var(--error);border:none;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" title="Hapus file">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        {{-- Dropzone Input File --}}
         @if($currentStatus !== 'closed_acc')
-        <div>
-            <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:140px;gap:10px;">
-                <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" accept="image/*" style="display:none;" />
-                <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
+            @if(count($buktiPaths) < 3)
+                <div>
+                    <div style="border:2px dashed var(--bbor);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:120px;gap:10px;">
+                        <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" multiple accept="image/*,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" />
+                        <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
 
-                @if ($foto_bukti)
-                    <img src="{{ $foto_bukti->temporaryUrl() }}" style="max-height:160px;border-radius:8px;object-fit:contain;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                @elseif ($foto_bukti_path)
-                    <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}" style="max-height:160px;border-radius:8px;object-fit:contain;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                @else
-                    <span class="material-symbols-outlined" style="font-size:36px;color:var(--btxt2);">add_a_photo</span>
-                    <p style="font-size:12.5px;color:var(--btxt2);margin:0;text-align:center;">Pilih metode upload foto bukti</p>
-                @endif
+                        <span class="material-symbols-outlined" style="font-size:32px;color:var(--btxt2);">cloud_upload</span>
+                        <p style="font-size:12.5px;color:var(--btxt2);margin:0;text-align:center;">Tambah file bukti (Tersisa {{ 3 - count($buktiPaths) }} file lagi)</p>
 
-                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-                    <label for="foto-bukti-camera" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;transition:opacity .2s;">
-                        <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
-                        Ambil Foto
-                    </label>
-                    <label for="foto-bukti-gallery" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);transition:opacity .2s;">
-                        <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
-                        Dari Galeri
-                    </label>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                            <label for="foto-bukti-camera" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;transition:opacity .2s;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
+                                Ambil Foto
+                            </label>
+                            <label for="foto-bukti-gallery" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);transition:opacity .2s;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span>
+                                Pilih File / Galeri
+                            </label>
+                        </div>
+                        <p style="font-size:11px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Maksimal 3 file &bull; Maks 3MB per file &bull; Format: JPG, PNG, WEBP, PDF, Word</p>
+                    </div>
+                    @error('foto_bukti') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
+                    @error('foto_bukti.*') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
+                    <div wire:loading wire:target="foto_bukti" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
+                        <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
+                        Mengunggah file...
+                    </div>
                 </div>
-                <p style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Maksimal 3MB &bull; Format: JPG, PNG, WebP</p>
-            </div>
-            @error('foto_bukti') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
-            <div wire:loading wire:target="foto_bukti" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
-                <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
-                Mengunggah foto...
-            </div>
-        </div>
-        @else
-            @if($foto_bukti_path)
-            <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);">
-                <img src="{{ Storage::disk('public')->url($foto_bukti_path) }}"
-                     alt="Foto bukti tindak lanjut"
-                     style="width:100%;max-height:220px;object-fit:contain;background:var(--bsur);" />
-            </div>
+            @else
+                <div style="padding:10px 14px;background:var(--bsur);border:1px solid var(--bbor);border-radius:10px;font-size:12px;color:var(--btxt2);text-align:center;">
+                    ✓ Kuota maksimal 3 file bukti sudah terpenuhi. Hapus salah satu file di atas jika ingin mengganti.
+                </div>
             @endif
         @endif
     </div>
@@ -154,60 +212,35 @@
             <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
             <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'in_progress' ? 'background:#e3f2fd;color:#1565c0;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">In Progress</span>
             <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
-            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'closed_pending_qa' ? 'background:#f3e5f5;color:#6a1b9a;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Pending QA</span>
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'closed_pending_qa' ? 'background:#ffebee;color:#c62828;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Pending QA</span>
             <span class="material-symbols-outlined" style="font-size:12px;color:var(--btxt2);flex-shrink:0;">arrow_forward</span>
-            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;background:var(--bsur);color:var(--btxt2);">ACC (QA)</span>
+            <span style="padding:4px 6px;border-radius:6px;white-space:nowrap;{{ $currentStatus === 'closed_acc' ? 'background:#e8f5e9;color:#2e7d32;font-weight:700;' : 'background:var(--bsur);color:var(--btxt2);' }}">Closed ACC</span>
         </div>
 
-        {{-- Tombol Transisi --}}
-        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        {{-- Tombol Aksi Status --}}
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
             @if($currentStatus === 'open')
-                <button wire:click="ubahStatus('in_progress')" wire:loading.attr="disabled"
-                    wire:confirm="Ubah status ke In Progress?"
-                    id="btn-status-in-progress" class="bbtn bbtn-primary">
-                    <span class="material-symbols-outlined" style="font-size:18px;">play_arrow</span>
-                    Mulai Pengerjaan (In Progress)
+                <button type="button" wire:click="ubahStatus('in_progress')" class="bbtn bbtn-primary bbtn-sm">
+                    <span class="material-symbols-outlined" style="font-size:16px;">play_arrow</span>
+                    Proses (Mulai In Progress)
                 </button>
-            @elseif($currentStatus === 'in_progress')
-                <div style="width:100%;">
-                    @if(empty($foto_bukti_path))
-                    <div class="balert balert-warn" style="margin-bottom:10px;">
-                        <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">warning</span>
-                        <span><strong>⚠ Foto bukti wajib diupload</strong> sebelum menutup laporan untuk verifikasi QA.</span>
+            @endif
+
+            @if($currentStatus === 'in_progress')
+                <button type="button" wire:click="ubahStatus('closed_pending_qa')"
+                    class="bbtn bbtn-success bbtn-sm"
+                    {{ empty($buktiPaths) ? 'disabled' : '' }}>
+                    <span class="material-symbols-outlined" style="font-size:16px;">task_alt</span>
+                    Ajukan Selesai (Closed Pending QA)
+                </button>
+
+                @if(empty($buktiPaths))
+                    <div style="font-size:11.5px;color:#e65100;margin-top:6px;width:100%;">
+                        ⚠️ Upload minimal 1 file/foto bukti terlebih dahulu untuk mengaktifkan tombol ini.
                     </div>
-                    @endif
-
-                    <button wire:click="ubahStatus('closed_pending_qa')" wire:loading.attr="disabled"
-                        wire:confirm="Selesaikan dan kirim ke QA untuk verifikasi? Pastikan foto bukti sudah diupload."
-                        id="btn-status-pending-qa" class="bbtn bbtn-purple"
-                        {{ empty($foto_bukti_path) ? 'disabled' : '' }}>
-                        <span class="material-symbols-outlined" style="font-size:18px;">send</span>
-                        Selesai & Kirim ke QA
-                    </button>
-
-                    @if(empty($foto_bukti_path))
-                    <p style="font-size:12px;color:#e65100;margin-top:8px;display:flex;align-items:center;gap:4px;">
-                        <span class="material-symbols-outlined" style="font-size:15px;">lock</span>
-                        Upload foto bukti terlebih dahulu untuk mengaktifkan tombol ini.
-                    </p>
-                    @endif
-                </div>
-            @elseif($currentStatus === 'closed_pending_qa')
-                <div class="balert balert-info" style="width:100%;">
-                    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">schedule</span>
-                    <span>Menunggu verifikasi QA. Anda tidak dapat mengubah status lebih lanjut.</span>
-                </div>
+                @endif
             @endif
         </div>
-
-        <p style="font-size:11.5px;color:var(--btxt2);margin-top:12px;display:flex;align-items:flex-start;gap:5px;flex-wrap:nowrap;">
-            <span class="material-symbols-outlined" style="font-size:14px;flex-shrink:0;position:relative;top:2px;">lock</span>
-            <span>Status <em>Closed ACC</em> hanya bisa diset oleh QA setelah verifikasi.</span>
-        </p>
     </div>
     @endif
-
-    <style>
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
 </div>

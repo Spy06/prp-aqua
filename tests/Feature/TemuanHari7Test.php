@@ -162,6 +162,23 @@ test('Policy: karyawan lain tidak boleh melihat detail temuan orang lain', funct
         ->assertForbidden(); // 403
 });
 
+test('TindakLanjutPIC: mengizinkan upload bukti berformat PDF dan Word (DOC/DOCX) maksimal 3MB', function () {
+    Storage::fake('public');
+
+    $pelapor = testBuatKaryawan('K109', 'Pelapor PDF');
+    $pic = testBuatKaryawan('K110', 'PIC PDF');
+    $temuan = testBuatTemuan($pelapor, $pic);
+
+    $filePdf = UploadedFile::fake()->create('bukti.pdf', 2000, 'application/pdf'); // 2MB PDF
+
+    Livewire::actingAs($pic)
+        ->test(\App\Livewire\TindakLanjutPIC::class, ['temuanId' => $temuan->id])
+        ->set('foto_bukti', $filePdf)
+        ->assertHasNoErrors();
+
+    expect($temuan->tindakLanjut->fresh()->foto_bukti_path)->not->toBeNull();
+});
+
 // ===========================================================================
 // 5. Validasi pembuatan akun: NIK tidak ada / tidak aktif ditolak
 // ===========================================================================

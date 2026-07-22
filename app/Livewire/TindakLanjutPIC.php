@@ -107,8 +107,25 @@ class TindakLanjutPIC extends Component
      */
     public function updatedFotoBukti(): void
     {
-        if ($this->foto_bukti) {
-            $this->uploadFoto();
+        if (!$this->authorizePic()) return;
+
+        try {
+            $this->validateOnly('foto_bukti', [
+                'foto_bukti' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+            ], [
+                'foto_bukti.required' => 'Pilih file foto terlebih dahulu.',
+                'foto_bukti.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+                'foto_bukti.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+                'foto_bukti.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
+                'foto_bukti.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
+            ]);
+
+            if ($this->foto_bukti) {
+                $this->uploadFoto();
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->foto_bukti = null;
+            throw $e;
         }
     }
 
@@ -119,11 +136,13 @@ class TindakLanjutPIC extends Component
     {
         if (!$this->authorizePic()) return;
         $this->validate([
-            'foto_bukti' => 'required|image|max:5120',
+            'foto_bukti' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
         ], [
             'foto_bukti.required' => 'Pilih file foto terlebih dahulu.',
-            'foto_bukti.image'    => 'File harus berupa gambar (jpg, png, dll.).',
-            'foto_bukti.max'      => 'Ukuran foto maksimal 5MB.',
+            'foto_bukti.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+            'foto_bukti.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+            'foto_bukti.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
+            'foto_bukti.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
         ]);
 
         $path = $this->foto_bukti->store('bukti', 'public');

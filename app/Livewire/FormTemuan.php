@@ -36,11 +36,24 @@ class FormTemuan extends Component
         'sub_area'       => 'required|string|max:255',
         'klausul_id'     => 'required|exists:klausul_prp,id',
         'detail_sub_area'=> 'required_if:sub_area,Others|nullable|string|max:255',
-        'foto_temuan'    => 'required|image|max:5120', // max 5MB
+        'foto_temuan'    => 'required|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB
         'deskripsi'      => 'required|string',
         'saran'          => 'nullable|string',
         'pic_id'         => 'required|exists:users,id',
     ];
+
+    protected $messages = [
+        'foto_temuan.required' => 'Foto temuan wajib diupload.',
+        'foto_temuan.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+        'foto_temuan.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+        'foto_temuan.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
+        'foto_temuan.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
+    ];
+
+    public function updatedFotoTemuan()
+    {
+        $this->validateOnly('foto_temuan');
+    }
 
     public function mount()
     {

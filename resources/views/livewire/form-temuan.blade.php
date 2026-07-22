@@ -109,8 +109,9 @@
                                         Dari Galeri
                                     </label>
                                 </div>
+                                <p style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Maksimal 3MB &bull; Format: JPG, PNG, WebP</p>
                             </div>
-                            @error('foto_temuan') <span class="berr">{{ $message }}</span> @enderror
+                            @error('foto_temuan') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
                             <div wire:loading wire:target="foto_temuan" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
                                 <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
                                 Mengunggah foto...

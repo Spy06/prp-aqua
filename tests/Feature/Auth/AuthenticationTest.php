@@ -65,3 +65,30 @@ test('users can logout', function () {
 
     $this->assertGuest();
 });
+
+test('karyawan with intended qa url is redirected to dashboard safely instead of qa url', function () {
+    $user = User::factory()->create(['role' => 'karyawan']);
+
+    $response = $this->withSession(['url.intended' => '/qa/dashboard'])
+        ->post(route('login.store'), [
+            'nik' => $user->nik,
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirect('/dashboard');
+    $this->assertAuthenticated();
+});
+
+test('whatsapp notification deep link to temuan detail is preserved after login', function () {
+    $user = User::factory()->create(['role' => 'karyawan']);
+    $deepLink = '/temuan/1';
+
+    $response = $this->withSession(['url.intended' => $deepLink])
+        ->post(route('login.store'), [
+            'nik' => $user->nik,
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirect($deepLink);
+    $this->assertAuthenticated();
+});

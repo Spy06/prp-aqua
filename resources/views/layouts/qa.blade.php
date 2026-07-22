@@ -492,7 +492,7 @@
 
         {{-- Sidebar Menu Content --}}
         <div class="qs-content">
-            <span class="qs-group-label">Dashboard</span>
+            <span class="qs-group-label">Dashboard QA</span>
             <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
                 <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                 <span>Grafik Temuan</span>
@@ -504,6 +504,12 @@
             <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                 <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
                 <span>Rekap Periode</span>
+            </a>
+
+            <span class="qs-group-label" style="margin-top:16px;">Mode Pelapor</span>
+            <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                <span>Lapor Temuan Saya</span>
             </a>
 
             <span class="qs-group-label" style="margin-top:16px;">Master Data</span>

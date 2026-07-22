@@ -452,18 +452,22 @@
 
         <div class="qs-content">
             @auth
-                @if(auth()->user()->role === 'pelapor')
+                @if(auth()->user()->role === 'qa')
+                    <span class="qs-section-label">Menu QA</span>
+                    <a class="qs-item" href="{{ route('qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic">dashboard</span>
+                        <span>Dashboard QA</span>
+                    </a>
+                    <span class="qs-section-label" style="margin-top:12px;">Mode Pelapor</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                        <span>Lapor Temuan Saya</span>
+                    </a>
+                @else
                     <span class="qs-section-label">Menu Utama</span>
                     <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">home</span>
                         <span>Beranda</span>
-                    </a>
-
-                @elseif(auth()->user()->role === 'pic')
-                    <span class="qs-section-label">Menu Utama</span>
-                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">assignment</span>
-                        <span>Temuan Saya</span>
                     </a>
                 @endif
             @endauth

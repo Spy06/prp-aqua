@@ -28,24 +28,33 @@
             style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;
             {{ $tab === 'pelapor' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
             <span class="material-symbols-outlined {{ $tab === 'pelapor' ? 'fil' : '' }}" style="font-size:16px;vertical-align:-3px;margin-right:4px;">person</span>
-            Pelapor
+            Mode Pelapor
         </button>
-        <button wire:click="setTab('pic')"
-            style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;
-            {{ $tab === 'pic' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
-            <span class="material-symbols-outlined {{ $tab === 'pic' ? 'fil' : '' }}" style="font-size:16px;">assignment_ind</span>
-            PIC
-            @if($picBadge > 0)
-                <span style="background:#c62828;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">{{ $picBadge }}</span>
-            @else
-                <span style="background:var(--bbor);color:var(--btxt2);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">0</span>
-            @endif
-        </button>
+
+        @if(auth()->user()->role === 'qa')
+            <a href="{{ route('qa.dashboard') }}" wire:navigate
+                style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;display:flex;align-items:center;gap:6px;background:transparent;color:var(--bs);;">
+                <span class="material-symbols-outlined" style="font-size:16px;">dashboard</span>
+                Dashboard QA
+            </a>
+        @else
+            <button wire:click="setTab('pic')"
+                style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;
+                {{ $tab === 'pic' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
+                <span class="material-symbols-outlined {{ $tab === 'pic' ? 'fil' : '' }}" style="font-size:16px;">assignment_ind</span>
+                PIC
+                @if($picBadge > 0)
+                    <span style="background:#c62828;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">{{ $picBadge }}</span>
+                @else
+                    <span style="background:var(--bbor);color:var(--btxt2);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">0</span>
+                @endif
+            </button>
+        @endif
     </div>
 
     {{-- Content --}}
     <div>
-        @if($tab === 'pelapor')
+        @if($tab === 'pelapor' || auth()->user()->role === 'qa')
             {{-- Form Toggle --}}
             <div x-show="showForm" x-collapse x-cloak style="margin-bottom:24px;">
                 <livewire:form-temuan />

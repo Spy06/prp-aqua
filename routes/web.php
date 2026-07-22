@@ -20,8 +20,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::redirect('/home', '/dashboard')->name('home');
 
-    // Role Karyawan
-    Route::middleware(['role:karyawan'])->group(function () {
+    // Role Karyawan & QA (Halaman Beranda & Lapor Temuan)
+    Route::middleware(['role:karyawan,qa'])->group(function () {
         Route::view('/beranda', 'pages.beranda')->name('beranda');
     });
 

@@ -61,6 +61,41 @@
             transition: left 0.3s ease;
         }
 
+        /* Mobile Menu Button */
+        .qtop-menu-btn {
+            display: none;
+            background: var(--bs-light);
+            color: var(--bs-dark);
+            border: none;
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            align-items: center; justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .qtop-menu-btn:hover {
+            background: var(--bs);
+            color: #fff;
+        }
+
+        .qs-close-btn {
+            display: none;
+            background: var(--bsur);
+            color: var(--btxt2);
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            align-items: center; justify-content: center;
+            cursor: pointer;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .qs-backdrop {
+            display: none;
+        }
+
         /* Topbar Actions */
         .qtop-act { display: flex; align-items: center; gap: 12px; }
         
@@ -221,8 +256,33 @@
             .qtop { left: 0 !important; right: 0 !important; padding: 0 16px; height: 64px; }
             .qmain-wrapper { margin-left: 0 !important; padding-top: 64px; }
             .qcontent-container { padding: 16px; }
-            .qs { display: none; }
             .qtop-logo { display: flex !important; align-items: center; gap: 10px; }
+            .qtop-menu-btn { display: flex !important; }
+            .qs-close-btn { display: flex !important; }
+
+            .qs {
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                z-index: 100 !important;
+                box-shadow: 0 0 30px rgba(0,0,0,0.25);
+                display: flex !important;
+            }
+            .qs.qs-open {
+                transform: translateX(0) !important;
+            }
+            .qs-backdrop {
+                display: block;
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.45);
+                backdrop-filter: blur(3px);
+                -webkit-backdrop-filter: blur(3px);
+                z-index: 90;
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            .qs-backdrop.qs-open {
+                opacity: 1; pointer-events: auto;
+            }
         }
 
         @media (max-width: 640px) {
@@ -377,15 +437,25 @@
 </head>
 <body>
 
+    {{-- ═══ MOBILE BACKDROP OVERLAY ═══ --}}
+    <div id="mobile-drawer-backdrop" class="qs-backdrop"></div>
+
     {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
-        <div class="logo-area qtop-logo">
-            <div class="logo-box">
-                <span class="material-symbols-outlined">verified_user</span>
-            </div>
-            <div class="logo-text">
-                <h1>SIVERA</h1>
-                <p>Internal System</p>
+        <div style="display:flex; align-items:center; gap:10px;">
+            {{-- Mobile Drawer Menu Button --}}
+            <button id="mobile-menu-btn" class="qtop-menu-btn" aria-label="Toggle Menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <div class="logo-area qtop-logo">
+                <div class="logo-box">
+                    <span class="material-symbols-outlined">verified_user</span>
+                </div>
+                <div class="logo-text">
+                    <h1>SIVERA</h1>
+                    <p>Internal System</p>
+                </div>
             </div>
         </div>
 
@@ -403,7 +473,7 @@
     </header>
 
     {{-- ═══ SIDEBAR DRAWER ═══ --}}
-    <aside class="qs">
+    <aside id="sidebar-drawer" class="qs">
         {{-- Sidebar Logo Area --}}
         <div class="qs-header">
             <div class="logo-area">
@@ -415,6 +485,9 @@
                     <p>Version 1.0.0</p>
                 </div>
             </div>
+            <button id="mobile-menu-close" class="qs-close-btn" aria-label="Close Menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
 
         {{-- Sidebar Menu Content --}}
@@ -509,6 +582,36 @@
                 document.documentElement.classList.remove('dark');
             });
 
+            function setupMobileMenu() {
+                const btnOpen = document.getElementById('mobile-menu-btn');
+                const btnClose = document.getElementById('mobile-menu-close');
+                const sidebar = document.getElementById('sidebar-drawer');
+                const backdrop = document.getElementById('mobile-drawer-backdrop');
+
+                if (!btnOpen || !sidebar || !backdrop) return;
+
+                function openDrawer() {
+                    sidebar.classList.add('qs-open');
+                    backdrop.classList.add('qs-open');
+                    document.body.style.overflow = 'hidden';
+                }
+
+                function closeDrawer() {
+                    sidebar.classList.remove('qs-open');
+                    backdrop.classList.remove('qs-open');
+                    document.body.style.overflow = '';
+                }
+
+                btnOpen.onclick = openDrawer;
+                if (btnClose) btnClose.onclick = closeDrawer;
+                backdrop.onclick = closeDrawer;
+
+                const navItems = sidebar.querySelectorAll('.qs-item');
+                navItems.forEach(item => {
+                    item.onclick = closeDrawer;
+                });
+            }
+
             let pendingTarget = null, bypassing = false;
             window.confirm = function (message) {
                 if (bypassing) return true;
@@ -536,8 +639,14 @@
                     setTimeout(function () { bypassing = false; }, 200);
                 };
             }
-            document.addEventListener('DOMContentLoaded', attachButtons);
-            document.addEventListener('livewire:navigated', attachButtons);
+            document.addEventListener('DOMContentLoaded', () => {
+                attachButtons();
+                setupMobileMenu();
+            });
+            document.addEventListener('livewire:navigated', () => {
+                attachButtons();
+                setupMobileMenu();
+            });
         })();
     </script>
     @livewireScripts

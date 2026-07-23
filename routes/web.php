@@ -2,7 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+// Halaman utama default sebelum login: Portal Pemilihan Sistem Informasi
+Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->role === 'qa') {
+            return redirect()->route('qa.dashboard');
+        }
+        return redirect()->route('beranda');
+    }
+    return view('portal');
+})->name('portal');
 
 // Pendaftaran publik DINONAKTIFKAN — akun hanya dibuat oleh QA (admin master)
 // Rute /register secara eksplisit mengembalikan 404

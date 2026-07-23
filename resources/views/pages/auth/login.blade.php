@@ -4,7 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Verifikasi PRP - Login</title>
+    @php
+        $system = request('system', 'sivera');
+        $isSivera = $system !== 'other';
+        $systemTitle = $isSivera ? 'SIVERA' : 'SIM-PLANT';
+        $systemSub = $isSivera ? 'Sistem Verifikasi PRP Plant' : 'Sistem Informasi Operasional Plant';
+    @endphp
+    <title>{{ $systemTitle }} - Login</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -19,15 +25,15 @@
 
     <style>
         .glass-card {
-            background: rgba(244, 250, 255, 0.85);
+            background: rgba(244, 250, 255, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         html.dark .glass-card {
-            background: rgba(24, 33, 39, 0.75);
-            border: 1px solid rgba(60, 73, 78, 0.4);
+            background: rgba(24, 33, 39, 0.85);
+            border: 1px solid rgba(60, 73, 78, 0.5);
         }
 
         .bg-light-image {
@@ -49,30 +55,51 @@
 </head>
 
 <body
-    class="font-inter text-zinc-900 dark:text-zinc-100 h-screen w-screen flex items-center justify-center overflow-hidden relative">
+    class="font-inter text-zinc-900 dark:text-zinc-100 min-h-screen w-screen flex flex-col items-center justify-center overflow-x-hidden relative py-8">
 
     <!-- Background Image -->
     <div class="absolute inset-0 z-0 bg-cover bg-center bg-light-image dark:bg-dark-image transition-all duration-500">
-        <div class="absolute inset-0 bg-blue-900/20 dark:bg-zinc-950/80 transition-all duration-500"></div>
+        <div class="absolute inset-0 bg-blue-900/25 dark:bg-zinc-950/85 transition-all duration-500"></div>
     </div>
 
     <!-- Login Card Container -->
     <div class="relative z-10 w-full max-w-[480px] p-4 sm:p-6">
+
+        <!-- Tombol Kembali ke Pemilihan Sistem -->
+        <div class="mb-3">
+            <a href="{{ route('portal') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-xs font-bold text-zinc-700 dark:text-zinc-200 border border-white/60 dark:border-zinc-700/60 hover:bg-white dark:hover:bg-zinc-800 transition-all shadow-md">
+                <span class="material-symbols-outlined text-base">arrow_back</span>
+                <span>Kembali ke Pemilihan Sistem</span>
+            </a>
+        </div>
+
         <div class="glass-card rounded-2xl p-6 sm:p-10 shadow-2xl flex flex-col gap-6 items-center">
 
-            <!-- Branding -->
+            <!-- Branding Header -->
             <div class="flex flex-col items-center gap-2 mb-2 w-full">
-                <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400 flex items-center justify-center shadow-lg dark:border dark:border-cyan-500/30 mb-2 transition-all">
-                    <span class="material-symbols-outlined text-4xl sm:text-5xl"
-                        style="font-variation-settings: 'FILL' 1;">verified_user</span>
-                </div>
-                <h1
-                    class="font-hanken text-2xl sm:text-3xl font-bold text-cyan-800 dark:text-cyan-300 text-center tracking-tight transition-colors">
-                    SIVERA
-                </h1>
+                @if($isSivera)
+                    <div
+                        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400 flex items-center justify-center shadow-lg dark:border dark:border-cyan-500/30 mb-2 transition-all">
+                        <span class="material-symbols-outlined text-4xl sm:text-5xl"
+                            style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                    </div>
+                    <h1
+                        class="font-hanken text-2xl sm:text-3xl font-bold text-cyan-800 dark:text-cyan-300 text-center tracking-tight transition-colors">
+                        SIVERA
+                    </h1>
+                @else
+                    <div
+                        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400 flex items-center justify-center shadow-lg dark:border dark:border-purple-500/30 mb-2 transition-all">
+                        <span class="material-symbols-outlined text-4xl sm:text-5xl"
+                            style="font-variation-settings: 'FILL' 1;">analytics</span>
+                    </div>
+                    <h1
+                        class="font-hanken text-2xl sm:text-3xl font-bold text-purple-800 dark:text-purple-300 text-center tracking-tight transition-colors">
+                        SIM-PLANT
+                    </h1>
+                @endif
                 <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 text-center transition-colors">
-                    Sistem Verifikasi PRP Plant
+                    {{ $systemSub }}
                 </p>
             </div>
 
@@ -93,6 +120,7 @@
             <!-- Form -->
             <form method="POST" action="{{ route('login.store') }}" class="w-full flex flex-col gap-5">
                 @csrf
+                <input type="hidden" name="system" value="{{ $system }}">
 
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-widest"
@@ -135,18 +163,27 @@
                     </label>
                 </div>
 
-                <button
-                    class="w-full h-12 sm:h-14 mt-2 bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-cyan-950 rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg shadow-cyan-600/20 active:scale-[0.98] flex items-center justify-center gap-3"
-                    type="submit">
-                    <span>Masuk</span>
-                    <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
-                </button>
+                @if($isSivera)
+                    <button
+                        class="w-full h-12 sm:h-14 mt-2 bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-cyan-950 rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg shadow-cyan-600/20 active:scale-[0.98] flex items-center justify-center gap-3"
+                        type="submit">
+                        <span>Masuk ke SIVERA</span>
+                        <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
+                    </button>
+                @else
+                    <button
+                        class="w-full h-12 sm:h-14 mt-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-400 text-white dark:text-purple-950 rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg shadow-purple-600/20 active:scale-[0.98] flex items-center justify-center gap-3"
+                        type="submit">
+                        <span>Masuk ke SIM-PLANT</span>
+                        <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
+                    </button>
+                @endif
             </form>
 
             <!-- Footer Note -->
             <div class="mt-2 border-t border-zinc-200/50 dark:border-zinc-700/50 w-full pt-4 text-center">
                 <p class="text-xs text-zinc-500 dark:text-zinc-500">
-                    © 2026 Nama Perusahaan
+                    © 2026 PT Tirta Investama — Plant Cianjur
                 </p>
             </div>
         </div>

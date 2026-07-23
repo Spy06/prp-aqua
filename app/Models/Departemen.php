@@ -31,4 +31,12 @@ class Departemen extends Model
     {
         return $this->hasMany(Temuan::class, 'departemen_id');
     }
+
+    /**
+     * Sub area yang berada di departemen ini.
+     */
+    public function subAreas(): HasMany
+    {
+        return $this->hasMany(SubArea::class, 'departemen_id');
+    }
 }

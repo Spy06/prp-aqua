@@ -22,6 +22,15 @@ new #[Title('Pengaturan Profil')] class extends Component {
     }
 
     /**
+     * Tentukan layout secara dinamis berdasarkan role user.
+     */
+    public function rendering($view): void
+    {
+        $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
+        $view->layout($layout, ['title' => __('Pengaturan Profil — SIVERA')]);
+    }
+
+    /**
      * Update nama tampilan dan nomor WhatsApp.
      */
     public function updateProfileInformation(): void
@@ -42,51 +51,41 @@ new #[Title('Pengaturan Profil')] class extends Component {
     }
 }; ?>
 
-<section class="w-full">
+<div style="max-width:900px;margin:0 auto;">
     @include('partials.settings-heading')
 
-    <flux:heading class="sr-only">{{ __('Pengaturan Profil') }}</flux:heading>
-
     <x-pages::settings.layout :heading="__('Profil')" :subheading="__('Perbarui nama tampilan dan nomor WhatsApp Anda')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+        <form wire:submit="updateProfileInformation" style="display:flex;flex-direction:column;gap:16px;margin-top:12px;">
 
-            {{-- NIK (hanya tampilan, tidak bisa diubah) --}}
-            <flux:input
-                :label="__('NIK (Nomor Induk Karyawan)')"
-                :value="Auth::user()->nik ?? '-'"
-                type="text"
-                readonly
-                disabled
-                class="opacity-60 cursor-not-allowed"
-            />
+            {{-- NIK --}}
+            <div>
+                <label class="blabel">NIK (Nomor Induk Karyawan)</label>
+                <input type="text" value="{{ Auth::user()->nik ?? '-' }}" class="binput" disabled readonly style="opacity:0.7;cursor:not-allowed;background:var(--bsur);" />
+            </div>
 
             {{-- Nama tampilan --}}
-            <flux:input
-                wire:model="name"
-                :label="__('Nama')"
-                type="text"
-                required
-                autofocus
-                autocomplete="name"
-            />
+            <div>
+                <label for="name" class="blabel">Nama Lengkap <span style="color:var(--error);">*</span></label>
+                <input type="text" id="name" wire:model="name" class="binput" required autocomplete="name" />
+                @error('name') <span class="berr">{{ $message }}</span> @enderror
+            </div>
 
             {{-- Nomor WhatsApp untuk notifikasi --}}
-            <flux:input
-                wire:model="no_whatsapp"
-                :label="__('Nomor WhatsApp')"
-                type="text"
-                autocomplete="tel"
-                placeholder="6281234567890"
-                :description="__('Dipakai untuk notifikasi temuan PRP. Format: 628xxx tanpa spasi atau tanda +')"
-            />
+            <div>
+                <label for="no_whatsapp" class="blabel">Nomor WhatsApp Notifikasi</label>
+                <input type="text" id="no_whatsapp" wire:model="no_whatsapp" class="binput" placeholder="6281234567890" autocomplete="tel" />
+                <span style="font-size:11px;color:var(--btxt2);margin-top:4px;display:block;">
+                    Dipakai untuk notifikasi WA temuan. Format: 628xxx tanpa spasi atau tanda +
+                </span>
+                @error('no_whatsapp') <span class="berr">{{ $message }}</span> @enderror
+            </div>
 
-            <div class="flex items-center gap-4">
-                <flux:button variant="primary" type="submit" data-test="update-profile-button">
-                    {{ __('Simpan') }}
-                </flux:button>
+            <div style="margin-top:8px;">
+                <button type="submit" class="bbtn bbtn-primary bbtn-sm" data-test="update-profile-button">
+                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                    Simpan Profil
+                </button>
             </div>
         </form>
-
-        {{-- Hapus akun dinonaktifkan — penghapusan akun hanya oleh QA (admin master) --}}
     </x-pages::settings.layout>
-</section>
+</div>

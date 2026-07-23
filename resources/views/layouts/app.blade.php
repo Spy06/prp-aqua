@@ -482,6 +482,10 @@
                     <div style="color:var(--btxt2);font-size:11px;text-transform:capitalize;">{{ auth()->user()->role }}</div>
                 </div>
             </div>
+            <a href="{{ route('profile.edit') }}" class="qs-logout" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">manage_accounts</span>
+                <span>Pengaturan Profil</span>
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="width:100%;">
                 @csrf
                 <button type="submit" class="qs-logout">

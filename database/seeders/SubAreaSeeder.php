@@ -17,7 +17,7 @@ class SubAreaSeeder extends Seeder
             'Logistics' => ['Gudang Material Existing', 'Gudang Material Cimex', 'Gudang Material Line 5', 'Gudang Produk Existing', 'Gudang Produk Cimex', 'Loading Unloading Produk', 'Loading Unloading Material', 'Gudang Kimia', 'Gudang Afval', 'Gudang B3', 'Tangki Solar', 'Sparepart', 'Others'],
             'Quality Assurance' => ['LAB Fiskim', 'LAB Mikro', 'Ruang IPC', 'Ruang IMC', 'Ruang Sample IMC', 'Ruang HPU', 'Others'],
             'Human Resource' => ['POS Security', 'Kantin', 'Lobby', 'Toilet', 'Ruang Meeting', 'Mushola', 'Others'],
-            'Engineering' => ['Workshop', 'Kompresor', 'Chiller', 'Soft Water', 'AHU', 'Travo', 'Gardu PLN', 'Others'],
+            'Engineering' => ['Workshop', 'Kompresor', 'Chiller', 'Soft Water', 'AHU', 'Travo', 'Gardu PLN', 'Ruang Server', 'Others'],
             'Corporate Social Responsibility' => ['Green House']
         ];
 

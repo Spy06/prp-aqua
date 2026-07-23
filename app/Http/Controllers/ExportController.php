@@ -165,19 +165,27 @@ class ExportController extends Controller
         }
 
         $fotoBuktiUrls = [];
-        $fotoBuktiUrl = null;
+        $docBuktiFiles = [];
+        $fotoBuktiUrl  = null;
+
         if ($tl = $temuan->tindakLanjut) {
             foreach ($tl->bukti_paths as $bPath) {
                 $path = Storage::disk('public')->path($bPath);
                 if (file_exists($path)) {
                     $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                     if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
-                        $data = file_get_contents($path);
-                        $url = 'data:image/' . $ext . ';base64,' . base64_encode($data);
+                        $mimeType = $ext === 'jpg' ? 'jpeg' : $ext;
+                        $data     = file_get_contents($path);
+                        $url      = 'data:image/' . $mimeType . ';base64,' . base64_encode($data);
                         $fotoBuktiUrls[] = $url;
                         if (!$fotoBuktiUrl) {
                             $fotoBuktiUrl = $url;
                         }
+                    } else {
+                        $docBuktiFiles[] = [
+                            'name' => basename($bPath),
+                            'ext'  => strtoupper($ext),
+                        ];
                     }
                 }
             }
@@ -188,6 +196,7 @@ class ExportController extends Controller
             'fotoTemuanUrl' => $fotoTemuanUrl,
             'fotoBuktiUrl'  => $fotoBuktiUrl,
             'fotoBuktiUrls' => $fotoBuktiUrls,
+            'docBuktiFiles' => $docBuktiFiles,
         ])->setPaper('a4', 'portrait');
 
         $filename = "laporan-temuan-{$temuan->id}-" . now()->format('Ymd') . '.pdf';

@@ -218,13 +218,36 @@
             </table>
         </div>
 
-        {{-- Foto Bukti --}}
-        @if($tl->foto_bukti_path)
-            <div class="section">
-                <div class="section-title">Foto Bukti Tindak Lanjut</div>
-                <div class="foto-box">
-                    <img src="{{ $fotoBuktiUrl }}" alt="Foto Bukti" />
-                </div>
+        {{-- Foto & Dokumen Bukti Tindak Lanjut --}}
+        @if((isset($fotoBuktiUrls) && count($fotoBuktiUrls) > 0) || (isset($docBuktiFiles) && count($docBuktiFiles) > 0))
+            <div class="section" style="page-break-inside: avoid;">
+                <div class="section-title">Foto & Dokumen Bukti Tindak Lanjut ({{ count($fotoBuktiUrls) + count($docBuktiFiles) }} File)</div>
+                
+                @if(count($fotoBuktiUrls) > 0)
+                    <div style="margin-top: 8px;">
+                        @foreach($fotoBuktiUrls as $idx => $bUrl)
+                            <div class="foto-box" style="margin-bottom: 14px; page-break-inside: avoid;">
+                                @if(count($fotoBuktiUrls) > 1)
+                                    <div style="font-size: 10px; font-weight: bold; color: #374151; margin-bottom: 4px; text-align: left;">
+                                        Foto Bukti Pengerjaan #{{ $idx + 1 }}
+                                    </div>
+                                @endif
+                                <img src="{{ $bUrl }}" alt="Foto Bukti #{{ $idx + 1 }}" style="max-width: 100%; max-height: 260px; border: 1px solid #e5e7eb; border-radius: 4px;" />
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if(count($docBuktiFiles) > 0)
+                    <div style="margin-top: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px; page-break-inside: avoid;">
+                        <div style="font-weight: bold; color: #1e3a8a; margin-bottom: 6px; font-size: 10px;">Dokumen Lampiran Bukti:</div>
+                        @foreach($docBuktiFiles as $doc)
+                            <div style="font-size: 10px; color: #334155; padding: 3px 0;">
+                                📄 <strong>{{ $doc['name'] }}</strong> (File {{ $doc['ext'] }})
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         @endif
 

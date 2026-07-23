@@ -1,4 +1,4 @@
-<div style="max-width:900px;margin:0 auto;" id="detail-temuan-container">
+<div style="max-width:900px;margin:0 auto;" id="detail-temuan-container" x-data="{ lightboxOpen: false, lightboxSrc: '', lightboxTitle: '' }">
 
     {{-- Breadcrumb --}}
     <div class="breadcrumb fu">
@@ -48,35 +48,38 @@
                         <div class="inf-value">{{ $temuan->tanggal_temuan->format('d F Y') }}</div>
                     </div>
                     <div class="info-row">
-                        <div class="inf-label">Departemen</div>
+                        <div class="inf-label">Departemen & Area</div>
                         <div class="inf-value">{{ $temuan->departemen->nama_departemen ?? '-' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="inf-label">Sub Area</div>
-                        <div class="inf-value">
-                            {{ $temuan->sub_area }}
-                            @if($temuan->sub_area === 'Others' && $temuan->detail_sub_area)
-                                <span style="color:var(--btxt2);font-weight:400;font-size:12.5px;">— {{ $temuan->detail_sub_area }}</span>
-                            @endif
+                        <div style="font-size:12px;color:var(--bp);margin-top:2px;font-weight:600;">
+                            Sub Area: {{ $temuan->sub_area }}{{ $temuan->detail_sub_area ? ' ('.$temuan->detail_sub_area.')' : '' }}
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="inf-label">Klausul PRP</div>
-                        <div class="inf-value" style="font-size:13px;">
-                            {{ $temuan->klausul ? $temuan->klausul->kode_klausul . ' — ' . $temuan->klausul->nama_klausul : '-' }}
+                        <div class="inf-value">
+                            @if($temuan->klausul)
+                                <span style="font-size:11px;font-weight:700;background:var(--bp-light);color:var(--bp-dark);padding:2px 8px;border-radius:6px;margin-right:6px;">
+                                    {{ $temuan->klausul->kode_klausul }}
+                                </span>
+                                {{ $temuan->klausul->nama_klausul }}
+                            @else
+                                -
+                            @endif
                         </div>
                     </div>
                     <div class="info-row">
                         <div class="inf-label">Pelapor</div>
-                        <div class="inf-value">{{ $temuan->pelapor->name ?? '-' }}</div>
+                        <div class="inf-value">
+                            {{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->nik ?? '-' }})
+                            @if($isPelapor)
+                                <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e8f5e9;color:#2e7d32;border-radius:6px;border:1px solid rgba(46,125,50,0.2);">Anda</span>
+                            @endif
+                        </div>
                     </div>
                     <div class="info-row" style="margin-bottom:0;">
-                        <div class="inf-label">PIC yang Ditunjuk</div>
-                        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-                            <div style="width:28px;height:28px;border-radius:50%;background:var(--bp);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                {{ substr($temuan->pic->name ?? '?', 0, 1) }}
-                            </div>
-                            <div class="inf-value">{{ $temuan->pic->name ?? '-' }}</div>
+                        <div class="inf-label">PIC Penanggung Jawab</div>
+                        <div class="inf-value">
+                            {{ $temuan->pic->name ?? '-' }} ({{ $temuan->pic->nik ?? '-' }})
                             @if($isPic)
                                 <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e3f2fd;color:#1565c0;border-radius:6px;border:1px solid rgba(25,118,210,0.2);">Anda</span>
                             @endif
@@ -101,10 +104,17 @@
                     @if($temuan->foto_temuan_path)
                     <div class="info-row" style="margin-bottom:0;">
                         <div class="inf-label">Foto Temuan</div>
-                        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-top:6px;">
+                        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);margin-top:6px;position:relative;cursor:pointer;background:var(--bsur);"
+                             @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $temuan->foto_temuan_path) }}'; lightboxTitle = 'Foto Temuan PRP #{{ $temuan->id }}'"
+                             class="img-hover-container"
+                             title="Klik untuk memperbesar gambar">
                             <img src="{{ asset('storage/' . $temuan->foto_temuan_path) }}"
                                  alt="Foto temuan PRP"
-                                 style="width:100%;max-height:260px;object-fit:contain;background:var(--bsur);" />
+                                 style="width:100%;max-height:260px;object-fit:contain;display:block;transition:transform 0.25s;" />
+                            <div class="img-hover-overlay">
+                                <span class="material-symbols-outlined" style="font-size:26px;color:#fff;">zoom_in</span>
+                                <span style="font-size:12px;color:#fff;font-weight:600;">Klik untuk Perbesar</span>
+                            </div>
                         </div>
                     </div>
                     @endif
@@ -166,10 +176,19 @@
                                     $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp']);
                                 @endphp
                                 @if($isImage)
-                                    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);background:var(--bsur);display:flex;flex-direction:column;">
-                                        <img src="{{ asset('storage/' . $path) }}"
-                                             alt="Foto bukti tindak lanjut"
-                                             style="width:100%;height:140px;object-fit:cover;" />
+                                    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);background:var(--bsur);display:flex;flex-direction:column;"
+                                         class="img-hover-container">
+                                        <div style="height:140px;overflow:hidden;position:relative;cursor:pointer;"
+                                             @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $path) }}'; lightboxTitle = 'Foto Bukti Tindak Lanjut #{{ $index + 1 }} (Temuan #{{ $temuan->id }})'"
+                                             title="Klik untuk memperbesar gambar">
+                                            <img src="{{ asset('storage/' . $path) }}"
+                                                 alt="Foto bukti tindak lanjut"
+                                                 style="width:100%;height:140px;object-fit:cover;display:block;transition:transform 0.25s;" />
+                                            <div class="img-hover-overlay">
+                                                <span class="material-symbols-outlined" style="font-size:24px;color:#fff;">zoom_in</span>
+                                                <span style="font-size:11px;color:#fff;font-weight:600;">Klik Perbesar</span>
+                                            </div>
+                                        </div>
                                         <div style="padding:6px 10px;background:var(--bcard);border-top:1px solid var(--bbor);display:flex;justify-content:space-between;align-items:center;">
                                             <span style="font-size:11px;color:var(--btxt2);font-weight:600;">Foto #{{ $index + 1 }}</span>
                                             <a href="{{ asset('storage/' . $path) }}" target="_blank" download style="font-size:11px;color:var(--bp);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:2px;">
@@ -251,8 +270,76 @@
     </div>
     @endif
 
+    {{-- ═══ LIGHTBOX MODAL PREVIEW HIGH-RES ═══ --}}
+    <template x-teleport="body">
+        <div x-show="lightboxOpen"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @keydown.escape.window="lightboxOpen = false"
+             style="position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;margin:0!important;z-index:999999!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-sizing:border-box;"
+             x-cloak>
+            
+            {{-- Lightbox Topbar --}}
+            <div style="width:100%;max-width:min(960px, 92vw);display:flex;align-items:center;justify-content:space-between;margin:0 auto 14px;color:#fff;background:rgba(30,41,59,0.85);padding:10px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 4px 20px rgba(0,0,0,0.4);flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:8px;overflow:hidden;">
+                    <span class="material-symbols-outlined" style="color:var(--bp);font-size:22px;">zoom_in</span>
+                    <h4 style="margin:0;font-size:14px;font-weight:700;letter-spacing:-0.2px;color:#fff;" class="truncate" x-text="lightboxTitle"></h4>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                    <a :href="lightboxSrc" target="_blank" download class="bbtn bbtn-secondary bbtn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none!important;padding:6px 12px;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">download</span> Unduh Original
+                    </a>
+                    <button @click="lightboxOpen = false" style="background:rgba(255,255,255,0.2);color:#fff;border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;" title="Tutup (Esc)">
+                        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Image Container (Seamless, no black side boxes) --}}
+            <div style="display:flex;align-items:center;justify-content:center;width:100%;max-width:min(960px, 92vw);margin:0 auto;" @click.outside="lightboxOpen = false">
+                <img :src="lightboxSrc" :alt="lightboxTitle" style="max-width:100%;max-height:76vh;object-fit:contain;display:block;border-radius:12px;box-shadow:0 25px 60px rgba(0,0,0,0.7);user-select:none;">
+            </div>
+
+            <div style="margin-top:12px;color:rgba(255,255,255,0.7);font-size:12px;text-align:center;">
+                Tekan <kbd style="background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">Esc</kbd> atau klik di luar gambar untuk menutup
+            </div>
+        </div>
+    </template>
+
     <style>
         .info-row { margin-bottom: 16px; }
+        
+        /* Image Hover Overlay Styles */
+        .img-hover-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .img-hover-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .img-hover-container:hover .img-hover-overlay {
+            opacity: 1;
+        }
+        .img-hover-container:hover img {
+            transform: scale(1.03);
+        }
+
         @media (max-width: 640px) {
             div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
         }

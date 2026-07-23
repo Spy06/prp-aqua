@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ picLightboxOpen: false, picLightboxSrc: '', picLightboxTitle: '' }">
     {{-- Flash Notifications --}}
     @if (session()->has('status_success'))
         <div class="balert balert-success fu" style="margin-bottom:16px;">
@@ -70,7 +70,7 @@
             <div>
                 <label for="action" class="blabel">Rencana / Deskripsi Tindakan Perbaikan <span style="color:var(--error);">*</span></label>
                 @if($currentStatus !== 'closed_acc')
-                    <textarea id="action" wire:model.defer="action" class="binput" rows="4"
+                    <textarea id="action" wire:model="action" class="binput" rows="4"
                         placeholder="Jelaskan tindakan perbaikan yang dilakukan atau akan dilakukan..."></textarea>
                     @error('action') <span class="berr">{{ $message }}</span> @enderror
                 @else
@@ -82,7 +82,7 @@
             <div>
                 <label for="due_date" class="blabel">Target Selesai (Due Date) <span style="color:var(--error);">*</span></label>
                 @if($currentStatus !== 'closed_acc')
-                    <input type="date" id="due_date" wire:model.defer="due_date" class="binput" style="max-width:240px;" />
+                    <input type="date" id="due_date" wire:model="due_date" class="binput" style="max-width:240px;" />
                     @error('due_date') <span class="berr">{{ $message }}</span> @enderror
                 @else
                     <div class="inf-value" style="margin-top:4px;">
@@ -129,10 +129,17 @@
                         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                         $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp']);
                     @endphp
-                    <div style="position:relative;background:var(--bcard);border:1.5px solid var(--bbor);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;flex-direction:column;">
+                    <div style="position:relative;background:var(--bcard);border:1.5px solid var(--bbor);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;flex-direction:column;"
+                         class="pic-img-hover-container">
                         @if($isImage)
-                            <div style="height:120px;background:var(--bsur);display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                                <img src="{{ Storage::disk('public')->url($path) }}" style="width:100%;height:100%;object-fit:cover;">
+                            <div style="height:120px;background:var(--bsur);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:pointer;"
+                                 @click="picLightboxOpen = true; picLightboxSrc = '{{ Storage::disk('public')->url($path) }}'; picLightboxTitle = 'Foto Bukti #{{ $index + 1 }}'"
+                                 title="Klik untuk memperbesar gambar">
+                                <img src="{{ Storage::disk('public')->url($path) }}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.25s;">
+                                <div class="pic-img-hover-overlay">
+                                    <span class="material-symbols-outlined" style="font-size:22px;color:#fff;">zoom_in</span>
+                                    <span style="font-size:10.5px;color:#fff;font-weight:600;">Perbesar</span>
+                                </div>
                             </div>
                         @else
                             <div style="height:120px;background:var(--bsur);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;gap:6px;text-align:center;">
@@ -243,4 +250,54 @@
         </div>
     </div>
     @endif
+
+    {{-- Lightbox Modal untuk PIC --}}
+    <template x-teleport="body">
+        <div x-show="picLightboxOpen"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @keydown.escape.window="picLightboxOpen = false"
+             style="position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;margin:0!important;z-index:999999!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;padding:20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-sizing:border-box;"
+             x-cloak>
+            
+            <div style="width:100%;max-width:min(960px, 92vw);display:flex;align-items:center;justify-content:space-between;margin:0 auto 14px;color:#fff;background:rgba(30,41,59,0.85);padding:10px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 4px 20px rgba(0,0,0,0.4);flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:8px;overflow:hidden;">
+                    <span class="material-symbols-outlined" style="color:var(--bp);font-size:22px;">zoom_in</span>
+                    <h4 style="margin:0;font-size:14px;font-weight:700;color:#fff;" class="truncate" x-text="picLightboxTitle"></h4>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                    <a :href="picLightboxSrc" target="_blank" download class="bbtn bbtn-secondary bbtn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none!important;padding:6px 12px;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">download</span> Unduh Original
+                    </a>
+                    <button @click="picLightboxOpen = false" style="background:rgba(255,255,255,0.2);color:#fff;border:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;" title="Tutup (Esc)">
+                        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;width:100%;max-width:min(960px, 92vw);margin:0 auto;" @click.outside="picLightboxOpen = false">
+                <img :src="picLightboxSrc" :alt="picLightboxTitle" style="max-width:100%;max-height:76vh;object-fit:contain;display:block;border-radius:12px;box-shadow:0 25px 60px rgba(0,0,0,0.7);user-select:none;">
+            </div>
+
+            <div style="margin-top:12px;color:rgba(255,255,255,0.7);font-size:12px;text-align:center;">
+                Tekan <kbd style="background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">Esc</kbd> atau klik di luar gambar untuk menutup
+            </div>
+        </div>
+    </template>
+
+    <style>
+        .pic-img-hover-container { position: relative; }
+        .pic-img-hover-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+            opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+        }
+        .pic-img-hover-container:hover .pic-img-hover-overlay { opacity: 1; }
+        .pic-img-hover-container:hover img { transform: scale(1.04); }
+    </style>
 </div>

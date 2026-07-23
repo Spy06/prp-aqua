@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Temuan;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class DetailTemuan extends Component
@@ -21,10 +22,16 @@ class DetailTemuan extends Component
         $this->temuan = $temuan;
     }
 
+    #[On('tindakLanjutUpdated')]
+    public function handleTindakLanjutUpdated(): void
+    {
+        $this->temuan = $this->temuan->fresh(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
+    }
+
     public function render()
     {
-        // Eager load relasi yang dibutuhkan
-        $this->temuan->loadMissing(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
+        // Eager load / refresh relasi yang dibutuhkan agar data selalu up to date
+        $this->temuan->load(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
 
         $user    = auth()->user();
         $temuan  = $this->temuan;

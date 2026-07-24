@@ -5,10 +5,17 @@ use Illuminate\Support\Facades\Route;
 // Halaman utama default sebelum login: Portal Pemilihan Sistem Informasi
 Route::get('/', function () {
     if (auth()->check()) {
-        if (auth()->user()->role === 'qa') {
-            return redirect()->route('qa.dashboard');
+        $system = session('login_system', 'sivera');
+        $user   = auth()->user();
+        if ($system === 'bosq') {
+            return $user->role === 'qa'
+                ? redirect()->route('bosq.qa.dashboard')
+                : redirect()->route('bosq.beranda');
         }
-        return redirect()->route('beranda');
+        // SIVERA default
+        return $user->role === 'qa'
+            ? redirect()->route('qa.dashboard')
+            : redirect()->route('beranda');
     }
     return view('portal');
 })->name('portal');
@@ -21,10 +28,17 @@ Route::post('/register', fn () => abort(404));
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', function () {
-        if (request()->user()->role === 'qa') {
-            return redirect()->route('qa.dashboard');
+        $system = session('login_system', 'sivera');
+        $user   = request()->user();
+        if ($system === 'bosq') {
+            return $user->role === 'qa'
+                ? redirect()->route('bosq.qa.dashboard')
+                : redirect()->route('bosq.beranda');
         }
-        return redirect()->route('beranda');
+        // SIVERA default
+        return $user->role === 'qa'
+            ? redirect()->route('qa.dashboard')
+            : redirect()->route('beranda');
     })->name('dashboard');
 
     Route::redirect('/home', '/dashboard')->name('home');
@@ -57,24 +71,22 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.temuan-detail', ['temuan' => $temuan]);
     })->name('temuan.detail')->middleware('can:view,temuan');
 
-    // ── Skeleton Routing BOS'Q (Hari 1) ──
+    // ── BOS'Q Routes ──
     Route::prefix('bosq')->name('bosq.')->group(function () {
         Route::middleware(['role:karyawan,qa'])->group(function () {
-            Route::get('/beranda', function () {
-                return response('BOSQ Beranda Placeholder');
-            })->name('beranda');
+            Route::view('/beranda', 'pages.bosq.beranda')->name('beranda');
         });
 
         Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
-            Route::get('/dashboard', fn() => response('BOSQ QA Dashboard Placeholder'))->name('dashboard');
-            Route::get('/rekap', fn() => response('BOSQ QA Rekap Placeholder'))->name('rekap');
-            Route::get('/master/line', fn() => response('BOSQ Master Line Placeholder'))->name('master.line');
-            Route::get('/master/subarea', fn() => response('BOSQ Master SubArea Placeholder'))->name('master.subarea');
-            Route::get('/master/elemen', fn() => response('BOSQ Master Elemen Placeholder'))->name('master.elemen');
+            Route::get('/dashboard', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Dashboard QA BOS\'Q', 'desc' => 'Dashboard analisis observasi BOS\'Q (Fitur Hari 3)']))->name('dashboard');
+            Route::get('/rekap', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Rekap Kepatuhan BOS\'Q', 'desc' => 'Rekapitulasi kepatuhan observasi BOS\'Q (Fitur Hari 3)']))->name('rekap');
+            Route::get('/master/line', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Line BOS\'Q', 'desc' => 'Manajemen data Master Line BOS\'Q (Fitur Hari 3)']))->name('master.line');
+            Route::get('/master/subarea', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Sub Area BOS\'Q', 'desc' => 'Manajemen data Master Sub Area BOS\'Q (Fitur Hari 3)']))->name('master.subarea');
+            Route::get('/master/elemen', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Elemen QFS BOS\'Q', 'desc' => 'Manajemen data Master Elemen QFS BOS\'Q (Fitur Hari 3)']))->name('master.elemen');
         });
 
         Route::get('/temuan/{bosqTemuan}', function (\App\Models\BosqTemuan $bosqTemuan) {
-            return response('BOSQ Temuan Detail Placeholder #' . $bosqTemuan->id);
+            return view('pages.bosq.detail-temuan', ['bosqTemuan' => $bosqTemuan]);
         })->name('temuan.detail')->middleware('can:view,bosqTemuan');
     });
 

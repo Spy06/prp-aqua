@@ -24,21 +24,46 @@ class LoginResponse implements LoginResponseContract
                 $normalizedPath = '/';
             }
 
+            $genericPaths = ['/', '/login', '/dashboard', '/home', '/beranda'];
+
             if ($user && $user->role !== 'qa') {
-                // Karyawan (non-QA) tidak boleh diarahkan ke rute khusus QA atau Export
+                // Karyawan tidak boleh ke rute khusus QA atau Export
                 if (str_starts_with($path, '/qa') || str_starts_with($path, '/export')) {
                     session()->forget('url.intended');
                 }
+                // Jika intended adalah path generic, hapus agar redirect ke beranda sistem
+                if (in_array($normalizedPath, $genericPaths, true)) {
+                    session()->forget('url.intended');
+                }
             } elseif ($user && $user->role === 'qa') {
-                // User QA yang login dari rute umum harus diarahkan ke QA Dashboard default
-                $genericPaths = ['/', '/login', '/dashboard', '/home', '/beranda'];
+                // QA dari rute umum → hapus intended, redirect ke dashboard sistem
                 if (in_array($normalizedPath, $genericPaths, true)) {
                     session()->forget('url.intended');
                 }
             }
         }
 
-        $target = route('dashboard', absolute: false);
+        // Baca sistem yang dipilih user saat login (dari form field 'system')
+        $system = $request->input('system', session('login_system', 'sivera'));
+
+        // Simpan ke session agar layout/menu tahu sistem mana yang aktif
+        session(['login_system' => $system]);
+
+        // Tentukan target redirect berdasarkan sistem + role
+        if ($system === 'bosq') {
+            if ($user && $user->role === 'qa') {
+                $target = route('bosq.qa.dashboard', absolute: false);
+            } else {
+                $target = route('bosq.beranda', absolute: false);
+            }
+        } else {
+            // SIVERA (default)
+            if ($user && $user->role === 'qa') {
+                $target = route('qa.dashboard', absolute: false);
+            } else {
+                $target = route('beranda', absolute: false);
+            }
+        }
 
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])

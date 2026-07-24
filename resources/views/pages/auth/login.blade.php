@@ -6,11 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
         $system = request('system', 'sivera');
-        $isSivera = $system !== 'other';
-        $systemTitle = $isSivera ? 'SIVERA' : 'SIM-PLANT';
-        $systemSub = $isSivera ? 'Sistem Verifikasi PRP Plant' : 'Sistem Informasi Operasional Plant';
+        
+        $systemConfig = match($system) {
+            'bosq' => [
+                'title'    => "BOS'Q",
+                'sub'      => 'Behavior Observation System Quality',
+                'icon'     => 'visibility',
+                'bg_icon'  => 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400 dark:border-cyan-500/30',
+                'title_cls'=> 'text-cyan-800 dark:text-cyan-300',
+                'btn_cls'  => 'bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-cyan-950 shadow-cyan-600/20',
+            ],
+            default => [
+                'title'    => 'SIVERA',
+                'sub'      => 'Sistem Verifikasi PRP Plant',
+                'icon'     => 'verified_user',
+                'bg_icon'  => 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400 dark:border-cyan-500/30',
+                'title_cls'=> 'text-cyan-800 dark:text-cyan-300',
+                'btn_cls'  => 'bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-cyan-950 shadow-cyan-600/20',
+            ],
+        };
     @endphp
-    <title>{{ $systemTitle }} - Login</title>
+    <title>{{ $systemConfig['title'] }} - Login</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -77,29 +93,17 @@
 
             <!-- Branding Header -->
             <div class="flex flex-col items-center gap-2 mb-2 w-full">
-                @if($isSivera)
-                    <div
-                        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400 flex items-center justify-center shadow-lg dark:border dark:border-cyan-500/30 mb-2 transition-all">
-                        <span class="material-symbols-outlined text-4xl sm:text-5xl"
-                            style="font-variation-settings: 'FILL' 1;">verified_user</span>
-                    </div>
-                    <h1
-                        class="font-hanken text-2xl sm:text-3xl font-bold text-cyan-800 dark:text-cyan-300 text-center tracking-tight transition-colors">
-                        SIVERA
-                    </h1>
-                @else
-                    <div
-                        class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400 flex items-center justify-center shadow-lg dark:border dark:border-purple-500/30 mb-2 transition-all">
-                        <span class="material-symbols-outlined text-4xl sm:text-5xl"
-                            style="font-variation-settings: 'FILL' 1;">analytics</span>
-                    </div>
-                    <h1
-                        class="font-hanken text-2xl sm:text-3xl font-bold text-purple-800 dark:text-purple-300 text-center tracking-tight transition-colors">
-                        SIM-PLANT
-                    </h1>
-                @endif
+                <div
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full {{ $systemConfig['bg_icon'] }} flex items-center justify-center shadow-lg dark:border mb-2 transition-all">
+                    <span class="material-symbols-outlined text-4xl sm:text-5xl"
+                        style="font-variation-settings: 'FILL' 1;">{{ $systemConfig['icon'] }}</span>
+                </div>
+                <h1
+                    class="font-hanken text-2xl sm:text-3xl font-bold {{ $systemConfig['title_cls'] }} text-center tracking-tight transition-colors">
+                    {{ $systemConfig['title'] }}
+                </h1>
                 <p class="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 text-center transition-colors">
-                    {{ $systemSub }}
+                    {{ $systemConfig['sub'] }}
                 </p>
             </div>
 
@@ -163,21 +167,12 @@
                     </label>
                 </div>
 
-                @if($isSivera)
-                    <button
-                        class="w-full h-12 sm:h-14 mt-2 bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-cyan-950 rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg shadow-cyan-600/20 active:scale-[0.98] flex items-center justify-center gap-3"
-                        type="submit">
-                        <span>Masuk ke SIVERA</span>
-                        <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
-                    </button>
-                @else
-                    <button
-                        class="w-full h-12 sm:h-14 mt-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-400 text-white dark:text-purple-950 rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg shadow-purple-600/20 active:scale-[0.98] flex items-center justify-center gap-3"
-                        type="submit">
-                        <span>Masuk ke SIM-PLANT</span>
-                        <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
-                    </button>
-                @endif
+                <button
+                    class="w-full h-12 sm:h-14 mt-2 {{ $systemConfig['btn_cls'] }} rounded-xl font-bold text-base sm:text-lg transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
+                    type="submit">
+                    <span>Masuk ke {{ $systemConfig['title'] }}</span>
+                    <span class="material-symbols-outlined text-xl sm:text-2xl">login</span>
+                </button>
             </form>
 
             <!-- Footer Note -->

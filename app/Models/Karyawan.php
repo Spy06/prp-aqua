@@ -26,12 +26,14 @@ class Karyawan extends Model
         'nama',
         'departemen_id',
         'status_aktif',
+        'is_anggota_divisi_manajemen',
     ];
 
     protected function casts(): array
     {
         return [
             'status_aktif' => 'boolean',
+            'is_anggota_divisi_manajemen' => 'boolean',
         ];
     }
 

@@ -29,12 +29,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::redirect('/home', '/dashboard')->name('home');
 
-    // Role Karyawan & QA (Halaman Beranda & Lapor Temuan)
+    // Role Karyawan & QA (Halaman Beranda & Lapor Temuan SIVERA)
     Route::middleware(['role:karyawan,qa'])->group(function () {
         Route::view('/beranda', 'pages.beranda')->name('beranda');
     });
 
-    // Role QA — Dashboard, Rekap, Master Data
+    // Role QA — Dashboard, Rekap, Master Data SIVERA
     Route::middleware(['role:qa'])->group(function () {
         Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
         Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
@@ -45,19 +45,38 @@ Route::middleware(['auth'])->group(function () {
         Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
     });
 
-    // Export routes — hanya QA (dicek di ExportController::requireQa())
+    // Export routes SIVERA — hanya QA
     Route::middleware(['role:qa'])->group(function () {
         Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
         Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
         Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
     });
 
-    // Temuan detail (accessible by pelapor_id, pic_id or role qa via Policy)
-    // Policy ditegakkan di DAUD level: middleware route + AuthorizesRequests di Livewire mount()
+    // Temuan detail SIVERA
     Route::get('/temuan/{temuan}', function (\App\Models\Temuan $temuan) {
         return view('pages.temuan-detail', ['temuan' => $temuan]);
     })->name('temuan.detail')->middleware('can:view,temuan');
 
+    // ── Skeleton Routing BOS'Q (Hari 1) ──
+    Route::prefix('bosq')->name('bosq.')->group(function () {
+        Route::middleware(['role:karyawan,qa'])->group(function () {
+            Route::get('/beranda', function () {
+                return response('BOSQ Beranda Placeholder');
+            })->name('beranda');
+        });
+
+        Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
+            Route::get('/dashboard', fn() => response('BOSQ QA Dashboard Placeholder'))->name('dashboard');
+            Route::get('/rekap', fn() => response('BOSQ QA Rekap Placeholder'))->name('rekap');
+            Route::get('/master/line', fn() => response('BOSQ Master Line Placeholder'))->name('master.line');
+            Route::get('/master/subarea', fn() => response('BOSQ Master SubArea Placeholder'))->name('master.subarea');
+            Route::get('/master/elemen', fn() => response('BOSQ Master Elemen Placeholder'))->name('master.elemen');
+        });
+
+        Route::get('/temuan/{bosqTemuan}', function (\App\Models\BosqTemuan $bosqTemuan) {
+            return response('BOSQ Temuan Detail Placeholder #' . $bosqTemuan->id);
+        })->name('temuan.detail')->middleware('can:view,bosqTemuan');
+    });
 
 });
 

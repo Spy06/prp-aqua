@@ -43,7 +43,7 @@
     <!-- Background Decoration -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl"></div>
-        <div class="absolute top-1/2 -right-40 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl"></div>
     </div>
 
     <!-- Top Header Navigation -->
@@ -62,7 +62,7 @@
             </div>
             <div class="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-200/70 dark:bg-slate-800/70 px-3.5 py-1.5 rounded-full border border-slate-300/60 dark:border-slate-700">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Portal Sistem Aktif</span>
+                <span>2 Sistem Aktif</span>
             </div>
         </div>
     </header>
@@ -85,7 +85,7 @@
                 </p>
             </div>
 
-            <!-- Cards Selector Grid -->
+            <!-- Cards Selector Grid (2 Systems: SIVERA & BOS'Q - Consistently Styled with SIVERA Palette) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 w-full max-w-4xl">
 
                 <!-- System 1: SIVERA -->
@@ -125,39 +125,39 @@
                     </a>
                 </div>
 
-                <!-- System 2: SIM-Plant (Sistem Informasi Operasional) -->
-                <div class="system-card glass-panel rounded-2xl p-6 sm:p-8 flex flex-col justify-between border-2 border-transparent hover:border-purple-500/50 relative overflow-hidden group">
-                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                <!-- System 2: BOS'Q (Same Color Palette as SIVERA) -->
+                <div class="system-card glass-panel rounded-2xl p-6 sm:p-8 flex flex-col justify-between border-2 border-transparent hover:border-blue-500/50 relative overflow-hidden group">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
                     
                     <div>
                         <div class="flex items-center justify-between mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-600/30">
-                                <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                            <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
+                                <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">visibility</span>
                             </div>
-                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">
-                                SIM-PLANT v1.0
+                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                                BOS'Q v1.0
                             </span>
                         </div>
 
-                        <h3 class="font-hanken text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                            SIM-PLANT
+                        <h3 class="font-hanken text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            BOS'Q
                         </h3>
-                        <p class="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-3">
-                            Sistem Informasi Operasional Plant
+                        <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
+                            Behavior Observation System Quality
                         </p>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                            Portal sistem informasi operasional, manajemen data pendukung produksi, dan sistem informasi manajemen terpadu Plant Aqua Cianjur.
+                            Sistem observasi perilaku mutu &amp; keamanan pangan (QFS), pemantauan budaya K3L, dan rekap kepatuhan Divisi Manajemen Plant Aqua Cianjur.
                         </p>
 
                         <div class="flex flex-wrap gap-2 mb-8">
-                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">📊 Data Operasional</span>
-                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 Monitoring Plant</span>
-                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">📈 Laporan Performa</span>
+                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">👁️ Lapor Observasi</span>
+                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">✅ Tindak Lanjut</span>
+                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">🛡️ Verifikasi QA</span>
                         </div>
                     </div>
 
-                    <a href="{{ route('login', ['system' => 'other']) }}" class="w-full py-3.5 px-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-purple-600/25 transition-all group-hover:gap-3">
-                        <span>Masuk ke SIM-PLANT</span>
+                    <a href="{{ route('login', ['system' => 'bosq']) }}" class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all group-hover:gap-3">
+                        <span>Masuk ke BOS'Q</span>
                         <span class="material-symbols-outlined text-lg">arrow_forward</span>
                     </a>
                 </div>

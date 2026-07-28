@@ -66,6 +66,13 @@ class FormTemuan extends Component
         $this->detail_sub_area = null;
     }
 
+    public function updatedSubArea($value)
+    {
+        if (strtolower(trim($value ?? '')) !== 'others') {
+            $this->detail_sub_area = null;
+        }
+    }
+
     public function updatedPicSearch()
     {
         if (strlen($this->picSearch) >= 2) {

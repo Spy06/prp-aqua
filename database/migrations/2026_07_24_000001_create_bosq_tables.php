@@ -38,7 +38,7 @@ return new class extends Migration
             $table->foreignId('pelapor_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('auditee_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('departemen_id')->constrained('departemen')->cascadeOnDelete();
-            $table->foreignId('line_id')->constrained('bosq_line')->cascadeOnDelete();
+            $table->foreignId('line_id')->nullable()->constrained('bosq_line')->cascadeOnDelete();
             $table->foreignId('sub_area_id')->constrained('bosq_sub_area')->cascadeOnDelete();
             $table->string('detail_sub_area')->nullable();
             $table->foreignId('elemen_qfs_id')->constrained('bosq_elemen_qfs')->cascadeOnDelete();

@@ -104,7 +104,7 @@
                         </div>
                         <div class="tcard-sub">
                             <span class="material-symbols-outlined" style="font-size:14px;">location_on</span>
-                            {{ $temuan->line->nama_line ?? '-' }} / {{ $temuan->subArea->nama_sub_area ?? '-' }}
+                            {{ $temuan->subArea->nama_sub_area ?? '-' }}
                             @if($temuan->detail_sub_area)
                                 <span> — {{ $temuan->detail_sub_area }}</span>
                             @endif

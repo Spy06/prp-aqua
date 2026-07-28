@@ -4,7 +4,6 @@ namespace App\Livewire\BosQ;
 
 use App\Jobs\SendWhatsApp;
 use App\Models\BosqElemenQfs;
-use App\Models\BosqLine;
 use App\Models\BosqSubArea;
 use App\Models\BosqTemuan;
 use App\Models\BosqTindakLanjut;
@@ -18,13 +17,13 @@ class FormTemuan extends Component
 {
     public string $tanggal_temuan = '';
     public ?int   $departemen_id = null;
-    public ?int   $line_id       = null;
     public ?int   $sub_area_id   = null;
     public string $detail_sub_area = '';
     public ?int   $elemen_qfs_id = null;
     public string $temuan_bqa    = '';
     public string $tingkat_resiko = 'minor_quality_risk';
     public string $dampak_temuan  = 'negatif';
+    public string $action_negatif = '';
 
     // Auditee searchable
     public string $auditeeSearch  = '';
@@ -42,25 +41,37 @@ class FormTemuan extends Component
         }
     }
 
+    public function getIsSubAreaOthersProperty(): bool
+    {
+        if (!$this->sub_area_id) {
+            return false;
+        }
+        $sa = BosqSubArea::find($this->sub_area_id);
+        return $sa && strtolower(trim($sa->nama_sub_area)) === 'others';
+    }
+
     public function updatedDepartemenId(): void
     {
         $this->sub_area_id    = null;
         $this->detail_sub_area = '';
     }
 
-    public function updatedLineId($value): void
+    public function updatedSubAreaId($value): void
     {
         if ($value) {
-            $line = BosqLine::find($value);
-            if ($line && $line->default_auditee_id) {
-                $defaultUser = User::find($line->default_auditee_id);
-                if ($defaultUser) {
-                    $this->auditee_id     = $defaultUser->id;
-                    $this->auditeeSearch  = $defaultUser->name . ' (' . $defaultUser->nik . ')';
-                    $this->auditeeResults = [];
-                }
+            $sa = BosqSubArea::find($value);
+            if (!$sa || strtolower(trim($sa->nama_sub_area)) !== 'others') {
+                $this->detail_sub_area = '';
             }
-            // Jika default_auditee_id null: auditee_id tetap kosong (pilih manual)
+        } else {
+            $this->detail_sub_area = '';
+        }
+    }
+
+    public function updatedDampakTemuan($value): void
+    {
+        if ($value === 'positif') {
+            $this->action_negatif = '';
         }
     }
 
@@ -99,16 +110,18 @@ class FormTemuan extends Component
         $this->validate([
             'tanggal_temuan'  => 'required|date',
             'departemen_id'   => 'required|exists:departemen,id',
-            'line_id'         => 'required|exists:bosq_line,id',
             'sub_area_id'     => 'required|exists:bosq_sub_area,id',
-            'detail_sub_area' => 'nullable|string|max:255',
+            'detail_sub_area' => $this->isSubAreaOthers ? 'required|string|max:255' : 'nullable|string|max:255',
             'elemen_qfs_id'   => 'required|exists:bosq_elemen_qfs,id',
             'temuan_bqa'      => 'required|string',
             'tingkat_resiko'  => 'required|in:food_safety_risk,major_quality_risk,minor_quality_risk',
             'dampak_temuan'   => 'required|in:negatif,positif',
+            'action_negatif'  => $this->dampak_temuan === 'negatif' ? 'required|string' : 'nullable|string',
             'auditee_id'      => 'required|exists:users,id',
         ], [
-            'auditee_id.required' => 'Auditee wajib dipilih.',
+            'auditee_id.required'      => 'Auditee wajib dipilih.',
+            'detail_sub_area.required' => 'Detail Sub Area wajib diisi jika memilih Others.',
+            'action_negatif.required'  => 'Action wajib diisi jika dampak observasi negatif.',
         ]);
 
         $user     = auth()->user();
@@ -122,9 +135,9 @@ class FormTemuan extends Component
                 'pelapor_id'      => $user->id,
                 'auditee_id'      => $this->auditee_id,
                 'departemen_id'   => $this->departemen_id,
-                'line_id'         => $this->line_id,
+                'line_id'         => null,
                 'sub_area_id'     => $this->sub_area_id,
-                'detail_sub_area' => $this->detail_sub_area ?: null,
+                'detail_sub_area' => $this->isSubAreaOthers ? ($this->detail_sub_area ?: null) : null,
                 'elemen_qfs_id'   => $this->elemen_qfs_id,
                 'temuan_bqa'      => $this->temuan_bqa,
                 'tingkat_resiko'  => $this->tingkat_resiko,
@@ -135,6 +148,7 @@ class FormTemuan extends Component
             if ($isNegatif) {
                 BosqTindakLanjut::create([
                     'bosq_temuan_id' => $temuan->id,
+                    'action'         => $this->action_negatif,
                     'status'         => 'open',
                     'acc_qa'         => false,
                 ]);
@@ -150,7 +164,8 @@ class FormTemuan extends Component
                       . "Observer: " . $user->name . "\n"
                       . "Auditee: " . ($auditeeObj?->name ?? '-') . "\n"
                       . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
-                      . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n\n"
+                      . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n"
+                      . "📌 *Action*: " . $this->action_negatif . "\n\n"
                       . "Buka dan verifikasi di:\n{$link}";
 
                 $qaUsers = User::where('role', 'qa')->whereNotNull('no_whatsapp')->get();
@@ -161,7 +176,7 @@ class FormTemuan extends Component
 
             // Reset form
             $this->reset(['sub_area_id', 'detail_sub_area', 'elemen_qfs_id', 'temuan_bqa',
-                'auditee_id', 'auditeeSearch', 'auditeeResults', 'line_id']);
+                'auditee_id', 'auditeeSearch', 'auditeeResults', 'action_negatif']);
             $this->tingkat_resiko = 'minor_quality_risk';
             $this->dampak_temuan  = 'negatif';
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
@@ -201,7 +216,6 @@ class FormTemuan extends Component
 
         return view('livewire.bosq.form-temuan', [
             'departemens' => Departemen::orderBy('nama_departemen')->get(),
-            'lines'       => BosqLine::with('defaultAuditee')->orderBy('nama_line')->get(),
             'subAreas'    => $subAreas,
             'elemenList'  => BosqElemenQfs::orderBy('nama_elemen')->get(),
         ]);

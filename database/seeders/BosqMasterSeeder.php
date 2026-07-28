@@ -7,6 +7,7 @@ use App\Models\BosqLine;
 use App\Models\BosqSubArea;
 use App\Models\Departemen;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BosqMasterSeeder extends Seeder
 {
@@ -34,63 +35,99 @@ class BosqMasterSeeder extends Seeder
             ]);
         }
 
-        // Departemen IDs lookup
-        $mfgDept  = Departemen::where('nama_departemen', 'Manufacturing')->first()?->id;
-        $qaDept   = Departemen::where('nama_departemen', 'Quality Assurance')->first()?->id;
-        $logDept  = Departemen::where('nama_departemen', 'Logistics')->first()?->id;
-        $hrDept   = Departemen::where('nama_departemen', 'Human Resource')->first()?->id;
-        $engDept  = Departemen::where('nama_departemen', 'Engineering')->first()?->id;
-        $sheDept  = Departemen::where('nama_departemen', 'Safety Health & Environment (SHE)')->first()?->id;
-
-        // 2. Seed Sub Areas with Opsi A (departemen_id)
-        $subAreasMapping = [
-            // Manufacturing
-            ['nama' => 'Filler', 'dept' => $mfgDept],
-            ['nama' => 'Spektrum 1', 'dept' => $mfgDept],
-            ['nama' => 'Labeller', 'dept' => $mfgDept],
-            ['nama' => 'Spektrum 2', 'dept' => $mfgDept],
-            ['nama' => 'Versa/Variopack/SMI', 'dept' => $mfgDept],
-            ['nama' => 'Weight Checker', 'dept' => $mfgDept],
-            ['nama' => 'Palletizer', 'dept' => $mfgDept],
-            ['nama' => 'Storage Preform Existing', 'dept' => $mfgDept],
-            ['nama' => 'Storage Preform Gede', 'dept' => $mfgDept],
-            ['nama' => 'WT Existing', 'dept' => $mfgDept],
-            ['nama' => 'WT Gede', 'dept' => $mfgDept],
-            ['nama' => 'Husky', 'dept' => $mfgDept],
-            ['nama' => 'Ruang IPC', 'dept' => $mfgDept],
-
-            // Engineering / Maintenance
-            ['nama' => 'HPU', 'dept' => $engDept],
-            ['nama' => 'Sumber 1', 'dept' => $engDept],
-            ['nama' => 'Sumber 3', 'dept' => $engDept],
-            ['nama' => 'Sumber 4', 'dept' => $engDept],
-
-            // Quality
-            ['nama' => 'Lab Fiskim', 'dept' => $qaDept],
-            ['nama' => 'Lab Mikro', 'dept' => $qaDept],
-            ['nama' => 'Ruang IMC', 'dept' => $qaDept],
-
-            // Logistics
-            ['nama' => 'Gudang Produk', 'dept' => $logDept],
-            ['nama' => 'Gudang Material', 'dept' => $logDept],
-            ['nama' => 'Gudang Chemical', 'dept' => $logDept],
-            ['nama' => 'Gudang Limbah', 'dept' => $logDept],
-            ['nama' => 'Gudang Afval', 'dept' => $logDept],
-            ['nama' => 'Loading unloading', 'dept' => $logDept],
-
-            // HR & SHE / General
-            ['nama' => 'Post Security', 'dept' => $hrDept],
-            ['nama' => 'Parkiran', 'dept' => $hrDept],
-            ['nama' => 'Office', 'dept' => $hrDept],
-            ['nama' => 'Others', 'dept' => null],
+        // 2. Seed Sub Areas matching exact Departemen & SubArea spec
+        $map = [
+            'Manufacturing' => [
+                'SBO Filler Line 1',
+                'SBO Filler Line 2',
+                'SBO Filler Line 3',
+                'Ergo Line 5',
+                'End Off Line 1',
+                'End Off Line 2',
+                'End Off Line 3',
+                'End Off Line 5',
+                'Storage Preform Existing',
+                'Storage Preform Line 5',
+                'WT Existing',
+                'WT Line 5',
+                'Husky',
+                'Others',
+            ],
+            'LOGISTIK' => [
+                'Gudang Material Existing',
+                'Gudang Material Cimex',
+                'Gudang Material Line 5',
+                'Gudang Produk Existing',
+                'Gudang Produk Cimex',
+                'Loading Unloading Produk',
+                'Loading Unloading Material',
+                'Gudang Kimia',
+                'Gudang Afval',
+                'Gudang B3',
+                'Tangki Solar',
+                'Sparepart',
+                'Others',
+            ],
+            'QUALITY' => [
+                'LAB Fiskim',
+                'LAB Mikro',
+                'Ruang IPC',
+                'Ruang IMC',
+                'Ruang Sample IMC',
+                'Ruang HPU',
+                'Others',
+            ],
+            'HR' => [
+                'POS Security',
+                'Kantin',
+                'Lobby',
+                'Toilet',
+                'Ruang Meeting',
+                'Mushola',
+                'Others',
+            ],
+            'ENGINEERING' => [
+                'Workshop',
+                'Kompresor',
+                'Chiller',
+                'Soft Water',
+                'AHU',
+                'Travo',
+                'Gardu PLN',
+                'Others',
+            ],
+            'CSR' => [
+                'Green House',
+                'Others',
+            ],
+            'PERFORMANCE' => [
+                'Others',
+            ],
+            'FINANCE' => [
+                'Others',
+            ],
         ];
 
-        foreach ($subAreasMapping as $item) {
-            BosqSubArea::firstOrCreate([
-                'nama_sub_area' => $item['nama'],
-            ], [
-                'departemen_id' => $item['dept'],
-            ]);
+        DB::table('bosq_sub_area')->delete();
+
+        $departemens = Departemen::all();
+
+        foreach ($departemens as $dept) {
+            $namaDept = $dept->nama_departemen;
+
+            if (isset($map[$namaDept])) {
+                foreach ($map[$namaDept] as $subAreaName) {
+                    BosqSubArea::create([
+                        'departemen_id' => $dept->id,
+                        'nama_sub_area' => $subAreaName,
+                    ]);
+                }
+            } else {
+                BosqSubArea::create([
+                    'departemen_id' => $dept->id,
+                    'nama_sub_area' => 'Others',
+                ]);
+            }
         }
 
         // 3. Seed Elemen QFS

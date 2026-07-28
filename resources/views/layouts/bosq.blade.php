@@ -273,10 +273,6 @@
                     </a>
 
                     <span class="qs-section-label" style="margin-top:12px;">Master Data</span>
-                    <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">linear_scale</span>
-                        <span>Master Line</span>
-                    </a>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.subarea') ? 'fil' : '' }}">location_on</span>
                         <span>Master Sub Area</span>

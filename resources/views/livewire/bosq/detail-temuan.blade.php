@@ -52,9 +52,8 @@
                         <div class="inf-value">{{ $temuan->departemen->nama_departemen ?? '-' }}</div>
                     </div>
                     <div class="info-row">
-                        <div class="inf-label">Line / Sub Area</div>
+                        <div class="inf-label">Sub Area</div>
                         <div class="inf-value">
-                            {{ $temuan->line->nama_line ?? '-' }} /
                             {{ $temuan->subArea->nama_sub_area ?? '-' }}
                             @if($temuan->detail_sub_area)
                                 <span style="font-size:12px;color:var(--btxt2);">({{ $temuan->detail_sub_area }})</span>
@@ -134,6 +133,15 @@
                 <div style="background:var(--bsur);border:1px solid var(--bbor);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--btxt);">
                     {{ $temuan->temuan_bqa }}
                 </div>
+
+                @if($temuan->tindakLanjut && $temuan->tindakLanjut->action)
+                <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--bbor);">
+                    <div class="inf-label" style="margin-bottom:8px;">Action (Jika Negatif)</div>
+                    <div style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:#e65100;font-weight:500;">
+                        {{ $temuan->tindakLanjut->action }}
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

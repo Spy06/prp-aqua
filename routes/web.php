@@ -83,7 +83,6 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
             Route::get('/dashboard', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Dashboard QA BOS\'Q', 'desc' => 'Dashboard analisis observasi BOS\'Q (Fitur Hari 3)']))->name('dashboard');
             Route::get('/rekap', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Rekap Kepatuhan BOS\'Q', 'desc' => 'Rekapitulasi kepatuhan observasi BOS\'Q (Fitur Hari 3)']))->name('rekap');
-            Route::get('/master/line', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Line BOS\'Q', 'desc' => 'Manajemen data Master Line BOS\'Q (Fitur Hari 3)']))->name('master.line');
             Route::get('/master/subarea', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Sub Area BOS\'Q', 'desc' => 'Manajemen data Master Sub Area BOS\'Q (Fitur Hari 3)']))->name('master.subarea');
             Route::get('/master/elemen', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Elemen QFS BOS\'Q', 'desc' => 'Manajemen data Master Elemen QFS BOS\'Q (Fitur Hari 3)']))->name('master.elemen');
         });

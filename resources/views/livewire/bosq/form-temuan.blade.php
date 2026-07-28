@@ -59,18 +59,6 @@
                             @error('departemen_id') <span class="berr">{{ $message }}</span> @enderror
                         </div>
 
-                        {{-- Line --}}
-                        <div>
-                            <label class="blabel" for="line">Line <span style="color:var(--error);">*</span></label>
-                            <select wire:model.live="line_id" id="line" class="binput">
-                                <option value="">Pilih Line</option>
-                                @foreach($lines as $line)
-                                    <option value="{{ $line->id }}">{{ $line->nama_line }}</option>
-                                @endforeach
-                            </select>
-                            @error('line_id') <span class="berr">{{ $message }}</span> @enderror
-                        </div>
-
                         {{-- Sub Area --}}
                         <div>
                             <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
@@ -83,12 +71,14 @@
                             @error('sub_area_id') <span class="berr">{{ $message }}</span> @enderror
                         </div>
 
-                        {{-- Detail Sub Area --}}
+                        {{-- Detail Sub Area (Hanya jika memilih 'Others') --}}
+                        @if($this->isSubAreaOthers)
                         <div>
-                            <label class="blabel" for="detail_sa">Detail Sub Area <span style="font-size:10px;font-weight:400;color:var(--btxt2);">(Opsional)</span></label>
-                            <input type="text" wire:model="detail_sub_area" id="detail_sa" class="binput" placeholder="Detail lokasi spesifik...">
+                            <label class="blabel" for="detail_sa">Detail Sub Area <span style="color:var(--error);">*</span></label>
+                            <input type="text" wire:model="detail_sub_area" id="detail_sa" class="binput" placeholder="Tuliskan nama detail area spesifik...">
                             @error('detail_sub_area') <span class="berr">{{ $message }}</span> @enderror
                         </div>
+                        @endif
 
                         {{-- Elemen QFS --}}
                         <div>
@@ -147,6 +137,15 @@
                             </div>
                             @error('dampak_temuan') <span class="berr">{{ $message }}</span> @enderror
                         </div>
+
+                        {{-- Action (Jika Negatif) --}}
+                        @if($dampak_temuan === 'negatif')
+                        <div>
+                            <label class="blabel" for="action_negatif">Action (Jika Negatif) <span style="color:var(--error);">*</span></label>
+                            <textarea wire:model="action_negatif" id="action_negatif" rows="3" class="binput" placeholder="Tuliskan tindakan / action perbaikan..."></textarea>
+                            @error('action_negatif') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
 
                         {{-- Auditee Search --}}
                         <div style="position:relative;">

@@ -11,12 +11,14 @@ class DepartemenSeeder extends Seeder
     {
         $departemen = [
             'Manufacturing',
-            'Engineering',
-            'Logistics',
-            'Human Resource',
-            'Quality Assurance',
+            'LOGISTIK',
+            'QUALITY',
+            'HR',
+            'ENGINEERING',
+            'CSR',
+            'PERFORMANCE',
+            'FINANCE',
             'Safety Health & Environment (SHE)',
-            'Corporate Social Responsibility'
         ];
 
         foreach ($departemen as $nama) {

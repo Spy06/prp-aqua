@@ -9,7 +9,7 @@
             'closed'     => (clone $myTemuans)->where('status', 'closed_acc')->count(),
         ];
     @endphp
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;" class="fu">
+    <div class="bstat-grid fu">
         <div class="bstat">
             <div class="bstat-icon" style="background:#fff3e0;">
                 <span class="material-symbols-outlined fil" style="color:#e65100;font-size:22px;">error</span>

@@ -36,17 +36,17 @@
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bsur); color: var(--btxt); margin: 0; min-height: 100vh; overflow-x: hidden; }
+        html, body { font-family: 'Inter', sans-serif; background: var(--bsur); color: var(--btxt); margin: 0; min-height: 100vh; max-width: 100vw; overflow-x: hidden !important; width: 100%; }
 
         /* ── Top Header ── */
-        .qtop { background: var(--bcard); border-bottom: 1px solid var(--bbor); height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: fixed; top: 0; left: 250px; right: 0; z-index: 40; box-shadow: 0 1px 12px rgba(0,0,0,0.05); transition: left 0.3s ease; }
+        .qtop { background: var(--bcard); border-bottom: 1px solid var(--bbor); height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: fixed; top: 0; left: 250px; right: 0; z-index: 40; box-shadow: 0 1px 12px rgba(0,0,0,0.05); transition: left 0.3s ease; box-sizing: border-box; }
         .qtop-menu-btn { display: none; background: var(--bp-light); color: var(--bp-dark); border: none; width: 36px; height: 36px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
         .qtop-menu-btn:hover { background: var(--bp); color: #fff; }
         .qs-close-btn { display: none; background: var(--bsur); color: var(--btxt2); border: none; width: 32px; height: 32px; border-radius: 8px; align-items: center; justify-content: center; cursor: pointer; margin-left: auto; flex-shrink: 0; }
         .qs-backdrop { display: none; }
-        .qtop-act { display: flex; align-items: center; gap: 10px; }
-        .qtop-profile-pill { display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; background: var(--bp-light); border-radius: 24px; border: 1px solid rgba(25,118,210,0.15); cursor: default; color: var(--bp-dark); font-family: inherit; user-select: none; }
-        .qtop-av { width: 26px; height: 26px; background: var(--bp); color: #fff; font-weight: 700; font-size: 11px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .qtop-act { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .qtop-profile-pill { display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; background: var(--bp-light); border-radius: 24px; border: 1px solid rgba(25,118,210,0.15); cursor: default; color: var(--bp-dark); font-family: inherit; user-select: none; flex-shrink: 0; }
+        .qtop-av { width: 26px; height: 26px; background: var(--bp); color: #fff; font-weight: 700; font-size: 11px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .qtop-profile-pill .name { font-size: 13px; font-weight: 600; }
 
         /* ── Sidebar BOS'Q ── */
@@ -55,7 +55,7 @@
         .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
 
         /* BOS'Q Logo Box — biru sama SIVERA */
-        .logo-box { width: 36px; height: 36px; background: linear-gradient(135deg, #1976d2, #42a5f5); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(25,118,210,0.3); }
+        .logo-box { width: 36px; height: 36px; background: linear-gradient(135deg, #1976d2, #42a5f5); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(25,118,210,0.3); flex-shrink: 0; }
         .logo-box span { color: #fff; font-size: 18px; }
         .logo-text h1 { font-size: 15px; font-weight: 700; color: var(--bp); letter-spacing: -0.2px; margin: 0; }
         .logo-text p { font-size: 9.5px; color: var(--btxt2); margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
@@ -81,17 +81,17 @@
         .qs-logout:hover { background: var(--error-light); color: var(--error); }
 
         /* ── Layout Wrapper ── */
-        .qmain { min-height: 100vh; padding-top: 68px; margin-left: 250px; }
-        .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .qmain { min-height: 100vh; padding-top: 68px; margin-left: 250px; max-width: 100vw; overflow-x: hidden !important; }
+        .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; overflow-x: hidden !important; }
         .qtop-logo { display: none; }
 
         /* ── Responsive ── */
         @media (max-width: 960px) {
-            .qtop { left: 0 !important; right: 0 !important; padding: 0 16px; height: 60px; }
-            .qmain { margin-left: 0 !important; padding-top: 60px; }
-            .qcontent { padding: 16px; }
+            .qtop { left: 0 !important; right: 0 !important; padding: 0 14px; height: 60px; }
+            .qmain { margin-left: 0 !important; padding-top: 60px; max-width: 100vw; overflow-x: hidden !important; }
+            .qcontent { padding: 16px; max-width: 100vw; overflow-x: hidden !important; }
             .mobile-logout { display: block !important; }
-            .qtop-logo { display: flex !important; align-items: center; gap: 10px; }
+            .qtop-logo { display: flex !important; align-items: center; gap: 8px; }
             .qtop-menu-btn { display: flex !important; }
             .qs-close-btn { display: flex !important; }
             .qs { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100 !important; box-shadow: 0 0 30px rgba(0,0,0,0.25); display: flex !important; }
@@ -100,10 +100,29 @@
             .qs-backdrop.qs-open { opacity: 1; pointer-events: auto; }
         }
         @media (max-width: 640px) {
-            .qtop { padding: 0 12px; height: 56px; }
-            .qmain { padding-top: 56px; }
-            .qcontent { padding: 12px; }
+            .qtop { padding: 0 10px; height: 56px; }
+            .qtop-logo .logo-text p { display: none; }
+            .logo-area.qtop-logo { width: auto !important; max-width: 140px; gap: 6px; }
+            .logo-area.qtop-logo .logo-box { width: 32px; height: 32px; }
+            .logo-area.qtop-logo .logo-box span { font-size: 16px; }
+            .logo-area.qtop-logo .logo-text h1 { font-size: 14px; }
+            .qtop-profile-pill { padding: 3px 6px 3px 3px; gap: 4px; border-radius: 50px; }
             .qtop-profile-pill .name { display: none; }
+
+            .qmain { padding-top: 56px; }
+            .qcontent { padding: 10px 8px; }
+
+            .bcard { border-radius: 12px; width: 100%; box-sizing: border-box; }
+            .bcard-header { padding: 12px 14px; gap: 8px; }
+            .bcard-body { padding: 12px 10px; }
+
+            .bph { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+            .bph-title { font-size: 17px; }
+            .bph-sub { font-size: 12px; }
+            .bph > div:last-child { width: 100%; flex-direction: column; gap: 8px; }
+            .bph .bbtn { width: 100%; justify-content: center; }
+
+            .bbtn { white-space: normal; text-align: center; }
         }
 
         /* ── Berry Cards (identik SIVERA) ── */
@@ -176,6 +195,22 @@
         .tcard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         @media (max-width: 1024px) { .tcard-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 640px) { .tcard-grid { grid-template-columns: 1fr; gap: 12px; } }
+
+        /* ── Responsive Stat Cards & Grids ── */
+        .bstat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        @media (max-width: 1024px) { .bstat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+        @media (max-width: 480px) {
+            .bstat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .bstat { padding: 12px 10px; gap: 8px; }
+            .bstat-val { font-size: 20px; }
+            .bstat-lbl { font-size: 10px; }
+            .bstat-icon { width: 36px; height: 36px; border-radius: 8px; }
+            .bstat-icon .material-symbols-outlined { font-size: 18px !important; }
+        }
+
+        /* ── Responsive Form Grid ── */
+        .form-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        @media (max-width: 768px) { .form-grid-2col { grid-template-columns: 1fr; gap: 18px; } }
 
         /* ── Breadcrumb ── */
         .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--btxt2); margin-bottom: 20px; flex-wrap: wrap; }

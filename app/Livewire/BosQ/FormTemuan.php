@@ -85,12 +85,14 @@ class FormTemuan extends Component
     public function updatedAuditeeSearch(): void
     {
         $this->auditee_id = null; // reset saat user mengetik
-        if (strlen($this->auditeeSearch) >= 2) {
-            $this->auditeeResults = User::where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->auditeeSearch . '%')
-                      ->orWhere('nik', 'like', '%' . $this->auditeeSearch . '%');
+        $query = trim($this->auditeeSearch);
+        if (strlen($query) >= 1) {
+            $this->auditeeResults = User::where(function ($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%')
+                      ->orWhere('nik', 'like', '%' . $query . '%');
                 })
-                ->take(7)
+                ->orderBy('name')
+                ->take(10)
                 ->get(['id', 'name', 'nik', 'no_whatsapp'])
                 ->toArray();
         } else {

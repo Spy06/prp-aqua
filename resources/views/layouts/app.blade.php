@@ -161,12 +161,12 @@
 
         .qs-footer {
             padding: 14px; border-top: 1px solid var(--bbor);
-            background: var(--bsur); flex-shrink: 0;
+            background: var(--bsur); flex-shrink: 0; width: 100%; box-sizing: border-box;
         }
         .qs-user {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 12px; background: var(--bcard); border-radius: 10px;
-            border: 1px solid var(--bbor); margin-bottom: 8px;
+            border: 1px solid var(--bbor); margin-bottom: 8px; width: 100%; box-sizing: border-box; overflow: hidden;
         }
         .qs-av {
             width: 32px; height: 32px; background: var(--bp); color: #fff;
@@ -477,9 +477,9 @@
             @auth
             <div class="qs-user">
                 <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <div style="overflow:hidden;flex:1;">
-                    <div class="truncate" style="color:var(--btxt);font-size:13px;font-weight:600;">{{ auth()->user()->name }}</div>
-                    <div style="color:var(--btxt2);font-size:11px;text-transform:capitalize;">{{ auth()->user()->role }}</div>
+                <div style="overflow:hidden;flex:1;min-width:0;">
+                    <div style="color:var(--btxt);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</div>
+                    <div style="color:var(--btxt2);font-size:11px;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->role }}</div>
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="qs-logout" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">

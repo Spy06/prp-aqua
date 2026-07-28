@@ -319,13 +319,13 @@
                         @else
                             <div style="position:relative;">
                                 <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--btxt2);">search</span>
-                                <input wire:model.live.debounce.300ms="auditeeSearch" id="auditee"
+                                <input wire:model.live.debounce.150ms="auditeeSearch" id="auditee"
                                     placeholder="Cari nama atau NIK auditee..."
                                     type="text" class="binput" style="padding-left:38px;" />
                             </div>
 
                             @if(count($auditeeResults) > 0)
-                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:20;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.1);overflow:hidden;max-height:200px;overflow-y:auto;">
+                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;max-height:220px;overflow-y:auto;">
                                     @foreach($auditeeResults as $res)
                                         <button type="button"
                                             wire:click="selectAuditee({{ $res['id'] }}, '{{ addslashes($res['name'] ?? $res['nik']) }}')"
@@ -335,6 +335,10 @@
                                             <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
                                         </button>
                                     @endforeach
+                                </div>
+                            @elseif(strlen(trim($auditeeSearch)) >= 1)
+                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);box-shadow:0 8px 24px rgba(0,0,0,0.12);">
+                                    Tidak ada auditee yang ditemukan dengan NIK / nama tersebut.
                                 </div>
                             @endif
                         @endif

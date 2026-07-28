@@ -87,11 +87,21 @@ new #[Title('Pengaturan Profil')] class extends Component {
                 @error('no_whatsapp') <span class="berr">{{ $message }}</span> @enderror
             </div>
 
-            <div style="margin-top:8px;">
+            @php
+                $system = session('login_system', 'sivera');
+                $homeRoute = $system === 'bosq'
+                    ? (Auth::user()?->role === 'qa' ? route('bosq.qa.dashboard') : route('bosq.beranda'))
+                    : (Auth::user()?->role === 'qa' ? route('qa.dashboard') : route('beranda'));
+            @endphp
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
                 <button type="submit" class="bbtn bbtn-primary bbtn-sm" data-test="update-profile-button">
                     <span class="material-symbols-outlined" style="font-size:16px;">save</span>
                     Simpan Profil
                 </button>
+                <a href="{{ $homeRoute }}" class="bbtn bbtn-secondary bbtn-sm" style="text-decoration:none;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+                    Kembali
+                </a>
             </div>
         </form>
     </x-pages::settings.layout>

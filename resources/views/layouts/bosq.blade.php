@@ -297,16 +297,7 @@
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">home</span>
                         <span>Beranda BOS'Q</span>
-                    </a>
                 @endif
-
-                {{-- Link pindah ke SIVERA --}}
-                <div style="margin-top: 16px; padding: 0 2px;">
-                    <a href="{{ route('beranda') }}" class="qs-switch">
-                        <span class="material-symbols-outlined" style="font-size:16px;">swap_horiz</span>
-                        <span>Beralih ke SIVERA</span>
-                    </a>
-                </div>
             @endauth
         </div>
 

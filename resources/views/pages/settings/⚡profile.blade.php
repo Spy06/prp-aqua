@@ -26,8 +26,15 @@ new #[Title('Pengaturan Profil')] class extends Component {
      */
     public function rendering($view): void
     {
-        $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
-        $view->layout($layout, ['title' => __('Pengaturan Profil — SIVERA')]);
+        $system = session('login_system', 'sivera');
+        if ($system === 'bosq') {
+            $layout = 'layouts.bosq';
+            $title  = __('Pengaturan Profil — BOS\'Q');
+        } else {
+            $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
+            $title  = __('Pengaturan Profil — SIVERA');
+        }
+        $view->layout($layout, ['title' => $title]);
     }
 
     /**

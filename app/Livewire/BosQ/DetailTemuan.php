@@ -40,14 +40,11 @@ class DetailTemuan extends Component
         $isPelapor = $user->id === $temuan->pelapor_id;
         $isQa      = $user->role === 'qa';
 
-        // Auditee bisa mengisi tindak lanjut selama status belum closed_acc (dan bukan QA)
-        $showTindakLanjutForm = $isAuditee
-            && !$isQa
-            && $temuan->dampak_temuan === 'negatif'
-            && !in_array($temuan->status, ['closed_acc']);
+        // Laporan BOS'Q langsung masuk ke QA — tidak ada form tindak lanjut auditee
+        $showTindakLanjutForm = false;
 
-        // QA bisa verifikasi hanya saat closed_pending_qa
-        $showVerifikasiForm = $isQa && $temuan->status === 'closed_pending_qa';
+        // QA bisa verifikasi selama status belum closed_acc
+        $showVerifikasiForm = $isQa && $temuan->status !== 'closed_acc';
 
         return view('livewire.bosq.detail-temuan', [
             'temuan'              => $temuan,

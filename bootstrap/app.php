@@ -13,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'role'         => \App\Http\Middleware\RoleMiddleware::class,
+            'system_guard' => \App\Http\Middleware\SystemGuardMiddleware::class,
         ]);
         // Trust semua proxy (termasuk ngrok) agar URL & header X-Forwarded-* diproses dengan benar
         $middleware->trustProxies(at: '*');

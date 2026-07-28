@@ -142,19 +142,20 @@ class FormTemuan extends Component
 
             DB::commit();
 
-            // Dispatch WA hanya untuk temuan negatif
+            // Dispatch WA untuk temuan negatif -> dikirim ke tim QA
             if ($isNegatif) {
-                $auditee = User::find($this->auditee_id);
-                if ($auditee && $auditee->no_whatsapp) {
-                    $link = route('bosq.temuan.detail', $temuan->id);
-                    $msg  = "*[BOS'Q] Observasi Baru Ditugaskan*\n\n"
-                          . "Halo {$auditee->name},\n"
-                          . "Anda ditugaskan sebagai Auditee untuk observasi BOS'Q baru.\n\n"
-                          . "📋 *ID*: #{$temuan->id}\n"
-                          . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
-                          . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n\n"
-                          . "Segera tindak lanjuti di:\n{$link}";
-                    SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
+                $auditeeObj = User::find($this->auditee_id);
+                $link = route('bosq.temuan.detail', $temuan->id);
+                $msg  = "*[BOS'Q] Observasi Baru Perlu Verifikasi QA*\n\n"
+                      . "Observer: " . $user->name . "\n"
+                      . "Auditee: " . ($auditeeObj?->name ?? '-') . "\n"
+                      . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
+                      . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n\n"
+                      . "Buka dan verifikasi di:\n{$link}";
+
+                $qaUsers = User::where('role', 'qa')->whereNotNull('no_whatsapp')->get();
+                foreach ($qaUsers as $qa) {
+                    SendWhatsApp::dispatch($qa->no_whatsapp, $msg);
                 }
             }
 
@@ -166,7 +167,7 @@ class FormTemuan extends Component
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
 
             session()->flash('success', "Observasi BOS'Q berhasil dilaporkan!" .
-                ($isNegatif ? ' Auditee telah dinotifikasi.' : ' Status langsung Closed (Positif).'));
+                ($isNegatif ? ' Laporan telah diteruskan ke tim QA untuk verifikasi.' : ' Status langsung Closed (Positif).'));
 
             $this->dispatch('temuanAdded');
 

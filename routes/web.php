@@ -43,36 +43,39 @@ Route::middleware(['auth'])->group(function () {
 
     Route::redirect('/home', '/dashboard')->name('home');
 
-    // Role Karyawan & QA (Halaman Beranda & Lapor Temuan SIVERA)
-    Route::middleware(['role:karyawan,qa'])->group(function () {
-        Route::view('/beranda', 'pages.beranda')->name('beranda');
-    });
+    // ── SIVERA Routes ──
+    Route::middleware(['system_guard:sivera'])->group(function () {
+        // Role Karyawan & QA (Halaman Beranda & Lapor Temuan SIVERA)
+        Route::middleware(['role:karyawan,qa'])->group(function () {
+            Route::view('/beranda', 'pages.beranda')->name('beranda');
+        });
 
-    // Role QA — Dashboard, Rekap, Master Data SIVERA
-    Route::middleware(['role:qa'])->group(function () {
-        Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
-        Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
-        Route::view('/qa/rekap', 'pages.qa.rekap')->name('qa.rekap');
-        Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
-        Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');
-        Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
-        Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
-    });
+        // Role QA — Dashboard, Rekap, Master Data SIVERA
+        Route::middleware(['role:qa'])->group(function () {
+            Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
+            Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
+            Route::view('/qa/rekap', 'pages.qa.rekap')->name('qa.rekap');
+            Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
+            Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');
+            Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
+            Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
+        });
 
-    // Export routes SIVERA — hanya QA
-    Route::middleware(['role:qa'])->group(function () {
-        Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
-        Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
-        Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
-    });
+        // Export routes SIVERA — hanya QA
+        Route::middleware(['role:qa'])->group(function () {
+            Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
+            Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
+            Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
+        });
 
-    // Temuan detail SIVERA
-    Route::get('/temuan/{temuan}', function (\App\Models\Temuan $temuan) {
-        return view('pages.temuan-detail', ['temuan' => $temuan]);
-    })->name('temuan.detail')->middleware('can:view,temuan');
+        // Temuan detail SIVERA
+        Route::get('/temuan/{temuan}', function (\App\Models\Temuan $temuan) {
+            return view('pages.temuan-detail', ['temuan' => $temuan]);
+        })->name('temuan.detail')->middleware('can:view,temuan');
+    });
 
     // ── BOS'Q Routes ──
-    Route::prefix('bosq')->name('bosq.')->group(function () {
+    Route::middleware(['system_guard:bosq'])->prefix('bosq')->name('bosq.')->group(function () {
         Route::middleware(['role:karyawan,qa'])->group(function () {
             Route::view('/beranda', 'pages.bosq.beranda')->name('beranda');
         });

@@ -138,53 +138,29 @@
         </div>
     </div>
 
-    {{-- Tindak Lanjut Auditee Panel --}}
-    @if($showTindakLanjutForm)
-        <div class="bcard fu2" style="margin-bottom:20px;">
-            <div class="bcard-header">
-                <div class="bcard-hicon" style="background:#fff3e0;">
-                    <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">assignment_ind</span>
-                </div>
-                <div>
-                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Tindak Lanjut Auditee</div>
-                    <div style="font-size:12px;color:var(--btxt2);">Isi tindakan perbaikan dan upload bukti dokumen</div>
-                </div>
-            </div>
-            <div class="bcard-body">
-                <livewire:bos-q.tindak-lanjut-auditee :bosqTemuanId="$temuan->id" :key="'tl-'.$temuan->id" />
-            </div>
-        </div>
-    @elseif($temuan->tindakLanjut && $temuan->dampak_temuan === 'negatif')
-        {{-- Show read-only tindak lanjut info --}}
+    {{-- Verification Summary Info --}}
+    @if($temuan->tindakLanjut && $temuan->status === 'closed_acc')
         <div class="bcard fu2" style="margin-bottom:20px;">
             <div class="bcard-header">
                 <div class="bcard-hicon" style="background:#e8f5e9;">
-                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">assignment_turned_in</span>
+                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">task_alt</span>
                 </div>
                 <div>
-                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Tindak Lanjut</div>
-                    <div style="font-size:12px;color:var(--btxt2);">Ringkasan tindak lanjut oleh Auditee</div>
+                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi Tim QA</div>
+                    <div style="font-size:12px;color:var(--btxt2);">Observasi telah diverifikasi dan disetujui oleh QA</div>
                 </div>
             </div>
             <div class="bcard-body">
                 @php $tl = $temuan->tindakLanjut; @endphp
-                <div class="info-row">
-                    <div class="inf-label">Deskripsi Tindakan</div>
-                    <div class="inf-value">{{ $tl->action ?: '-' }}</div>
-                </div>
-                <div class="info-row">
-                    <div class="inf-label">Due Date</div>
-                    <div class="inf-value">{{ $tl->due_date ? $tl->due_date->format('d F Y') : '-' }}</div>
-                </div>
                 @if($tl->catatan_qa)
                     <div class="info-row">
                         <div class="inf-label">Catatan QA</div>
-                        <div class="inf-value" style="color:#c62828;">{{ $tl->catatan_qa }}</div>
+                        <div class="inf-value" style="color:#2e7d32;">{{ $tl->catatan_qa }}</div>
                     </div>
                 @endif
                 @if($tl->tanggal_acc)
                     <div class="info-row" style="margin-bottom:0;">
-                        <div class="inf-label">Tanggal ACC QA</div>
+                        <div class="inf-label">Tanggal Disetujui QA</div>
                         <div class="inf-value" style="color:#2e7d32;font-weight:600;">{{ $tl->tanggal_acc->format('d F Y, H:i') }} WIB</div>
                     </div>
                 @endif

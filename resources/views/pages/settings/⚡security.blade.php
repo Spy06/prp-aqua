@@ -19,8 +19,15 @@ new #[Title('Ganti Password')] class extends Component {
      */
     public function rendering($view): void
     {
-        $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
-        $view->layout($layout, ['title' => __('Ganti Password — SIVERA')]);
+        $system = session('login_system', 'sivera');
+        if ($system === 'bosq') {
+            $layout = 'layouts.bosq';
+            $title  = __('Ganti Password — BOS\'Q');
+        } else {
+            $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
+            $title  = __('Ganti Password — SIVERA');
+        }
+        $view->layout($layout, ['title' => $title]);
     }
 
     /**

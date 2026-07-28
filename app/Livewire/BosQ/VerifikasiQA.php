@@ -25,26 +25,36 @@ class VerifikasiQA extends Component
             abort(403);
         }
 
-        if ($this->temuan->status !== 'closed_pending_qa') {
+        if (!in_array($this->temuan->status, ['open', 'closed_pending_qa', 'in_progress'])) {
             return;
         }
 
         $tl = $this->temuan->tindakLanjut;
-        if ($tl) {
+        if (!$tl) {
+            $tl = BosqTindakLanjut::create([
+                'bosq_temuan_id' => $this->temuan->id,
+                'action'         => 'Verifikasi langsung oleh QA',
+                'status'         => 'closed_acc',
+                'acc_qa'         => true,
+                'tanggal_acc'    => now(),
+                'catatan_qa'     => $this->catatan_qa ?: null,
+            ]);
+        } else {
             $tl->update([
                 'acc_qa'      => true,
                 'tanggal_acc' => now(),
                 'status'      => 'closed_acc',
-                'catatan_qa'  => null,
+                'catatan_qa'  => $this->catatan_qa ?: null,
             ]);
         }
 
         $this->temuan->update(['status' => 'closed_acc']);
 
-        // Kirim WA ke Pelapor + Auditee
+        // Kirim WA notifikasi ke Pelapor & Auditee
         $link = route('bosq.temuan.detail', $this->temuan->id);
-        $msg  = "*[BOS'Q] Observasi #{$this->temuan->id} — ACC (Closed)*\n\n"
-              . "Tindak lanjut telah disetujui oleh QA dan observasi resmi selesai.\n"
+        $msg  = "*[BOS'Q] Observasi #{$this->temuan->id} — Verifikasi QA (Closed)*\n\n"
+              . "Observasi telah diverifikasi dan disetujui oleh tim QA.\n"
+              . ($this->catatan_qa ? "Catatan QA: {$this->catatan_qa}\n\n" : "")
               . "Lihat detail di:\n{$link}";
 
         $pelapor = User::find($this->temuan->pelapor_id);
@@ -57,49 +67,7 @@ class VerifikasiQA extends Component
             SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
         }
 
-        $this->redirectRoute('bosq.temuan.detail', $this->temuan->id);
-    }
-
-    public function tolak(): void
-    {
-        if (auth()->user()->role !== 'qa') {
-            abort(403);
-        }
-
-        $this->validate([
-            'catatan_qa' => 'required|string',
-        ], [
-            'catatan_qa.required' => 'Catatan QA wajib diisi saat menolak tindak lanjut.',
-        ]);
-
-        if ($this->temuan->status !== 'closed_pending_qa') {
-            return;
-        }
-
-        $tl = $this->temuan->tindakLanjut;
-        if ($tl) {
-            $tl->update([
-                'acc_qa'      => false,
-                'tanggal_acc' => null,
-                'status'      => 'in_progress',
-                'catatan_qa'  => $this->catatan_qa,
-            ]);
-        }
-
-        $this->temuan->update(['status' => 'in_progress']);
-
-        // Kirim WA ke Auditee saja
-        $auditee = User::find($this->temuan->auditee_id);
-        if ($auditee && $auditee->no_whatsapp) {
-            $link    = route('bosq.temuan.detail', $this->temuan->id);
-            $catRing = Str::limit($this->catatan_qa, 80);
-            $msg     = "*[BOS'Q] Observasi #{$this->temuan->id} — Dikembalikan*\n\n"
-                     . "Tindak lanjut Anda ditolak oleh QA.\n"
-                     . "Catatan: {$catRing}\n\n"
-                     . "Perbaiki dan kirim ulang di:\n{$link}";
-            SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
-        }
-
+        session()->flash('success', 'Observasi BOS\'Q berhasil diverifikasi dan diselesaikan (Closed ACC).');
         $this->redirectRoute('bosq.temuan.detail', $this->temuan->id);
     }
 

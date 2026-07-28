@@ -25,7 +25,7 @@ class VerifikasiQA extends Component
             abort(403);
         }
 
-        if (!in_array($this->temuan->status, ['open', 'closed_pending_qa', 'in_progress'])) {
+        if ($this->temuan->status !== 'open') {
             return;
         }
 
@@ -34,7 +34,7 @@ class VerifikasiQA extends Component
             $tl = BosqTindakLanjut::create([
                 'bosq_temuan_id' => $this->temuan->id,
                 'action'         => 'Verifikasi langsung oleh QA',
-                'status'         => 'closed_acc',
+                'status'         => 'closed',
                 'acc_qa'         => true,
                 'tanggal_acc'    => now(),
                 'catatan_qa'     => $this->catatan_qa ?: null,
@@ -43,12 +43,12 @@ class VerifikasiQA extends Component
             $tl->update([
                 'acc_qa'      => true,
                 'tanggal_acc' => now(),
-                'status'      => 'closed_acc',
+                'status'      => 'closed',
                 'catatan_qa'  => $this->catatan_qa ?: null,
             ]);
         }
 
-        $this->temuan->update(['status' => 'closed_acc']);
+        $this->temuan->update(['status' => 'closed']);
 
         // Kirim WA notifikasi ke Pelapor & Auditee
         $link = route('bosq.temuan.detail', $this->temuan->id);
@@ -67,7 +67,7 @@ class VerifikasiQA extends Component
             SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
         }
 
-        session()->flash('success', 'Observasi BOS\'Q berhasil diverifikasi dan diselesaikan (Closed ACC).');
+        session()->flash('success', 'Observasi BOS\'Q berhasil diverifikasi dan diselesaikan (Closed).');
         $this->redirectRoute('bosq.temuan.detail', $this->temuan->id);
     }
 

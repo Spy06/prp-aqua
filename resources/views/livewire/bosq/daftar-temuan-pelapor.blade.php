@@ -3,47 +3,27 @@
     @php
         $myTemuans = \App\Models\BosqTemuan::where('pelapor_id', auth()->id());
         $metrics = [
-            'open'       => (clone $myTemuans)->where('status', 'open')->count(),
-            'in_progress'=> (clone $myTemuans)->where('status', 'in_progress')->count(),
-            'pending_qa' => (clone $myTemuans)->where('status', 'closed_pending_qa')->count(),
-            'closed'     => (clone $myTemuans)->where('status', 'closed_acc')->count(),
+            'open'   => (clone $myTemuans)->whereIn('status', ['open', 'in_progress', 'closed_pending_qa'])->count(),
+            'closed' => (clone $myTemuans)->whereIn('status', ['closed', 'closed_acc'])->count(),
         ];
     @endphp
-    <div class="bstat-grid fu">
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px;" class="fu">
         <div class="bstat">
             <div class="bstat-icon" style="background:#fff3e0;">
-                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:22px;">error</span>
+                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:24px;">error</span>
             </div>
             <div>
                 <div class="bstat-val" style="color:#e65100;">{{ $metrics['open'] }}</div>
-                <div class="bstat-lbl">Open</div>
-            </div>
-        </div>
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#e3f2fd;">
-                <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:22px;">pending</span>
-            </div>
-            <div>
-                <div class="bstat-val" style="color:#1565c0;">{{ $metrics['in_progress'] }}</div>
-                <div class="bstat-lbl">In Progress</div>
-            </div>
-        </div>
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#f3e5f5;">
-                <span class="material-symbols-outlined fil" style="color:#6a1b9a;font-size:22px;">hourglass_top</span>
-            </div>
-            <div>
-                <div class="bstat-val" style="color:#6a1b9a;">{{ $metrics['pending_qa'] }}</div>
-                <div class="bstat-lbl">Pending QA</div>
+                <div class="bstat-lbl">Open (Perlu Verifikasi QA)</div>
             </div>
         </div>
         <div class="bstat">
             <div class="bstat-icon" style="background:#e8f5e9;">
-                <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:22px;">task_alt</span>
+                <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:24px;">task_alt</span>
             </div>
             <div>
                 <div class="bstat-val" style="color:#2e7d32;">{{ $metrics['closed'] }}</div>
-                <div class="bstat-lbl">Closed</div>
+                <div class="bstat-lbl">Closed (Diverifikasi QA)</div>
             </div>
         </div>
     </div>
@@ -67,20 +47,9 @@
         <div class="tcard-grid fu2">
             @foreach($temuans as $temuan)
                 @php
-                    $statusClass = match($temuan->status) {
-                        'open'              => 'sbadge-open',
-                        'in_progress'       => 'sbadge-progress',
-                        'closed_pending_qa' => 'sbadge-pending',
-                        'closed_acc'        => 'sbadge-closed',
-                        default             => 'sbadge-progress',
-                    };
-                    $statusText = match($temuan->status) {
-                        'open'              => 'Open',
-                        'in_progress'       => 'In Progress',
-                        'closed_pending_qa' => 'Pending QA',
-                        'closed_acc'        => 'Closed (ACC)',
-                        default             => $temuan->status,
-                    };
+                    $isClosed    = in_array($temuan->status, ['closed', 'closed_acc']);
+                    $statusClass = $isClosed ? 'sbadge-closed' : 'sbadge-open';
+                    $statusText  = $isClosed ? 'Closed' : 'Open';
                     $risikoColor = match($temuan->tingkat_resiko) {
                         'food_safety_risk'   => '#c62828',
                         'major_quality_risk' => '#e65100',

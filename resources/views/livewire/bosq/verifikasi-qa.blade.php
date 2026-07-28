@@ -27,7 +27,7 @@
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                 <button type="submit" class="bbtn bbtn-success">
                     <span class="material-symbols-outlined fil" style="font-size:18px;">check_circle</span>
-                    Setujui & Verifikasi (Closed ACC)
+                    Setujui & Verifikasi (Closed)
                 </button>
             </div>
         </form>

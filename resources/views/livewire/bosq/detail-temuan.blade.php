@@ -21,20 +21,9 @@
             </div>
             {{-- Status Badge --}}
             @php
-                $statusClass = match($temuan->status) {
-                    'open'              => 'sbadge-open',
-                    'in_progress'       => 'sbadge-progress',
-                    'closed_pending_qa' => 'sbadge-pending',
-                    'closed_acc'        => 'sbadge-closed',
-                    default             => 'sbadge-progress',
-                };
-                $statusText = match($temuan->status) {
-                    'open'              => 'Open',
-                    'in_progress'       => 'In Progress',
-                    'closed_pending_qa' => 'Pending QA',
-                    'closed_acc'        => 'Closed (ACC)',
-                    default             => $temuan->status,
-                };
+                $isClosed    = in_array($temuan->status, ['closed', 'closed_acc']);
+                $statusClass = $isClosed ? 'sbadge-closed' : 'sbadge-open';
+                $statusText  = $isClosed ? 'Closed' : 'Open';
             @endphp
             <span class="sbadge {{ $statusClass }}" style="font-size:12px;padding:5px 14px;">{{ $statusText }}</span>
         </div>
@@ -136,7 +125,15 @@
 
                 @if($temuan->tindakLanjut && $temuan->tindakLanjut->action)
                 <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--bbor);">
-                    <div class="inf-label" style="margin-bottom:8px;">Action (Jika Negatif)</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+                        <div class="inf-label" style="margin:0;">Action (Jika Negatif)</div>
+                        @if($temuan->tindakLanjut->due_date)
+                            <div style="font-size:12px;font-weight:600;color:#e65100;background:#fff3e0;padding:3px 10px;border-radius:6px;border:1px solid #ffe0b2;display:flex;align-items:center;gap:4px;">
+                                <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
+                                <span>Due Date: {{ \Carbon\Carbon::parse($temuan->tindakLanjut->due_date)->format('d F Y') }}</span>
+                            </div>
+                        @endif
+                    </div>
                     <div style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:#e65100;font-weight:500;">
                         {{ $temuan->tindakLanjut->action }}
                     </div>
@@ -147,7 +144,7 @@
     </div>
 
     {{-- Verification Summary Info --}}
-    @if($temuan->tindakLanjut && $temuan->status === 'closed_acc')
+    @if($temuan->tindakLanjut && in_array($temuan->status, ['closed', 'closed_acc']))
         <div class="bcard fu2" style="margin-bottom:20px;">
             <div class="bcard-header">
                 <div class="bcard-hicon" style="background:#e8f5e9;">

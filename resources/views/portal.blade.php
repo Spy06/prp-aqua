@@ -146,7 +146,7 @@
                             Behavior Observation System Quality
                         </p>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                            Sistem observasi perilaku mutu &amp; keamanan pangan (QFS), pemantauan budaya K3L, dan rekap kepatuhan Divisi Manajemen Plant Aqua Cianjur.
+                            BOS'Q dilakukan untuk meningkatkan budaya quality dengan membangun kesadaran mutu, mendorong kepatuhan terhadap standar, dan memperkuat komitmen terhadap perbaikan berkelanjutan di seluruh lini kerja.  
                         </p>
 
                         <div class="flex flex-wrap gap-2 mb-8">

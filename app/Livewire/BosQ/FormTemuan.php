@@ -15,15 +15,16 @@ use Livewire\Component;
 
 class FormTemuan extends Component
 {
-    public string $tanggal_temuan = '';
-    public ?int   $departemen_id = null;
-    public ?int   $sub_area_id   = null;
+    public string $tanggal_temuan  = '';
+    public ?int   $departemen_id   = null;
+    public ?int   $sub_area_id     = null;
     public string $detail_sub_area = '';
-    public ?int   $elemen_qfs_id = null;
-    public string $temuan_bqa    = '';
-    public string $tingkat_resiko = 'minor_quality_risk';
-    public string $dampak_temuan  = 'negatif';
-    public string $action_negatif = '';
+    public ?int   $elemen_qfs_id   = null;
+    public string $temuan_bqa      = '';
+    public string $tingkat_resiko  = 'minor_quality_risk';
+    public string $dampak_temuan    = 'negatif';
+    public string $action_negatif   = '';
+    public string $due_date_action  = '';
 
     // Auditee searchable
     public string $auditeeSearch  = '';
@@ -32,7 +33,8 @@ class FormTemuan extends Component
 
     public function mount(): void
     {
-        $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
+        $this->tanggal_temuan  = Carbon::now()->format('Y-m-d');
+        $this->due_date_action = Carbon::now()->addDays(7)->format('Y-m-d');
 
         // Default departemen dari karyawan yang login
         $karyawan = auth()->user()->karyawan;
@@ -71,7 +73,12 @@ class FormTemuan extends Component
     public function updatedDampakTemuan($value): void
     {
         if ($value === 'positif') {
-            $this->action_negatif = '';
+            $this->action_negatif  = '';
+            $this->due_date_action = '';
+        } else {
+            if (empty($this->due_date_action)) {
+                $this->due_date_action = Carbon::now()->addDays(7)->format('Y-m-d');
+            }
         }
     }
 
@@ -117,16 +124,18 @@ class FormTemuan extends Component
             'tingkat_resiko'  => 'required|in:food_safety_risk,major_quality_risk,minor_quality_risk',
             'dampak_temuan'   => 'required|in:negatif,positif',
             'action_negatif'  => $this->dampak_temuan === 'negatif' ? 'required|string' : 'nullable|string',
+            'due_date_action' => $this->dampak_temuan === 'negatif' ? 'required|date' : 'nullable|date',
             'auditee_id'      => 'required|exists:users,id',
         ], [
             'auditee_id.required'      => 'Auditee wajib dipilih.',
             'detail_sub_area.required' => 'Detail Sub Area wajib diisi jika memilih Others.',
             'action_negatif.required'  => 'Action wajib diisi jika dampak observasi negatif.',
+            'due_date_action.required' => 'Due Date Action wajib diisi jika dampak observasi negatif.',
         ]);
 
-        $user     = auth()->user();
+        $user      = auth()->user();
         $isNegatif = $this->dampak_temuan === 'negatif';
-        $status   = $isNegatif ? 'open' : 'closed_acc';
+        $status    = $isNegatif ? 'open' : 'closed';
 
         DB::beginTransaction();
         try {
@@ -149,6 +158,7 @@ class FormTemuan extends Component
                 BosqTindakLanjut::create([
                     'bosq_temuan_id' => $temuan->id,
                     'action'         => $this->action_negatif,
+                    'due_date'       => $this->due_date_action ?: null,
                     'status'         => 'open',
                     'acc_qa'         => false,
                 ]);
@@ -165,7 +175,8 @@ class FormTemuan extends Component
                       . "Auditee: " . ($auditeeObj?->name ?? '-') . "\n"
                       . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
                       . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n"
-                      . "📌 *Action*: " . $this->action_negatif . "\n\n"
+                      . "📌 *Action*: " . $this->action_negatif . "\n"
+                      . "📅 *Due Date*: " . Carbon::parse($this->due_date_action)->format('d F Y') . "\n\n"
                       . "Buka dan verifikasi di:\n{$link}";
 
                 $qaUsers = User::where('role', 'qa')->whereNotNull('no_whatsapp')->get();
@@ -176,10 +187,11 @@ class FormTemuan extends Component
 
             // Reset form
             $this->reset(['sub_area_id', 'detail_sub_area', 'elemen_qfs_id', 'temuan_bqa',
-                'auditee_id', 'auditeeSearch', 'auditeeResults', 'action_negatif']);
-            $this->tingkat_resiko = 'minor_quality_risk';
-            $this->dampak_temuan  = 'negatif';
-            $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
+                'auditee_id', 'auditeeSearch', 'auditeeResults', 'action_negatif', 'due_date_action']);
+            $this->tingkat_resiko  = 'minor_quality_risk';
+            $this->dampak_temuan   = 'negatif';
+            $this->tanggal_temuan  = Carbon::now()->format('Y-m-d');
+            $this->due_date_action = Carbon::now()->addDays(7)->format('Y-m-d');
 
             session()->flash('success', "Observasi BOS'Q berhasil dilaporkan!" .
                 ($isNegatif ? ' Laporan telah diteruskan ke tim QA untuk verifikasi.' : ' Status langsung Closed (Positif).'));

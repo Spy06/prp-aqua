@@ -163,20 +163,20 @@
                         .rcard-mqr.active-mqr .rcard-title { color: #9a3412; }
                         .rcard-mqr.active-mqr .rcard-radio { color: #ea580c; }
 
-                        .rcard-min.active-min { border-color: #3b82f6 !important; background: #eff6ff !important; }
-                        .rcard-min.active-min .rcard-icon { background: #dbeafe; color: #2563eb; }
-                        .rcard-min.active-min .rcard-title { color: #1e40af; }
-                        .rcard-min.active-min .rcard-radio { color: #2563eb; }
+                        .rcard-min.active-min { border-color: #10b981 !important; background: #ecfdf5 !important; }
+                        .rcard-min.active-min .rcard-icon { background: #d1fae5; color: #059669; }
+                        .rcard-min.active-min .rcard-title { color: #065f46; }
+                        .rcard-min.active-min .rcard-radio { color: #059669; }
 
                         .rcard-neg.active-neg { border-color: #ef4444 !important; background: #fef2f2 !important; }
                         .rcard-neg.active-neg .rcard-icon { background: #fee2e2; color: #dc2626; }
                         .rcard-neg.active-neg .rcard-title { color: #991b1b; }
                         .rcard-neg.active-neg .rcard-radio { color: #dc2626; }
 
-                        .rcard-pos.active-pos { border-color: #10b981 !important; background: #ecfdf5 !important; }
-                        .rcard-pos.active-pos .rcard-icon { background: #d1fae5; color: #059669; }
-                        .rcard-pos.active-pos .rcard-title { color: #065f46; }
-                        .rcard-pos.active-pos .rcard-radio { color: #059669; }
+                        .rcard-pos.active-pos { border-color: #3b82f6 !important; background: #eff6ff !important; }
+                        .rcard-pos.active-pos .rcard-icon { background: #dbeafe; color: #2563eb; }
+                        .rcard-pos.active-pos .rcard-title { color: #1e40af; }
+                        .rcard-pos.active-pos .rcard-radio { color: #2563eb; }
 
                         @media (max-width: 640px) {
                             .rcard { padding: 10px 12px !important; gap: 8px !important; }
@@ -287,11 +287,19 @@
                         @error('dampak_temuan') <span class="berr">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Action (Jika Negatif) --}}
-                    <div x-show="dampakTemuan === 'negatif'" x-collapse x-cloak>
-                        <label class="blabel" for="action_negatif" style="margin-bottom:6px;display:block;">Action (Jika Negatif) <span style="color:var(--error);">*</span></label>
-                        <textarea wire:model="action_negatif" id="action_negatif" rows="3" class="binput" placeholder="Tuliskan tindakan / action perbaikan..."></textarea>
-                        @error('action_negatif') <span class="berr">{{ $message }}</span> @enderror
+                    {{-- Action & Due Date (Jika Negatif) --}}
+                    <div x-show="dampakTemuan === 'negatif'" x-collapse x-cloak style="display:flex;flex-direction:column;gap:14px;">
+                        <div>
+                            <label class="blabel" for="action_negatif" style="margin-bottom:6px;display:block;">Action (Jika Negatif) <span style="color:var(--error);">*</span></label>
+                            <textarea wire:model="action_negatif" id="action_negatif" rows="3" class="binput" placeholder="Tuliskan tindakan / action perbaikan..."></textarea>
+                            @error('action_negatif') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label class="blabel" for="due_date_act" style="margin-bottom:6px;display:block;">Due Date Action <span style="color:var(--error);">*</span></label>
+                            <input type="date" wire:model="due_date_action" id="due_date_act" class="binput">
+                            @error('due_date_action') <span class="berr">{{ $message }}</span> @enderror
+                        </div>
                     </div>
 
                     {{-- Auditee Search --}}

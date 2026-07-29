@@ -81,10 +81,18 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
-            Route::get('/dashboard', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Dashboard QA BOS\'Q', 'desc' => 'Dashboard analisis observasi BOS\'Q (Fitur Hari 3)']))->name('dashboard');
-            Route::get('/rekap', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Rekap Kepatuhan BOS\'Q', 'desc' => 'Rekapitulasi kepatuhan observasi BOS\'Q (Fitur Hari 3)']))->name('rekap');
-            Route::get('/master/subarea', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Sub Area BOS\'Q', 'desc' => 'Manajemen data Master Sub Area BOS\'Q (Fitur Hari 3)']))->name('master.subarea');
-            Route::get('/master/elemen', fn() => view('pages.bosq.qa-placeholder', ['title' => 'Master Elemen QFS BOS\'Q', 'desc' => 'Manajemen data Master Elemen QFS BOS\'Q (Fitur Hari 3)']))->name('master.elemen');
+            Route::get('/dashboard', \App\Livewire\BosQ\DashboardQA::class)->name('dashboard');
+            Route::get('/rekap', \App\Livewire\BosQ\RekapKepatuhan::class)->name('rekap');
+            Route::get('/master/line', \App\Livewire\BosQ\MasterLine::class)->name('master.line');
+            Route::get('/master/subarea', \App\Livewire\BosQ\MasterSubArea::class)->name('master.subarea');
+            Route::get('/master/elemen', \App\Livewire\BosQ\MasterElemenQfs::class)->name('master.elemen');
+            Route::get('/master/karyawan', \App\Livewire\BosQ\MasterKaryawan::class)->name('master.karyawan');
+
+            // Export routes BOS'Q
+            Route::get('/export/csv', [\App\Http\Controllers\BosqExportController::class, 'excel'])->name('export.csv');
+            Route::get('/export/pdf/dashboard', [\App\Http\Controllers\BosqExportController::class, 'pdfDashboard'])->name('export.pdf.dashboard');
+            Route::get('/export/rekap/csv', [\App\Http\Controllers\BosqExportController::class, 'rekapExcel'])->name('export.rekap.csv');
+            Route::get('/export/rekap/pdf', [\App\Http\Controllers\BosqExportController::class, 'pdfRekap'])->name('export.rekap.pdf');
         });
 
         Route::get('/temuan/{bosqTemuan}', function (\App\Models\BosqTemuan $bosqTemuan) {

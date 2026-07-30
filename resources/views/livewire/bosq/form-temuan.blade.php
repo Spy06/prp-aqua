@@ -33,7 +33,7 @@
 
             <div class="form-grid-2col">
 
-                {{-- ── KOLOM KIRI: Lokasi & Deskripsi Observasi ── --}}
+                {{-- ── KOLOM KIRI: Lokasi, Deskripsi Observasi & Auditee ── --}}
                 <div style="display:flex;flex-direction:column;gap:18px;">
 
                     {{-- Tanggal Temuan --}}
@@ -88,7 +88,7 @@
                         @error('elemen_qfs_id') <span class="berr">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Temuan BQA (Dipindahkan ke bawah Elemen QFS) --}}
+                    {{-- Temuan BQA --}}
                     <div>
                         <label class="blabel" for="temuan_bqa">Temuan Behavior Quality Audit <span style="color:var(--error);">*</span></label>
                         <textarea wire:model="temuan_bqa" id="temuan_bqa"
@@ -97,9 +97,52 @@
                         @error('temuan_bqa') <span class="berr">{{ $message }}</span> @enderror
                     </div>
 
+                    {{-- Auditee Search (Dipindahkan ke bawah Temuan BQA di Kolom Kiri) --}}
+                    <div style="position:relative;">
+                        <label class="blabel" for="auditee">Auditee (yang diobservasi) <span style="color:var(--error);">*</span></label>
+
+                        @if($auditee_id)
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1.5px solid #a5d6a7;border-radius:10px;background:#e8f5e9;">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">check_circle</span>
+                                    <span style="font-size:13.5px;font-weight:600;color:#2e7d32;">{{ $auditeeSearch }}</span>
+                                </div>
+                                <button type="button" wire:click="clearAuditee" style="font-size:12.5px;color:var(--error);background:none;border:none;cursor:pointer;font-weight:600;font-family:inherit;">
+                                    Ganti
+                                </button>
+                            </div>
+                        @else
+                            <div style="position:relative;">
+                                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--btxt2);">search</span>
+                                <input wire:model.live.debounce.150ms="auditeeSearch" id="auditee"
+                                    placeholder="Cari nama atau NIK auditee..."
+                                    type="text" class="binput" style="padding-left:38px;" />
+                            </div>
+
+                            @if(count($auditeeResults) > 0)
+                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;max-height:220px;overflow-y:auto;">
+                                    @foreach($auditeeResults as $res)
+                                        <button type="button"
+                                            wire:click="selectAuditee({{ $res['id'] }}, '{{ addslashes($res['name'] ?? $res['nik']) }}')"
+                                            style="width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--bbor);cursor:pointer;font-family:inherit;transition:background .15s;"
+                                            onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
+                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt);">{{ $res['name'] ?? 'User' }}</div>
+                                            <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @elseif(strlen(trim($auditeeSearch)) >= 1)
+                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);box-shadow:0 8px 24px rgba(0,0,0,0.12);">
+                                    Tidak ada auditee yang ditemukan dengan NIK / nama tersebut.
+                                </div>
+                            @endif
+                        @endif
+                        @error('auditee_id') <span class="berr">{{ $message }}</span> @enderror
+                    </div>
+
                 </div>
 
-                {{-- ── KOLOM KANAN: Klasifikasi & Auditee ── --}}
+                {{-- ── KOLOM KANAN: Klasifikasi Observasi ── --}}
                 <div x-data="{
                     tingkatResiko: $wire.entangle('tingkat_resiko'),
                     dampakTemuan: $wire.entangle('dampak_temuan')
@@ -195,7 +238,7 @@
                         <div style="display:flex;flex-direction:column;gap:8px;">
 
                             {{-- Food Safety Risk --}}
-                            <div @click="tingkatResiko = 'food_safety_risk'"
+                            <div x-on:click="tingkatResiko = 'food_safety_risk'"
                                 :class="tingkatResiko === 'food_safety_risk' ? 'active-fsr' : ''"
                                 class="rcard rcard-fsr">
                                 <div class="rcard-icon">
@@ -211,7 +254,7 @@
                             </div>
 
                             {{-- Major Quality Risk --}}
-                            <div @click="tingkatResiko = 'major_quality_risk'"
+                            <div x-on:click="tingkatResiko = 'major_quality_risk'"
                                 :class="tingkatResiko === 'major_quality_risk' ? 'active-mqr' : ''"
                                 class="rcard rcard-mqr">
                                 <div class="rcard-icon">
@@ -227,7 +270,7 @@
                             </div>
 
                             {{-- Minor Quality Risk --}}
-                            <div @click="tingkatResiko = 'minor_quality_risk'"
+                            <div x-on:click="tingkatResiko = 'minor_quality_risk'"
                                 :class="tingkatResiko === 'minor_quality_risk' ? 'active-min' : ''"
                                 class="rcard rcard-min">
                                 <div class="rcard-icon">
@@ -252,7 +295,7 @@
                         <div class="dampak-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
                             {{-- Negatif --}}
-                            <div @click="dampakTemuan = 'negatif'"
+                            <div x-on:click="dampakTemuan = 'negatif'"
                                 :class="dampakTemuan === 'negatif' ? 'active-neg' : ''"
                                 class="rcard rcard-neg">
                                 <div class="rcard-icon">
@@ -268,7 +311,7 @@
                             </div>
 
                             {{-- Positif --}}
-                            <div @click="dampakTemuan = 'positif'"
+                            <div x-on:click="dampakTemuan = 'positif'"
                                 :class="dampakTemuan === 'positif' ? 'active-pos' : ''"
                                 class="rcard rcard-pos">
                                 <div class="rcard-icon">
@@ -288,7 +331,7 @@
                     </div>
 
                     {{-- Action & Due Date (Jika Negatif) --}}
-                    <div x-show="dampakTemuan === 'negatif'" x-collapse x-cloak style="display:flex;flex-direction:column;gap:14px;">
+                    <div x-show="dampakTemuan === 'negatif'" style="display:flex;flex-direction:column;gap:14px;">
                         <div>
                             <label class="blabel" for="action_negatif" style="margin-bottom:6px;display:block;">Action (Jika Negatif) <span style="color:var(--error);">*</span></label>
                             <textarea wire:model="action_negatif" id="action_negatif" rows="3" class="binput" placeholder="Tuliskan tindakan / action perbaikan..."></textarea>
@@ -302,55 +345,12 @@
                         </div>
                     </div>
 
-                    {{-- Auditee Search --}}
-                    <div style="position:relative;">
-                        <label class="blabel" for="auditee">Auditee (yang diobservasi) <span style="color:var(--error);">*</span></label>
-
-                        @if($auditee_id)
-                            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1.5px solid #a5d6a7;border-radius:10px;background:#e8f5e9;">
-                                <div style="display:flex;align-items:center;gap:8px;">
-                                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">check_circle</span>
-                                    <span style="font-size:13.5px;font-weight:600;color:#2e7d32;">{{ $auditeeSearch }}</span>
-                                </div>
-                                <button type="button" wire:click="clearAuditee" style="font-size:12.5px;color:var(--error);background:none;border:none;cursor:pointer;font-weight:600;font-family:inherit;">
-                                    Ganti
-                                </button>
-                            </div>
-                        @else
-                            <div style="position:relative;">
-                                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--btxt2);">search</span>
-                                <input wire:model.live.debounce.150ms="auditeeSearch" id="auditee"
-                                    placeholder="Cari nama atau NIK auditee..."
-                                    type="text" class="binput" style="padding-left:38px;" />
-                            </div>
-
-                            @if(count($auditeeResults) > 0)
-                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;max-height:220px;overflow-y:auto;">
-                                    @foreach($auditeeResults as $res)
-                                        <button type="button"
-                                            wire:click="selectAuditee({{ $res['id'] }}, '{{ addslashes($res['name'] ?? $res['nik']) }}')"
-                                            style="width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--bbor);cursor:pointer;font-family:inherit;transition:background .15s;"
-                                            onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
-                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt);">{{ $res['name'] ?? 'User' }}</div>
-                                            <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @elseif(strlen(trim($auditeeSearch)) >= 1)
-                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);box-shadow:0 8px 24px rgba(0,0,0,0.12);">
-                                    Tidak ada auditee yang ditemukan dengan NIK / nama tersebut.
-                                </div>
-                            @endif
-                        @endif
-                        @error('auditee_id') <span class="berr">{{ $message }}</span> @enderror
-                    </div>
-
                 </div>
             </div>
 
             {{-- Form Footer Action Buttons --}}
             <div class="form-footer-actions" style="display:flex;justify-content:flex-end;gap:12px;padding-top:16px;border-top:1px solid var(--bbor);">
-                <button type="button" @click="showForm = false" class="bbtn bbtn-secondary">
+                <button type="button" x-on:click="showForm = false" class="bbtn bbtn-secondary">
                     <span class="material-symbols-outlined" style="font-size:18px;">close</span>
                     Batal
                 </button>

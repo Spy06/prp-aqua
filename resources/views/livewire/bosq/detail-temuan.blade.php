@@ -7,6 +7,28 @@
         <span style="color:var(--btxt);font-weight:600;">Observasi #{{ $temuan->id }}</span>
     </div>
 
+    {{-- Flash Notifications --}}
+    @if(session()->has('success'))
+        <div class="fu" style="padding:14px 18px;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;color:#2e7d32;font-weight:600;font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">check_circle</span>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session()->has('error'))
+        <div class="fu" style="padding:14px 18px;background:#ffebee;border:1px solid #ef9a9a;border-radius:12px;color:#c62828;font-weight:600;font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">error</span>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if(session()->has('info'))
+        <div class="fu" style="padding:14px 18px;background:#e3f2fd;border:1px solid #90caf9;border-radius:12px;color:#1565c0;font-weight:600;font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined fil" style="font-size:20px;flex-shrink:0;">info</span>
+            <span>{{ session('info') }}</span>
+        </div>
+    @endif
+
     {{-- Card: Info Observasi --}}
     <div class="bcard fu1" style="margin-bottom:20px;">
         <div class="bcard-header" style="justify-content:space-between;">
@@ -143,39 +165,48 @@
         </div>
     </div>
 
-    {{-- Verification Summary Info --}}
-    @if($temuan->tindakLanjut && in_array($temuan->status, ['closed', 'closed_acc']))
-        <div class="bcard fu2" style="margin-bottom:20px;">
-            <div class="bcard-header">
-                <div class="bcard-hicon" style="background:#e8f5e9;">
-                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">task_alt</span>
-                </div>
-                <div>
-                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi Tim QA</div>
-                    <div style="font-size:12px;color:var(--btxt2);">Observasi telah diverifikasi dan disetujui oleh QA</div>
+    {{-- Card: Action Ubah Status ke CLOSED oleh Observer / Pelapor --}}
+    @if($isPelapor || $isQa)
+        <div class="bcard fu2" style="margin-bottom:20px;border:1.5px solid {{ $isClosed ? '#a5d6a7' : '#90caf9' }};background:{{ $isClosed ? '#f1f8e9' : '#f4f8fb' }};">
+            <div class="bcard-header" style="justify-content:space-between;border-bottom:1px solid {{ $isClosed ? '#c8e6c9' : '#e0e0e0' }};">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="bcard-hicon" style="background:{{ $isClosed ? '#e8f5e9' : '#e3f2fd' }};">
+                        <span class="material-symbols-outlined fil" style="color:{{ $isClosed ? '#2e7d32' : '#1565c0' }};font-size:20px;">
+                            {{ $isClosed ? 'task_alt' : 'published_with_changes' }}
+                        </span>
+                    </div>
+                    <div>
+                        <div style="font-size:15px;font-weight:700;color:var(--btxt);">
+                            Status Perbaikan Observasi
+                        </div>
+                        <div style="font-size:12px;color:var(--btxt2);">
+                            {{ $isClosed ? 'Observasi ini telah ditandai selesai (CLOSED).' : 'Jika perbaikan telah Anda lakukan, ubah status observasi menjadi Closed.' }}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="bcard-body">
-                @php $tl = $temuan->tindakLanjut; @endphp
-                @if($tl->catatan_qa)
-                    <div class="info-row">
-                        <div class="inf-label">Catatan QA</div>
-                        <div class="inf-value" style="color:#2e7d32;">{{ $tl->catatan_qa }}</div>
+            <div class="bcard-body" style="padding:20px;">
+                @if(!$isClosed)
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                        <div>
+                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt);">Status saat ini: <span style="color:#e65100;font-weight:700;">OPEN</span></div>
+                            <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">Tekan tombol di samping jika perbaikan observasi sudah selesai dilakukan.</div>
+                        </div>
+
+                        <button type="button" wire:click="ubahStatusClosed" wire:confirm="Apakah Anda yakin ingin mengubah status observasi ini menjadi CLOSED?"
+                            class="bbtn bbtn-primary" style="background:#2e7d32;border-color:#2e7d32;box-shadow:0 4px 14px rgba(46,125,50,0.3);padding:10px 20px;font-weight:700;">
+                            <span class="material-symbols-outlined fil" style="font-size:18px;">check_circle</span>
+                            Tandai Selesai (Ubah Status ke CLOSED)
+                        </button>
                     </div>
-                @endif
-                @if($tl->tanggal_acc)
-                    <div class="info-row" style="margin-bottom:0;">
-                        <div class="inf-label">Tanggal Disetujui QA</div>
-                        <div class="inf-value" style="color:#2e7d32;font-weight:600;">{{ $tl->tanggal_acc->format('d F Y, H:i') }} WIB</div>
+                @else
+                    <div style="display:flex;align-items:center;gap:10px;color:#2e7d32;font-weight:600;font-size:14px;">
+                        <span class="material-symbols-outlined fil" style="font-size:22px;">check_circle</span>
+                        <span>Observasi ini sudah Selesai (CLOSED). Laporan disimpan sebagai arsip observasi Anda.</span>
                     </div>
                 @endif
             </div>
         </div>
-    @endif
-
-    {{-- QA Verifikasi Panel --}}
-    @if($showVerifikasiForm)
-        <livewire:bos-q.verifikasi-q-a :temuan="$temuan" :key="'vqa-'.$temuan->id" />
     @endif
 
     <style>

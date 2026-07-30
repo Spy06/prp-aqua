@@ -19,9 +19,7 @@
                 </a>
             @endif
 
-            <button @click="showForm = !showForm"
-                class="bbtn"
-                :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
+            <button @click="showForm = !showForm" class="bbtn" :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
                 <span class="material-symbols-outlined fil" style="font-size:18px;"
                     x-text="showForm ? 'close' : 'add'"></span>
                 <span x-text="showForm ? 'Tutup Form' : 'Catat Observasi Baru'"></span>

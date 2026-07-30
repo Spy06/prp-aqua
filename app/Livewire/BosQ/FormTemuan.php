@@ -137,7 +137,7 @@ class FormTemuan extends Component
 
         $user      = auth()->user();
         $isNegatif = $this->dampak_temuan === 'negatif';
-        $status    = $isNegatif ? 'open' : 'closed';
+        $status    = 'open';
 
         DB::beginTransaction();
         try {

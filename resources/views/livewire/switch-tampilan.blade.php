@@ -12,9 +12,7 @@
         </div>
 
         @if($tab === 'pelapor')
-            <button @click="showForm = !showForm"
-                class="bbtn"
-                :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
+            <button @click="showForm = !showForm" class="bbtn" :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
                 <span class="material-symbols-outlined fil" style="font-size:18px;"
                     x-text="showForm ? 'close' : 'add'"></span>
                 <span x-text="showForm ? 'Tutup Form' : 'Lapor Temuan Baru'"></span>
@@ -23,11 +21,13 @@
     </div>
 
     {{-- Tab Switcher --}}
-    <div style="display:flex;align-items:center;gap:0;background:var(--bsur);padding:5px;border-radius:12px;border:1px solid var(--bbor);display:inline-flex;margin-bottom:20px;" class="fu1">
+    <div style="display:flex;align-items:center;gap:0;background:var(--bsur);padding:5px;border-radius:12px;border:1px solid var(--bbor);display:inline-flex;margin-bottom:20px;"
+        class="fu1">
         <button wire:click="setTab('pelapor')"
             style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;
             {{ $tab === 'pelapor' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
-            <span class="material-symbols-outlined {{ $tab === 'pelapor' ? 'fil' : '' }}" style="font-size:16px;vertical-align:-3px;margin-right:4px;">person</span>
+            <span class="material-symbols-outlined {{ $tab === 'pelapor' ? 'fil' : '' }}"
+                style="font-size:16px;vertical-align:-3px;margin-right:4px;">person</span>
             Mode Pelapor
         </button>
 
@@ -40,13 +40,16 @@
         @else
             <button wire:click="setTab('pic')"
                 style="padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;
-                {{ $tab === 'pic' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
-                <span class="material-symbols-outlined {{ $tab === 'pic' ? 'fil' : '' }}" style="font-size:16px;">assignment_ind</span>
+                    {{ $tab === 'pic' ? 'background:var(--bcard);color:var(--bp);box-shadow:0 2px 8px rgba(0,0,0,0.08);' : 'background:transparent;color:var(--btxt2);' }}">
+                <span class="material-symbols-outlined {{ $tab === 'pic' ? 'fil' : '' }}"
+                    style="font-size:16px;">assignment_ind</span>
                 PIC
                 @if($picBadge > 0)
-                    <span style="background:#c62828;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">{{ $picBadge }}</span>
+                    <span
+                        style="background:#c62828;color:#fff;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">{{ $picBadge }}</span>
                 @else
-                    <span style="background:var(--bbor);color:var(--btxt2);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">0</span>
+                    <span
+                        style="background:var(--bbor);color:var(--btxt2);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;">0</span>
                 @endif
             </button>
         @endif

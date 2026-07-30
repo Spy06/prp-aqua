@@ -11,10 +11,15 @@ class DaftarTemuanPelapor extends Component
 {
     use WithPagination;
 
-    public string $filterStatus = '';
+    public string $filterStatus = ''; // '', 'open', 'closed'
 
-    public function updatingFilterStatus(): void
+    public function setFilterStatus(string $status): void
     {
+        if ($this->filterStatus === $status) {
+            $this->filterStatus = '';
+        } else {
+            $this->filterStatus = $status;
+        }
         $this->resetPage();
     }
 
@@ -29,8 +34,12 @@ class DaftarTemuanPelapor extends Component
         $query = BosqTemuan::with(['departemen', 'line', 'subArea', 'elemenQfs', 'auditee', 'tindakLanjut'])
             ->where('pelapor_id', auth()->id());
 
-        if ($this->filterStatus) {
-            $query->where('status', $this->filterStatus);
+        if ($this->filterStatus !== '') {
+            if ($this->filterStatus === 'open') {
+                $query->whereIn('status', ['open', 'in_progress', 'closed_pending_qa']);
+            } elseif ($this->filterStatus === 'closed') {
+                $query->whereIn('status', ['closed', 'closed_acc']);
+            }
         }
 
         $temuans = $query->latest('tanggal_temuan')->latest('id')->paginate(10);

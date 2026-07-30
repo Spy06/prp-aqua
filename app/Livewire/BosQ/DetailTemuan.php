@@ -27,6 +27,40 @@ class DetailTemuan extends Component
         ]);
     }
 
+    public function ubahStatusClosed(): void
+    {
+        $user = auth()->user();
+
+        // Hanya Pelapor (Observer) atau QA yang dapat mengubah status menjadi Closed
+        if ($user->id !== $this->temuan->pelapor_id && $user->role !== 'qa') {
+            session()->flash('error', 'Hanya observer (pelapor) yang berhak mengubah status observasi ini menjadi Closed.');
+            return;
+        }
+
+        if (in_array($this->temuan->status, ['closed', 'closed_acc'])) {
+            session()->flash('info', 'Observasi ini sudah berstatus Closed.');
+            return;
+        }
+
+        $this->temuan->update([
+            'status' => 'closed',
+        ]);
+
+        if ($this->temuan->tindakLanjut) {
+            $this->temuan->tindakLanjut->update([
+                'status'      => 'closed',
+                'acc_qa'      => true,
+                'tanggal_acc' => now(),
+            ]);
+        }
+
+        $this->temuan = $this->temuan->fresh([
+            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut',
+        ]);
+
+        session()->flash('success', 'Status observasi berhasil diubah menjadi CLOSED!');
+    }
+
     public function render()
     {
         $this->temuan->load([
@@ -40,11 +74,8 @@ class DetailTemuan extends Component
         $isPelapor = $user->id === $temuan->pelapor_id;
         $isQa      = $user->role === 'qa';
 
-        // Laporan BOS'Q langsung masuk ke QA — tidak ada form tindak lanjut auditee
         $showTindakLanjutForm = false;
-
-        // QA bisa verifikasi selama status belum closed_acc
-        $showVerifikasiForm = $isQa && $temuan->status !== 'closed_acc';
+        $showVerifikasiForm   = false;
 
         return view('livewire.bosq.detail-temuan', [
             'temuan'              => $temuan,

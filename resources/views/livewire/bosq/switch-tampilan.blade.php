@@ -19,7 +19,7 @@
                 </a>
             @endif
 
-            <button @click="showForm = !showForm" class="bbtn" :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
+            <button x-on:click="showForm = !showForm" class="bbtn" :class="showForm ? 'bbtn-secondary' : 'bbtn-primary'">
                 <span class="material-symbols-outlined fil" style="font-size:18px;"
                     x-text="showForm ? 'close' : 'add'"></span>
                 <span x-text="showForm ? 'Tutup Form' : 'Catat Observasi Baru'"></span>
@@ -27,11 +27,13 @@
         </div>
     </div>
 
-    {{-- Form Toggle --}}
-    <div x-show="showForm" x-collapse x-cloak style="margin-bottom:24px;">
+    {{-- Form Toggle (z-index tinggi agar dropdown melayang di atas daftar observasi) --}}
+    <div x-show="showForm" style="margin-bottom:24px; position:relative; z-index:50;">
         <livewire:bos-q.form-temuan />
     </div>
 
     {{-- Daftar Observasi --}}
-    <livewire:bos-q.daftar-temuan-pelapor />
+    <div style="position:relative; z-index:1;">
+        <livewire:bos-q.daftar-temuan-pelapor />
+    </div>
 </div>

@@ -75,13 +75,16 @@ class FormTemuan extends Component
 
     public function updatedPicSearch()
     {
-        if (strlen($this->picSearch) >= 2) {
+        $this->pic_id = null; // Reset selection saat mengetik
+        $query = trim($this->picSearch);
+
+        if (strlen($query) >= 1) {
             $this->picResults = User::where('role', 'karyawan')
-                ->where(function($q) {
-                    $q->where('name', 'like', '%' . $this->picSearch . '%')
-                      ->orWhere('nik', 'like', '%' . $this->picSearch . '%');
+                ->where(function($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%')
+                      ->orWhere('nik', 'like', '%' . $query . '%');
                 })
-                ->take(5)
+                ->take(15)
                 ->get();
         } else {
             $this->picResults = [];
@@ -99,6 +102,7 @@ class FormTemuan extends Component
     {
         $this->pic_id = null;
         $this->picSearch = '';
+        $this->picResults = [];
     }
 
     public function submit()

@@ -1,4 +1,4 @@
-<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px;">
+<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px; overflow: visible !important;">
     {{-- Card Header --}}
     <div class="bcard-header" style="justify-content:space-between; border-bottom: 1px solid var(--bbor); padding: 20px 24px;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -13,7 +13,7 @@
     </div>
 
     {{-- Card Body --}}
-    <div class="bcard-body" style="padding:24px;">
+    <div class="bcard-body" style="padding:24px; overflow: visible !important;">
 
         @if(session()->has('success'))
             <div style="padding:14px 18px;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;color:#2e7d32;font-weight:600;font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
@@ -120,19 +120,19 @@
                             </div>
 
                             @if(count($auditeeResults) > 0)
-                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;max-height:220px;overflow-y:auto;">
+                                <div class="auditee-dropdown-scroll" style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:9999;background:var(--bcard, #ffffff);border:1.5px solid var(--bp, #1565c0);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,0.22);max-height:250px;overflow-y:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;">
                                     @foreach($auditeeResults as $res)
                                         <button type="button"
                                             wire:click="selectAuditee({{ $res['id'] }}, '{{ addslashes($res['name'] ?? $res['nik']) }}')"
-                                            style="width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--bbor);cursor:pointer;font-family:inherit;transition:background .15s;"
-                                            onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
-                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt);">{{ $res['name'] ?? 'User' }}</div>
-                                            <div style="font-size:12px;color:var(--btxt2);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
+                                            style="width:100%;text-align:left;padding:12px 14px;background:none;border:none;border-bottom:1px solid var(--bbor, #e4e4e7);cursor:pointer;font-family:inherit;transition:background .15s;display:block;"
+                                            onmouseover="this.style.background='var(--bp-light, #e3f2fd)'" onmouseout="this.style.background='none'">
+                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt, #18181b);">{{ $res['name'] ?? 'User' }}</div>
+                                            <div style="font-size:12px;color:var(--btxt2, #71717a);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
                                         </button>
                                     @endforeach
                                 </div>
                             @elseif(strlen(trim($auditeeSearch)) >= 1)
-                                <div style="position:absolute;top:100%;left:0;right:0;margin-top:4px;z-index:30;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);box-shadow:0 8px 24px rgba(0,0,0,0.12);">
+                                <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:9999;background:var(--bcard, #ffffff);border:1px solid var(--bbor);border-radius:12px;padding:14px;text-align:center;font-size:13px;color:var(--btxt2);box-shadow:0 12px 32px rgba(0,0,0,0.22);">
                                     Tidak ada auditee yang ditemukan dengan NIK / nama tersebut.
                                 </div>
                             @endif
@@ -220,6 +220,11 @@
                         .rcard-pos.active-pos .rcard-icon { background: #dbeafe; color: #2563eb; }
                         .rcard-pos.active-pos .rcard-title { color: #1e40af; }
                         .rcard-pos.active-pos .rcard-radio { color: #2563eb; }
+
+                        .auditee-dropdown-scroll::-webkit-scrollbar { width: 6px; }
+                        .auditee-dropdown-scroll::-webkit-scrollbar-track { background: #f4f4f5; border-radius: 8px; }
+                        .auditee-dropdown-scroll::-webkit-scrollbar-thumb { background: #a1a1aa; border-radius: 8px; }
+                        .auditee-dropdown-scroll::-webkit-scrollbar-thumb:hover { background: #71717a; }
 
                         @media (max-width: 640px) {
                             .rcard { padding: 10px 12px !important; gap: 8px !important; }

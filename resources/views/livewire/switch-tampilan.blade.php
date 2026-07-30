@@ -59,7 +59,7 @@
     <div>
         @if($tab === 'pelapor' || auth()->user()->role === 'qa')
             {{-- Form Toggle --}}
-            <div x-show="showForm" x-collapse x-cloak style="margin-bottom:24px;">
+            <div x-show="showForm" x-collapse x-cloak style="margin-bottom:24px; position:relative; z-index:50;">
                 <livewire:form-temuan />
             </div>
             <livewire:daftar-temuan-pelapor />

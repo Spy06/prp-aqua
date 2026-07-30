@@ -87,13 +87,14 @@ class FormTemuan extends Component
         $this->auditee_id = null; // reset saat user mengetik
         $query = trim($this->auditeeSearch);
         if (strlen($query) >= 1) {
-            $this->auditeeResults = User::where(function ($q) use ($query) {
+            $this->auditeeResults = User::with('karyawan.departemen')
+                ->where(function ($q) use ($query) {
                     $q->where('name', 'like', '%' . $query . '%')
                       ->orWhere('nik', 'like', '%' . $query . '%');
                 })
                 ->orderBy('name')
-                ->take(10)
-                ->get(['id', 'name', 'nik', 'no_whatsapp'])
+                ->take(15)
+                ->get()
                 ->toArray();
         } else {
             $this->auditeeResults = [];
@@ -170,10 +171,11 @@ class FormTemuan extends Component
 
             // Dispatch WA untuk temuan negatif -> dikirim ke tim QA
             if ($isNegatif) {
-                $auditeeObj = User::find($this->auditee_id);
+                $auditeeObj  = User::find($this->auditee_id);
+                $pelaporDept = $user->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
                 $link = route('bosq.temuan.detail', $temuan->id);
                 $msg  = "*[BOS'Q] Observasi Baru Perlu Verifikasi QA*\n\n"
-                      . "Observer: " . $user->name . "\n"
+                      . "Observer: " . $user->name . " (Dept: " . $pelaporDept . ")\n"
                       . "Auditee: " . ($auditeeObj?->name ?? '-') . "\n"
                       . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
                       . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n"

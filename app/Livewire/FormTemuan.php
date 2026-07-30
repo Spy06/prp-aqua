@@ -157,9 +157,10 @@ class FormTemuan extends Component
 
             // 5. Kirim notifikasi WA ke QA untuk setiap temuan baru
             $qaUsers = User::where('role', 'qa')->get();
+            $pelaporDept = auth()->user()->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
             foreach ($qaUsers as $qa) {
                 if ($qa->no_whatsapp) {
-                    $messageQA = "Halo QA ({$qa->name}), ada laporan temuan PRP baru (#{$temuan->id}) diajukan oleh " . auth()->user()->name . ".\n"
+                    $messageQA = "Halo QA ({$qa->name}), ada laporan temuan PRP baru (#{$temuan->id}) diajukan oleh " . auth()->user()->name . " (Departemen Pelapor: {$pelaporDept}).\n"
                                . "Sub Area: {$temuan->sub_area}\n"
                                . (!empty($this->saran) ? "Saran: \"{$this->saran}\"\n" : "")
                                . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);

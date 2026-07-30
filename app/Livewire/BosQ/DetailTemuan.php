@@ -23,7 +23,7 @@ class DetailTemuan extends Component
     public function handleUpdated(): void
     {
         $this->temuan = $this->temuan->fresh([
-            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut',
+            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor.karyawan.departemen', 'auditee.karyawan.departemen', 'tindakLanjut',
         ]);
     }
 
@@ -55,7 +55,7 @@ class DetailTemuan extends Component
         }
 
         $this->temuan = $this->temuan->fresh([
-            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut',
+            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor.karyawan.departemen', 'auditee.karyawan.departemen', 'tindakLanjut',
         ]);
 
         session()->flash('success', 'Status observasi berhasil diubah menjadi CLOSED!');
@@ -64,7 +64,7 @@ class DetailTemuan extends Component
     public function render()
     {
         $this->temuan->load([
-            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut',
+            'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor.karyawan.departemen', 'auditee.karyawan.departemen', 'tindakLanjut',
         ]);
 
         $user   = auth()->user();

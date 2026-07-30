@@ -70,7 +70,7 @@
                     <div class="info-row">
                         <div class="inf-label">Pelapor</div>
                         <div class="inf-value">
-                            {{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->nik ?? '-' }})
+                            {{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})
                             @if($isPelapor)
                                 <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e8f5e9;color:#2e7d32;border-radius:6px;border:1px solid rgba(46,125,50,0.2);">Anda</span>
                             @endif
@@ -79,7 +79,7 @@
                     <div class="info-row" style="margin-bottom:0;">
                         <div class="inf-label">PIC Penanggung Jawab</div>
                         <div class="inf-value">
-                            {{ $temuan->pic->name ?? '-' }} ({{ $temuan->pic->nik ?? '-' }})
+                            {{ $temuan->pic->name ?? '-' }} ({{ $temuan->pic->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})
                             @if($isPic)
                                 <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e3f2fd;color:#1565c0;border-radius:6px;border:1px solid rgba(25,118,210,0.2);">Anda</span>
                             @endif

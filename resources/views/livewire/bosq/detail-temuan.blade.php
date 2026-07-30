@@ -81,7 +81,7 @@
                     <div class="info-row">
                         <div class="inf-label">Observer (Pelapor)</div>
                         <div class="inf-value">
-                            {{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->nik ?? '-' }})
+                            {{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})
                             @if($isPelapor)
                                 <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e8f5e9;color:#2e7d32;border-radius:6px;border:1px solid rgba(46,125,50,0.2);">Anda</span>
                             @endif
@@ -94,7 +94,7 @@
                     <div class="info-row">
                         <div class="inf-label">Auditee (yang Diobservasi)</div>
                         <div class="inf-value">
-                            {{ $temuan->auditee->name ?? '-' }} ({{ $temuan->auditee->nik ?? '-' }})
+                            {{ $temuan->auditee->name ?? '-' }} ({{ $temuan->auditee->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})
                             @if($isAuditee)
                                 <span style="padding:2px 8px;font-size:10px;font-weight:700;background:#e3f2fd;color:#1565c0;border-radius:6px;border:1px solid rgba(21,101,192,0.2);">Anda</span>
                             @endif

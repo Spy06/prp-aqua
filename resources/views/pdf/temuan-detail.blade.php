@@ -149,11 +149,11 @@
             </tr>
             <tr>
                 <td>Pelapor</td>
-                <td>{{ $temuan->pelapor->name ?? '-' }} (NIK: {{ $temuan->pelapor->nik ?? '-' }})</td>
+                <td>{{ $temuan->pelapor->name ?? '-' }} ({{ $temuan->pelapor->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})</td>
             </tr>
             <tr>
                 <td>PIC</td>
-                <td>{{ $temuan->pic->name ?? '-' }} (NIK: {{ $temuan->pic->nik ?? '-' }})</td>
+                <td>{{ $temuan->pic->name ?? '-' }} ({{ $temuan->pic->karyawan->departemen->nama_departemen ?? 'Tanpa Departemen' }})</td>
             </tr>
             <tr>
                 <td>Status</td>

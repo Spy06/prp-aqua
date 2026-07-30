@@ -25,13 +25,13 @@ class DetailTemuan extends Component
     #[On('tindakLanjutUpdated')]
     public function handleTindakLanjutUpdated(): void
     {
-        $this->temuan = $this->temuan->fresh(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
+        $this->temuan = $this->temuan->fresh(['departemen', 'pelapor.karyawan.departemen', 'pic.karyawan.departemen', 'klausul', 'tindakLanjut']);
     }
 
     public function render()
     {
         // Eager load / refresh relasi yang dibutuhkan agar data selalu up to date
-        $this->temuan->load(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
+        $this->temuan->load(['departemen', 'pelapor.karyawan.departemen', 'pic.karyawan.departemen', 'klausul', 'tindakLanjut']);
 
         $user    = auth()->user();
         $temuan  = $this->temuan;

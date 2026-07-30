@@ -126,8 +126,13 @@
                                             wire:click="selectAuditee({{ $res['id'] }}, '{{ addslashes($res['name'] ?? $res['nik']) }}')"
                                             style="width:100%;text-align:left;padding:12px 14px;background:none;border:none;border-bottom:1px solid var(--bbor, #e4e4e7);cursor:pointer;font-family:inherit;transition:background .15s;display:block;"
                                             onmouseover="this.style.background='var(--bp-light, #e3f2fd)'" onmouseout="this.style.background='none'">
-                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt, #18181b);">{{ $res['name'] ?? 'User' }}</div>
-                                            <div style="font-size:12px;color:var(--btxt2, #71717a);margin-top:2px;">NIK: {{ $res['nik'] }}</div>
+                                            <div style="font-size:13.5px;font-weight:600;color:var(--btxt, #18181b);">{{ is_array($res) ? ($res['name'] ?? 'User') : ($res->name ?? 'User') }}</div>
+                                            @php
+                                                $deptName = is_array($res)
+                                                    ? ($res['karyawan']['departemen']['nama_departemen'] ?? ($res['nik'] ?? '-'))
+                                                    : ($res->karyawan->departemen->nama_departemen ?? ($res->nik ?? '-'));
+                                            @endphp
+                                            <div style="font-size:12px;color:var(--btxt2, #71717a);margin-top:2px;">Departemen: {{ $deptName }}</div>
                                         </button>
                                     @endforeach
                                 </div>

@@ -70,6 +70,14 @@ new #[Title('Pengaturan Profil')] class extends Component {
                 <input type="text" value="{{ Auth::user()->nik ?? '-' }}" class="binput" disabled readonly style="opacity:0.7;cursor:not-allowed;background:var(--bsur);" />
             </div>
 
+            {{-- Departemen (Read-Only dari database karyawan QA SIVERA) --}}
+            <div>
+                <label class="blabel">Departemen</label>
+                <input type="text" value="{{ Auth::user()->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen' }}" class="binput" disabled readonly style="opacity:0.7;cursor:not-allowed;background:var(--bsur);" />
+                <span style="font-size:11px;color:var(--btxt2);margin-top:4px;display:block;">
+                </span>
+            </div>
+
             {{-- Nama tampilan --}}
             <div>
                 <label for="name" class="blabel">Nama Lengkap <span style="color:var(--error);">*</span></label>

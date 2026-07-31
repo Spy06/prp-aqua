@@ -34,9 +34,17 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         Fortify::authenticateUsing(function (Request $request) {
-            $user = \App\Models\User::where('name', $request->name)->first();
+            $user = \App\Models\User::where('nik', $request->name)
+                ->orWhere('name', $request->name)
+                ->first();
 
             if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                if ($user->role === 'superadmin') {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'name' => 'Akun Super Admin IT hanya dapat diakses melalui Portal Khusus IT.',
+                    ]);
+                }
+
                 if ($user->karyawan && !$user->karyawan->status_aktif) {
                     throw \Illuminate\Validation\ValidationException::withMessages([
                         'name' => 'Akun karyawan Anda telah dinonaktifkan. Hubungi QA/Admin.',

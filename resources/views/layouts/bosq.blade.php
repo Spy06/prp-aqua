@@ -295,9 +295,9 @@
 
         <div class="qs-content">
             @auth
-                @if(auth()->user()->role === 'qa')
-                    {{-- QA Menu --}}
-                    <span class="qs-section-label">Menu QA</span>
+                @if(in_array(auth()->user()->role, ['qa', 'superadmin'], true))
+                    {{-- QA & Super Admin Menu --}}
+                    <span class="qs-section-label">Menu Management</span>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
                         <span>Dashboard QA</span>
@@ -307,7 +307,7 @@
                         <span>Rekap Kepatuhan</span>
                     </a>
 
-                    <span class="qs-section-label" style="margin-top:12px;">Master Data</span>
+                    <span class="qs-section-label" style="margin-top:12px;">Master Data BOS'Q</span>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">precision_manufacturing</span>
                         <span>Master Line</span>
@@ -325,10 +325,26 @@
                         <span>Divisi Manajemen</span>
                     </a>
 
-                    <span class="qs-section-label" style="margin-top:12px;">Mode Observer</span>
+                    @if(auth()->user()->role === 'superadmin')
+                        <span class="qs-section-label" style="margin-top:12px;">Master Data SIVERA</span>
+                        <a class="qs-item" href="{{ route('qa.master.akun') }}" wire:navigate>
+                            <span class="material-symbols-outlined ic">manage_accounts</span>
+                            <span>Manajemen Akun User</span>
+                        </a>
+                        <a class="qs-item" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                            <span class="material-symbols-outlined ic">group</span>
+                            <span>Master Karyawan</span>
+                        </a>
+                    @endif
+
+                    <span class="qs-section-label" style="margin-top:12px;">Portals & Mode</span>
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">add_circle</span>
                         <span>Catat Observasi</span>
+                    </a>
+                    <a class="qs-switch" href="{{ route('qa.dashboard') }}" wire:navigate style="margin-top:6px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;color:#2563eb;">swap_horiz</span>
+                        <span>Beralih ke SIVERA</span>
                     </a>
                 @else
                     {{-- Karyawan Menu --}}
@@ -336,6 +352,7 @@
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">home</span>
                         <span>Beranda BOS'Q</span>
+                    </a>
                 @endif
             @endauth
         </div>

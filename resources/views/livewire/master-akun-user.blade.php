@@ -10,7 +10,7 @@
     <div class="bph">
         <div>
             <h2 class="bph-title">Manajemen Akun User</h2>
-            <p class="bph-sub">Kelola akun login karyawan dan QA</p>
+            <p class="bph-sub">Kelola penuh data login, NIK, departemen, role, dan password user</p>
         </div>
         <button wire:click="openCreate" id="btn-buat-akun" class="bbtn bbtn-primary">
             <span class="material-symbols-outlined" style="font-size:18px;">manage_accounts</span>
@@ -56,7 +56,8 @@
                 <label for="form-role" class="blabel">Role <span style="color:var(--be);">*</span></label>
                 <select id="form-role" wire:model="role_baru" class="binput">
                     <option value="karyawan">Karyawan (dapat melaporkan & tindak lanjut)</option>
-                    <option value="qa">QA (akses penuh termasuk verifikasi & master data)</option>
+                    <option value="qa">QA (akses verifikasi & master data)</option>
+                    <option value="superadmin">Super Admin (akses penuh administrator IT)</option>
                 </select>
                 @error('role_baru') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
@@ -85,32 +86,76 @@
     </div>
     @endif
 
-    {{-- Form: Edit Akun --}}
+    {{-- Form: Edit Akun (Full Access Super Admin) --}}
     @if($showFormEdit)
-    <div class="bcard fu1" style="padding:20px;">
-        <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0 0 16px;">Edit Akun User</h3>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+    <div class="bcard fu1" style="padding:20px;border:1.5px solid #7c3aed;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:#7c3aed;font-size:24px;">admin_panel_settings</span>
             <div>
-                <label for="edit-role" class="blabel">Role</label>
+                <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Edit Full Data Akun & Karyawan (Super Admin)</h3>
+                <p style="font-size:12px;color:var(--btxt2);margin:0;">Anda dapat mengedit NIK, Nama, Departemen, Role, dan Password pengguna ini secara langsung.</p>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;">
+            {{-- Edit NIK --}}
+            <div>
+                <label for="edit-nik" class="blabel">NIK User / Karyawan <span style="color:var(--be);">*</span></label>
+                <input type="text" id="edit-nik" wire:model="edit_nik" class="binput" placeholder="Masukkan NIK..." />
+                @error('edit_nik') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Edit Nama --}}
+            <div>
+                <label for="edit-nama" class="blabel">Nama Lengkap <span style="color:var(--be);">*</span></label>
+                <input type="text" id="edit-nama" wire:model="edit_nama" class="binput" placeholder="Masukkan nama..." />
+                @error('edit_nama') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Edit Departemen --}}
+            <div>
+                <label for="edit-dept" class="blabel">Departemen</label>
+                <select id="edit-dept" wire:model="edit_departemen_id" class="binput">
+                    <option value="">-- Tanpa Departemen --</option>
+                    @foreach($departemens as $dept)
+                        <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                    @endforeach
+                </select>
+                @error('edit_departemen_id') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Edit Role --}}
+            <div>
+                <label for="edit-role" class="blabel">Role Access <span style="color:var(--be);">*</span></label>
                 <select id="edit-role" wire:model="edit_role" class="binput">
                     <option value="karyawan">Karyawan</option>
                     <option value="qa">QA</option>
+                    <option value="superadmin">Super Admin</option>
                 </select>
                 @error('edit_role') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
+
+            {{-- Edit No WhatsApp --}}
             <div>
-                <label for="edit-wa" class="blabel">No. WhatsApp</label>
-                <input type="text" id="edit-wa" wire:model="edit_no_whatsapp"
-                       placeholder="628xxxxxxxxxx"
-                       class="binput" />
+                <label for="edit-wa" class="blabel">No. WhatsApp <span style="color:var(--be);">*</span></label>
+                <input type="text" id="edit-wa" wire:model="edit_no_whatsapp" placeholder="628xxxxxxxxxx" class="binput" />
                 @error('edit_no_whatsapp') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
+
+            {{-- Edit Password --}}
+            <div>
+                <label for="edit-pass" class="blabel">Reset Password Baru (Opsional)</label>
+                <input type="password" id="edit-pass" wire:model="edit_password" placeholder="Kosongkan jika tidak mau ubah password" class="binput" />
+                <p style="font-size:11px;color:var(--btxt2);margin-top:2px;">Isi hanya jika ingin mengganti password user ini.</p>
+                @error('edit_password') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
             <button wire:click="$set('showFormEdit', false)" class="bbtn bbtn-secondary">Batal</button>
-            <button wire:click="simpanEdit" wire:loading.attr="disabled" class="bbtn bbtn-primary">
+            <button wire:click="simpanEdit" wire:loading.attr="disabled" class="bbtn bbtn-primary" style="background:#7c3aed;border-color:#7c3aed;">
                 <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                Simpan Perubahan
+                Simpan Perubahan Full Access
             </button>
         </div>
     </div>
@@ -143,16 +188,18 @@
                 <tbody>
                     @forelse($users as $u)
                     <tr>
-                        <td style="font-family:monospace;font-size:12.5px;">{{ $u->nik }}</td>
+                        <td style="font-family:monospace;font-size:12.5px;font-weight:600;">{{ $u->nik }}</td>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <div class="qs-av" style="width:30px;height:30px;font-size:11px;flex-shrink:0;">{{ strtoupper(substr($u->name, 0, 1)) }}</div>
+                                <div class="qs-av" style="width:30px;height:30px;font-size:11px;flex-shrink:0;{{ $u->role === 'superadmin' ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr($u->name, 0, 1)) }}</div>
                                 <span style="font-weight:600;font-size:13.5px;">{{ $u->name }}</span>
                             </div>
                         </td>
                         <td style="font-size:13px;color:var(--btxt2);">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</td>
                         <td style="text-align:center;">
-                            @if($u->role === 'qa')
+                            @if($u->role === 'superadmin')
+                                <span class="bbadge" style="background:#7c3aed;color:#ffffff;font-weight:700;">Super Admin</span>
+                            @elseif($u->role === 'qa')
                                 <span class="bbadge bbadge-pending">QA</span>
                             @else
                                 <span class="bbadge bbadge-progress">Karyawan</span>
@@ -160,9 +207,9 @@
                         </td>
                         <td style="font-family:monospace;font-size:12px;color:var(--btxt2);">{{ $u->no_whatsapp ?? '-' }}</td>
                         <td style="text-align:center;">
-                            <button wire:click="openEdit({{ $u->id }})" title="Edit"
+                            <button wire:click="openEdit({{ $u->id }})" title="Edit Full Access (Super Admin)"
                                     class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
-                                <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                                <span class="material-symbols-outlined" style="font-size:15px;color:#7c3aed;">edit_square</span>
                             </button>
                         </td>
                     </tr>

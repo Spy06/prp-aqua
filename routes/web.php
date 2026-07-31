@@ -25,6 +25,11 @@ Route::get('/', function () {
 Route::get('/register', fn () => abort(404));
 Route::post('/register', fn () => abort(404));
 
+// ── Secret Portal Access Khusus IT Admin ──
+Route::get('/it-admin-portal', [\App\Http\Controllers\ItPortalAuthController::class, 'showLoginForm'])->name('it.login.form');
+Route::post('/it-admin-portal', [\App\Http\Controllers\ItPortalAuthController::class, 'login'])->name('it.login.submit');
+Route::post('/it-admin-portal/logout', [\App\Http\Controllers\ItPortalAuthController::class, 'logout'])->name('it.logout');
+
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', function () {
@@ -58,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
             Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
             Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');
             Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
+        });
+
+        // Role Super Admin Khusus IT — Manajemen Akun & Role System
+        Route::middleware(['role:superadmin'])->group(function () {
             Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
         });
 

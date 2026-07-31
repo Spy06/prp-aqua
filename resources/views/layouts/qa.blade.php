@@ -492,53 +492,101 @@
 
         {{-- Sidebar Menu Content --}}
         <div class="qs-content">
-            <span class="qs-group-label">Dashboard QA</span>
-            <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
-                <span>Grafik Temuan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                <span>Daftar Temuan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
-                <span>Rekap Periode</span>
-            </a>
+            @if(auth()->user()->isSuperAdmin())
+                <span class="qs-group-label">Super Admin Panel</span>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                    <span>Manajemen Akun User</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">group</span>
+                    <span>Master Karyawan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.departemen') ? 'fil' : '' }}">domain</span>
+                    <span>Master Departemen</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.klausul') ? 'fil' : '' }}">rule</span>
+                    <span>Klausul PRP</span>
+                </a>
 
-            <span class="qs-group-label" style="margin-top:16px;">Mode Pelapor</span>
-            <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
-                <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
-                <span>Lapor Temuan Saya</span>
-            </a>
+                <span class="qs-group-label" style="margin-top:16px;">Master Data BOS'Q</span>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">precision_manufacturing</span>
+                    <span>Master Line</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.subarea') ? 'fil' : '' }}">location_on</span>
+                    <span>Master Sub Area</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.elemen') ? 'fil' : '' }}">category</span>
+                    <span>Master Elemen QFS</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.karyawan') ? 'fil' : '' }}">groups</span>
+                    <span>Divisi Manajemen</span>
+                </a>
 
-            <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
-            <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">group</span>
-                <span>Karyawan</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">domain</span>
-                <span>Departemen</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">rule</span>
-                <span>Klausul PRP</span>
-            </a>
-            <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                <span class="material-symbols-outlined ic">manage_accounts</span>
-                <span>Akun User</span>
-            </a>
+                <span class="qs-group-label" style="margin-top:16px;">Monitoring & Analytics</span>
+                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
+                    <span>Grafik Temuan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                    <span>Daftar Temuan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
+                    <span>Rekap Periode</span>
+                </a>
+            @else
+                <span class="qs-group-label">Dashboard QA</span>
+                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
+                    <span>Grafik Temuan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                    <span>Daftar Temuan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
+                    <span>Rekap Periode</span>
+                </a>
+
+                <span class="qs-group-label" style="margin-top:16px;">Mode Pelapor</span>
+                <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                    <span>Lapor Temuan Saya</span>
+                </a>
+
+                <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
+                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic">group</span>
+                    <span>Karyawan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic">domain</span>
+                    <span>Departemen</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic">rule</span>
+                    <span>Klausul PRP</span>
+                </a>
+            @endif
         </div>
 
         {{-- Sidebar Footer with logout and user detail --}}
         <div class="qs-footer">
             @auth
             <div class="qs-user">
-                <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="qs-av" style="{{ auth()->user()->isSuperAdmin() ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="overflow:hidden;flex:1;">
                     <div class="qs-uname truncate" style="color:var(--btxt);font-size:13px;font-weight:600;">{{ auth()->user()->name }}</div>
-                    <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">QA Admin</div>
+                    <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">{{ auth()->user()->isSuperAdmin() ? 'Super Admin' : 'QA Admin' }}</div>
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="qs-action" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">

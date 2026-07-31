@@ -15,7 +15,18 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (! $request->user() || ! in_array($request->user()->role, $roles, true)) {
+        $user = $request->user();
+
+        if (! $user) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Super Admin memiliki akses penuh ke seluruh role & fitur
+        if ($user->role === 'superadmin') {
+            return $next($request);
+        }
+
+        if (! in_array($user->role, $roles, true)) {
             abort(403, 'Unauthorized action.');
         }
 

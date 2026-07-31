@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\Departemen;
 use App\Models\Karyawan;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class MasterAkunUser extends Component
 {
@@ -18,10 +18,14 @@ class MasterAkunUser extends Component
     public string $role_baru = 'karyawan';
     public string $no_whatsapp_baru = '';
 
-    // Form Edit Akun (yang sudah ada)
-    public string $edit_no_whatsapp = '';
-    public string $edit_role = '';
+    // Form Edit Akun (Full Access for Super Admin)
     public ?int $editingUserId = null;
+    public string $edit_nik = '';
+    public string $edit_nama = '';
+    public ?int $edit_departemen_id = null;
+    public string $edit_role = '';
+    public string $edit_no_whatsapp = '';
+    public string $edit_password = ''; // Kosongkan jika tidak ingin mengubah password
 
     public bool $showFormCreate = false;
     public bool $showFormEdit = false;
@@ -35,7 +39,7 @@ class MasterAkunUser extends Component
     {
         return [
             'nik_baru' => 'required|string|max:20',
-            'role_baru' => 'required|in:karyawan,qa',
+            'role_baru' => 'required|in:karyawan,qa,superadmin',
             'no_whatsapp_baru' => 'required|string|regex:/^628[0-9]{8,12}$/',
         ];
     }
@@ -47,7 +51,6 @@ class MasterAkunUser extends Component
 
     public function updatedNikBaru(): void
     {
-        // Cari karyawan saat NIK diketik
         $this->nikSearchError = '';
         $this->nikSearchResult = null;
 
@@ -55,7 +58,7 @@ class MasterAkunUser extends Component
             $k = Karyawan::where('nik', $this->nik_baru)->first();
             if ($k) {
                 if (!$k->status_aktif) {
-                    $this->nikSearchError = "Karyawan dengan NIK {$this->nik_baru} tidak aktif and tidak bisa dibuatkan akun.";
+                    $this->nikSearchError = "Karyawan dengan NIK {$this->nik_baru} tidak aktif dan tidak bisa dibuatkan akun.";
                 } elseif ($k->user()->exists()) {
                     $this->nikSearchError = "NIK {$this->nik_baru} sudah memiliki akun sistem.";
                 } else {
@@ -78,10 +81,15 @@ class MasterAkunUser extends Component
 
     public function openEdit(int $userId): void
     {
-        $user = User::findOrFail($userId);
-        $this->editingUserId = $user->id;
-        $this->edit_role = $user->role;
-        $this->edit_no_whatsapp = $user->no_whatsapp ?? '';
+        $user = User::with('karyawan')->findOrFail($userId);
+        $this->editingUserId       = $user->id;
+        $this->edit_nik           = $user->nik ?? '';
+        $this->edit_nama          = $user->name ?? '';
+        $this->edit_departemen_id = $user->karyawan?->departemen_id;
+        $this->edit_role          = $user->role;
+        $this->edit_no_whatsapp   = $user->no_whatsapp ?? '';
+        $this->edit_password      = '';
+
         $this->showFormCreate = false;
         $this->showFormEdit = true;
         $this->resetValidation();
@@ -91,7 +99,6 @@ class MasterAkunUser extends Component
     {
         $this->validate($this->rulesCreate());
 
-        // Validasi NIK: harus terdaftar dan aktif di tabel karyawan
         $karyawan = Karyawan::where('nik', $this->nik_baru)->first();
 
         if (!$karyawan) {
@@ -114,7 +121,7 @@ class MasterAkunUser extends Component
             'name' => $karyawan->nama,
             'role' => $this->role_baru,
             'no_whatsapp' => $this->no_whatsapp_baru,
-            'password' => Hash::make($this->nik_baru), // password default adalah NIK
+            'password' => Hash::make($this->nik_baru),
         ]);
 
         session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat.");
@@ -125,21 +132,48 @@ class MasterAkunUser extends Component
 
     public function simpanEdit(): void
     {
+        $user = User::with('karyawan')->findOrFail($this->editingUserId);
+
         $this->validate([
-            'edit_role' => 'required|in:karyawan,qa',
-            'edit_no_whatsapp' => 'required|string|regex:/^628[0-9]{8,12}$/',
+            'edit_nik'           => 'required|string|max:20|unique:users,nik,' . $user->id,
+            'edit_nama'          => 'required|string|max:255',
+            'edit_departemen_id' => 'nullable|exists:departemens,id',
+            'edit_role'          => 'required|in:karyawan,qa,superadmin',
+            'edit_no_whatsapp'   => 'required|string|regex:/^628[0-9]{8,12}$/',
+            'edit_password'      => 'nullable|string|min:4',
         ]);
 
-        $user = User::findOrFail($this->editingUserId);
+        $oldNik = $user->nik;
+        $newNik = $this->edit_nik;
 
-        $updateData = [
-            'role' => $this->edit_role,
-            'no_whatsapp' => $this->edit_no_whatsapp,
-        ];
+        // Update User
+        $user->nik         = $newNik;
+        $user->name        = $this->edit_nama;
+        $user->role        = $this->edit_role;
+        $user->no_whatsapp = $this->edit_no_whatsapp;
 
-        $user->update($updateData);
+        if (!empty($this->edit_password)) {
+            $user->password = Hash::make($this->edit_password);
+        }
 
-        session()->flash('success', "Akun {$user->name} berhasil diperbarui.");
+        $user->save();
+
+        // Update Karyawan
+        if ($user->karyawan) {
+            $user->karyawan->update([
+                'nik'           => $newNik,
+                'nama'          => $this->edit_nama,
+                'departemen_id' => $this->edit_departemen_id,
+            ]);
+        } elseif ($oldNik) {
+            Karyawan::where('nik', $oldNik)->update([
+                'nik'           => $newNik,
+                'nama'          => $this->edit_nama,
+                'departemen_id' => $this->edit_departemen_id,
+            ]);
+        }
+
+        session()->flash('success', "Data akun & karyawan {$this->edit_nama} berhasil diperbarui.");
         $this->showFormEdit = false;
         $this->editingUserId = null;
     }
@@ -161,8 +195,11 @@ class MasterAkunUser extends Component
             ->orderBy('name')
             ->paginate(15);
 
+        $departemens = Departemen::orderBy('nama_departemen')->get();
+
         return view('livewire.master-akun-user', [
-            'users' => $users,
+            'users'       => $users,
+            'departemens' => $departemens,
         ]);
     }
 }

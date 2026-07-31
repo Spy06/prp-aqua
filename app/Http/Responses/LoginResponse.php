@@ -50,7 +50,9 @@ class LoginResponse implements LoginResponseContract
         session(['login_system' => $system]);
 
         // Tentukan target redirect berdasarkan sistem + role
-        if ($system === 'bosq') {
+        if ($user && $user->role === 'superadmin') {
+            $target = route('qa.master.akun', absolute: false);
+        } elseif ($system === 'bosq') {
             if ($user && $user->role === 'qa') {
                 $target = route('bosq.qa.dashboard', absolute: false);
             } else {

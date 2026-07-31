@@ -16,7 +16,7 @@
             </div>
             <div style="flex:1;">
                 <div class="bstat-val" style="color:#e65100;">{{ $metrics['open'] }}</div>
-                <div class="bstat-lbl">Open (Perlu Verifikasi QA)</div>
+                <div class="bstat-lbl">Open</div>
             </div>
             @if($filterStatus === 'open')
                 <span class="material-symbols-outlined" style="color:#e65100;font-size:20px;">check_circle</span>

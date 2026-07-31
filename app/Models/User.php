@@ -72,11 +72,19 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Apakah user ini berperan sebagai QA.
+     * Apakah user ini berperan sebagai Super Admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Apakah user ini berperan sebagai QA atau Super Admin.
      */
     public function isQa(): bool
     {
-        return $this->role === 'qa';
+        return in_array($this->role, ['qa', 'superadmin'], true);
     }
 
     /**

@@ -60,6 +60,10 @@ class VerifikasiQA extends Component
             \App\Jobs\SendWhatsApp::dispatch($picUser->no_whatsapp, $messagePic);
         }
 
+        // Kirim Email Notifikasi SIVERA (Closed ACC)
+        $emailService = app(\App\Services\EmailNotificationService::class);
+        $emailService->sendSiveraNotification($this->temuan, 'closed');
+
         // Just to ensure UI updates
         $this->redirectRoute('temuan.detail', $this->temuan->id);
     }
@@ -97,8 +101,15 @@ class VerifikasiQA extends Component
         $picUser = User::find($this->temuan->pic_id);
         if ($picUser && $picUser->no_whatsapp) {
             $url = route('temuan.detail', $this->temuan->id);
-            // "Temuan #[id] dikembalikan, catatan QA: [catatan_qa]." 
-            // "Tolak -> kirim ke pic_id saja, sertakan ringkasan catatan_qa di pesan (ringkas, bukan seluruh isi kalau panjang)"
+            \App\Jobs\SendWhatsApp::dispatch($picUser->no_whatsapp, "Temuan #{$this->temuan->id} dikembalikan oleh QA. Catatan QA: {$this->catatan_qa}.\n" . $url);
+        }
+
+        if ($picUser && $picUser->email) {
+            app(\App\Services\EmailNotificationService::class)->sendSiveraNotification($this->temuan, 'tindaklanjut', $picUser->email);
+        }
+
+        $this->redirectRoute('temuan.detail', $this->temuan->id);
+    }    // "Tolak -> kirim ke pic_id saja, sertakan ringkasan catatan_qa di pesan (ringkas, bukan seluruh isi kalau panjang)"
             $catatanRingkas = \Illuminate\Support\Str::limit($this->catatan_qa, 50);
             $messagePic = "Temuan #{$this->temuan->id} dikembalikan, catatan QA: {$catatanRingkas}\n" . $url;
             

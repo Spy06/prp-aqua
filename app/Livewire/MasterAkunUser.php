@@ -15,6 +15,7 @@ class MasterAkunUser extends Component
 
     // Form Create Akun
     public string $nik_baru = '';
+    public string $email_baru = '';
     public string $role_baru = 'karyawan';
     public string $no_whatsapp_baru = '';
 
@@ -22,6 +23,7 @@ class MasterAkunUser extends Component
     public ?int $editingUserId = null;
     public string $edit_nik = '';
     public string $edit_nama = '';
+    public string $edit_email = '';
     public ?int $edit_departemen_id = null;
     public string $edit_role = '';
     public string $edit_no_whatsapp = '';
@@ -39,6 +41,7 @@ class MasterAkunUser extends Component
     {
         return [
             'nik_baru' => 'required|string|max:20',
+            'email_baru' => 'nullable|email|max:255',
             'role_baru' => 'required|in:karyawan,qa,superadmin',
             'no_whatsapp_baru' => 'required|string|regex:/^628[0-9]{8,12}$/',
         ];
@@ -72,7 +75,7 @@ class MasterAkunUser extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
+        $this->reset(['nik_baru', 'email_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
         $this->role_baru = 'karyawan';
         $this->showFormEdit = false;
         $this->showFormCreate = true;
@@ -85,6 +88,7 @@ class MasterAkunUser extends Component
         $this->editingUserId       = $user->id;
         $this->edit_nik           = $user->nik ?? '';
         $this->edit_nama          = $user->name ?? '';
+        $this->edit_email         = $user->email ?? '';
         $this->edit_departemen_id = $user->karyawan?->departemen_id;
         $this->edit_role          = $user->role;
         $this->edit_no_whatsapp   = $user->no_whatsapp ?? '';
@@ -119,13 +123,14 @@ class MasterAkunUser extends Component
         User::create([
             'nik' => $this->nik_baru,
             'name' => $karyawan->nama,
+            'email' => $this->email_baru ?: null,
             'role' => $this->role_baru,
             'no_whatsapp' => $this->no_whatsapp_baru,
             'password' => Hash::make($this->nik_baru),
         ]);
 
         session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat.");
-        $this->reset(['nik_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
+        $this->reset(['nik_baru', 'email_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
         $this->showFormCreate = false;
         $this->resetPage();
     }
@@ -137,6 +142,7 @@ class MasterAkunUser extends Component
         $this->validate([
             'edit_nik'           => 'required|string|max:20|unique:users,nik,' . $user->id,
             'edit_nama'          => 'required|string|max:255',
+            'edit_email'         => 'nullable|email|max:255',
             'edit_departemen_id' => 'nullable|exists:departemens,id',
             'edit_role'          => 'required|in:karyawan,qa,superadmin',
             'edit_no_whatsapp'   => 'required|string|regex:/^628[0-9]{8,12}$/',
@@ -149,6 +155,7 @@ class MasterAkunUser extends Component
         // Update User
         $user->nik         = $newNik;
         $user->name        = $this->edit_nama;
+        $user->email       = $this->edit_email ?: null;
         $user->role        = $this->edit_role;
         $user->no_whatsapp = $this->edit_no_whatsapp;
 

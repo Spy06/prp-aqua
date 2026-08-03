@@ -24,7 +24,7 @@ class FormTemuan extends Component
     public $deskripsi;
     public $saran = '';
     public $detail_sub_area;
-    
+
     // For PIC Search
     public $picSearch = '';
     public $pic_id;
@@ -32,21 +32,21 @@ class FormTemuan extends Component
 
     protected $rules = [
         'tanggal_temuan' => 'required|date',
-        'departemen_id'  => 'required|exists:departemen,id',
-        'sub_area'       => 'required|string|max:255',
-        'klausul_id'     => 'required|exists:klausul_prp,id',
-        'detail_sub_area'=> 'required_if:sub_area,Others|nullable|string|max:255',
-        'foto_temuan'    => 'required|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB
-        'deskripsi'      => 'required|string',
-        'saran'          => 'nullable|string',
-        'pic_id'         => 'required|exists:users,id',
+        'departemen_id' => 'required|exists:departemen,id',
+        'sub_area' => 'required|string|max:255',
+        'klausul_id' => 'required|exists:klausul_prp,id',
+        'detail_sub_area' => 'required_if:sub_area,Others|nullable|string|max:255',
+        'foto_temuan' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB
+        'deskripsi' => 'required|string',
+        'saran' => 'nullable|string',
+        'pic_id' => 'required|exists:users,id',
     ];
 
     protected $messages = [
         'foto_temuan.required' => 'Foto temuan wajib diupload.',
-        'foto_temuan.image'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-        'foto_temuan.mimes'    => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
-        'foto_temuan.max'      => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
+        'foto_temuan.image' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+        'foto_temuan.mimes' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
+        'foto_temuan.max' => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
         'foto_temuan.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
     ];
 
@@ -80,9 +80,9 @@ class FormTemuan extends Component
 
         if (strlen($query) >= 1) {
             $this->picResults = User::where('role', 'karyawan')
-                ->where(function($q) use ($query) {
+                ->where(function ($q) use ($query) {
                     $q->where('name', 'like', '%' . $query . '%')
-                      ->orWhere('nik', 'like', '%' . $query . '%');
+                        ->orWhere('nik', 'like', '%' . $query . '%');
                 })
                 ->take(15)
                 ->get();
@@ -124,46 +124,57 @@ class FormTemuan extends Component
         try {
             // 2. Buat record Temuan
             $temuan = Temuan::create([
-                'tanggal_temuan'   => $this->tanggal_temuan,
-                'pelapor_id'       => $user->id,
-                'pic_id'           => $this->pic_id,
-                'departemen_id'    => $this->departemen_id,
-                'sub_area'         => $this->sub_area,
-                'detail_sub_area'  => $this->sub_area === 'Others' ? $this->detail_sub_area : null,
-                'klausul_id'       => $this->klausul_id,
+                'tanggal_temuan' => $this->tanggal_temuan,
+                'pelapor_id' => $user->id,
+                'pic_id' => $this->pic_id,
+                'departemen_id' => $this->departemen_id,
+                'sub_area' => $this->sub_area,
+                'detail_sub_area' => $this->sub_area === 'Others' ? $this->detail_sub_area : null,
+                'klausul_id' => $this->klausul_id,
                 'foto_temuan_path' => $fotoPath,
-                'deskripsi'        => $this->deskripsi,
-                'saran'            => $this->saran,
-                'status'           => 'open',
+                'deskripsi' => $this->deskripsi,
+                'saran' => $this->saran,
+                'status' => 'open',
             ]);
 
             // 3. Buat record Tindak Lanjut awal
             TindakLanjut::create([
-                'temuan_id'       => $temuan->id,
-                'status'          => 'open',
-                'acc_qa'          => false,
+                'temuan_id' => $temuan->id,
+                'status' => 'open',
+                'acc_qa' => false,
             ]);
 
             DB::commit();
 
-            // 4. Dispatch WA Job ke PIC
+            // 4. Kirim Email Notifikasi SIVERA ke PIC Ditunjuk & QA Auditors
+            $emailService = app(\App\Services\EmailNotificationService::class);
+            $emailService->sendSiveraNotification($temuan, 'baru');
+
+            $qaUsers = User::where('role', 'qa')->get();
+            foreach ($qaUsers as $qa) {
+                if ($qa->email) {
+                    $emailService->sendSiveraNotification($temuan, 'baru', $qa->email);
+                }
+            }
+
+            // 5. Dispatch WA Job ke PIC
             $pic = User::find($this->pic_id);
             if ($pic && $pic->no_whatsapp) {
                 $message = "Halo {$pic->name}, Anda ditunjuk sebagai PIC untuk temuan PRP baru. "
-                         . "Segera tindak lanjuti di sini: " . route('temuan.detail', ['temuan' => $temuan->id]);
-                
+                    . "Segera tindak lanjuti di sini: " . route('temuan.detail', ['temuan' => $temuan->id]);
+
                 SendWhatsApp::dispatch($pic->no_whatsapp, $message);
             }
 
-            // 5. Kirim notifikasi WA ke QA untuk setiap temuan baru
+            // 6. Kirim notifikasi WA ke QA untuk setiap temuan baru
             $qaUsers = User::where('role', 'qa')->get();
             $pelaporDept = auth()->user()->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
             foreach ($qaUsers as $qa) {
                 if ($qa->no_whatsapp) {
                     $messageQA = "Halo QA ({$qa->name}), ada laporan temuan PRP baru (#{$temuan->id}) diajukan oleh " . auth()->user()->name . " (Departemen Pelapor: {$pelaporDept}).\n"
-                               . "Sub Area: {$temuan->sub_area}\n"
-                               . (!empty($this->saran) ? "Saran: \"{$this->saran}\"\n" : "")
-                               . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
+                        . "Sub Area: {$temuan->sub_area}\n"
+                        . (!empty($this->saran) ? "Saran: \"{$this->saran}\"\n" : "")
+                        . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
                     SendWhatsApp::dispatch($qa->no_whatsapp, $messageQA);
                 }
             }
@@ -171,12 +182,12 @@ class FormTemuan extends Component
             // Bersihkan form
             $this->reset(['sub_area', 'detail_sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'saran', 'pic_id', 'picSearch']);
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
-            
+
             session()->flash('success', 'Laporan temuan berhasil dikirim!');
-            
+
             // Refresh parent view data (DaftarTemuanPelapor)
             $this->dispatch('temuanAdded');
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -188,15 +199,15 @@ class FormTemuan extends Component
         $subAreas = [];
         if ($this->departemen_id) {
             $subAreas = \App\Models\SubArea::where('departemen_id', $this->departemen_id)
-                            ->orderByRaw("CASE WHEN nama_sub_area = 'Others' THEN 1 ELSE 0 END")
-                            ->orderBy('nama_sub_area')
-                            ->get();
+                ->orderByRaw("CASE WHEN nama_sub_area = 'Others' THEN 1 ELSE 0 END")
+                ->orderBy('nama_sub_area')
+                ->get();
         }
 
         return view('livewire.form-temuan', [
             'departemens' => Departemen::orderBy('nama_departemen')->get(),
-            'klausuls'    => \App\Models\KlausulPrp::orderBy('id')->get(),
-            'subAreas'    => $subAreas,
+            'klausuls' => \App\Models\KlausulPrp::orderBy('id')->get(),
+            'subAreas' => $subAreas,
         ]);
     }
 }

@@ -67,6 +67,10 @@ class VerifikasiQA extends Component
             SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
         }
 
+        // Kirim Email Notifikasi BOS'Q (Closed ACC)
+        $emailService = app(\App\Services\EmailNotificationService::class);
+        $emailService->sendBosqNotification($this->temuan, 'closed');
+
         session()->flash('success', 'Observasi BOS\'Q berhasil diverifikasi dan diselesaikan (Closed).');
         $this->redirectRoute('bosq.temuan.detail', $this->temuan->id);
     }

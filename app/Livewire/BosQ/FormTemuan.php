@@ -183,9 +183,17 @@ class FormTemuan extends Component
                       . "📅 *Due Date*: " . Carbon::parse($this->due_date_action)->format('d F Y') . "\n\n"
                       . "Buka dan verifikasi di:\n{$link}";
 
-                $qaUsers = User::where('role', 'qa')->whereNotNull('no_whatsapp')->get();
+                $qaUsers = User::where('role', 'qa')->get();
+                $emailService = app(\App\Services\EmailNotificationService::class);
+                $emailService->sendBosqNotification($temuan, 'baru');
+
                 foreach ($qaUsers as $qa) {
-                    SendWhatsApp::dispatch($qa->no_whatsapp, $msg);
+                    if ($qa->no_whatsapp) {
+                        SendWhatsApp::dispatch($qa->no_whatsapp, $msg);
+                    }
+                    if ($qa->email) {
+                        $emailService->sendBosqNotification($temuan, 'baru', $qa->email);
+                    }
                 }
             }
 

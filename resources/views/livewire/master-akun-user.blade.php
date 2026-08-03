@@ -51,6 +51,16 @@
                 @endif
             </div>
 
+            {{-- Email Perusahaan --}}
+            <div>
+                <label for="form-email-baru" class="blabel">Email Perusahaan</label>
+                <input type="email" id="form-email-baru" wire:model="email_baru"
+                       placeholder="nama@namaperusahaan.com"
+                       class="binput" />
+                <p style="font-size:11.5px;color:var(--btxt2);margin-top:4px;">Digunakan untuk menerima notifikasi penugasan PIC & audit</p>
+                @error('email_baru') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
             {{-- Role --}}
             <div>
                 <label for="form-role" class="blabel">Role <span style="color:var(--be);">*</span></label>
@@ -93,7 +103,7 @@
             <span class="material-symbols-outlined" style="color:#7c3aed;font-size:24px;">admin_panel_settings</span>
             <div>
                 <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Edit Full Data Akun & Karyawan (Super Admin)</h3>
-                <p style="font-size:12px;color:var(--btxt2);margin:0;">Anda dapat mengedit NIK, Nama, Departemen, Role, dan Password pengguna ini secara langsung.</p>
+                <p style="font-size:12px;color:var(--btxt2);margin:0;">Anda dapat mengedit NIK, Nama, Email, Departemen, Role, dan Password pengguna ini secara langsung.</p>
             </div>
         </div>
 
@@ -110,6 +120,13 @@
                 <label for="edit-nama" class="blabel">Nama Lengkap <span style="color:var(--be);">*</span></label>
                 <input type="text" id="edit-nama" wire:model="edit_nama" class="binput" placeholder="Masukkan nama..." />
                 @error('edit_nama') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Edit Email --}}
+            <div>
+                <label for="edit-email" class="blabel">Email Perusahaan</label>
+                <input type="email" id="edit-email" wire:model="edit_email" class="binput" placeholder="nama@namaperusahaan.com" />
+                @error('edit_email') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
 
             {{-- Edit Departemen --}}
@@ -178,7 +195,7 @@
                 <thead>
                     <tr>
                         <th>NIK</th>
-                        <th>Nama</th>
+                        <th>Nama & Email</th>
                         <th>Departemen</th>
                         <th style="text-align:center;">Role</th>
                         <th>No. WA</th>
@@ -192,7 +209,14 @@
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
                                 <div class="qs-av" style="width:30px;height:30px;font-size:11px;flex-shrink:0;{{ $u->role === 'superadmin' ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr($u->name, 0, 1)) }}</div>
-                                <span style="font-weight:600;font-size:13.5px;">{{ $u->name }}</span>
+                                <div>
+                                    <div style="font-weight:600;font-size:13.5px;">{{ $u->name }}</div>
+                                    @if($u->email)
+                                        <div style="font-size:11.5px;color:var(--btxt2);">✉️ {{ $u->email }}</div>
+                                    @else
+                                        <div style="font-size:11.5px;color:#ef4444;">⚠️ Email belum diisi</div>
+                                    @endif
+                                </div>
                             </div>
                         </td>
                         <td style="font-size:13px;color:var(--btxt2);">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</td>

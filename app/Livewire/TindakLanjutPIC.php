@@ -250,12 +250,13 @@ class TindakLanjutPIC extends Component
 
     protected function kirimNotifikasiQA(): void
     {
-        $temuan = Temuan::with(['departemen', 'pic'])->find($this->temuanId);
+        $temuan = Temuan::with(['departemen', 'pic', 'pelapor'])->find($this->temuanId);
         if (!$temuan) return;
 
-        $qaUsers = User::where('role', 'qa')->get();
-        if ($qaUsers->isEmpty()) return;
+        $emailService = app(\App\Services\EmailNotificationService::class);
+        $emailService->sendSiveraNotification($temuan, 'bukti');
 
+        $qaUsers = User::where('role', 'qa')->get();
         $deptNama = $temuan->departemen->nama_departemen ?? '-';
         $picNama  = $temuan->pic->name ?? '-';
         $pesan    = "*[SIVERA] Tindak Lanjut Siap Diverifikasi QA*\n\n"
@@ -270,6 +271,9 @@ class TindakLanjutPIC extends Component
         foreach ($qaUsers as $qa) {
             if (!empty($qa->no_whatsapp)) {
                 SendWhatsApp::dispatch($qa->no_whatsapp, $pesan);
+            }
+            if (!empty($qa->email)) {
+                $emailService->sendSiveraNotification($temuan, 'bukti', $qa->email);
             }
         }
     }

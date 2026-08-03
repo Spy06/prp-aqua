@@ -9,14 +9,9 @@ use App\Models\BosqTemuan;
 use App\Models\Departemen;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class DashboardQA extends Component
 {
-    use WithPagination;
-
-    protected string $paginationTheme = 'bootstrap';
-
     // Filter Periode
     public string $filter_type = 'bulan'; // 'bulan', 'tahun', 'custom'
     public int $bulan;
@@ -24,12 +19,8 @@ class DashboardQA extends Component
     public string $tgl_mulai = '';
     public string $tgl_selesai = '';
 
-    // Filter Tabel Temuan
-    public string $filter_departemen_id = '';
-    public string $filter_sub_area_id = '';
-    public string $filter_status = '';
-    public string $filter_tingkat_resiko = '';
-    public string $filter_dampak_temuan = '';
+    // Filter Sub Area Chart
+    public ?int $filterDepartemenSubArea = null;
 
     public function mount(): void
     {
@@ -37,46 +28,9 @@ class DashboardQA extends Component
         $this->tahun = (int) now()->year;
         $this->tgl_mulai = Carbon::now()->startOfMonth()->toDateString();
         $this->tgl_selesai = Carbon::now()->toDateString();
-    }
 
-    public function updatingFilterType(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingBulan(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingTahun(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterDepartemenId(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterSubAreaId(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterStatus(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterTingkatResiko(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterDampakTemuan(): void
-    {
-        $this->resetPage();
+        $firstDept = Departemen::orderBy('nama_departemen')->first();
+        $this->filterDepartemenSubArea = $firstDept ? $firstDept->id : null;
     }
 
     public function parseFilter(): array
@@ -106,83 +60,100 @@ class DashboardQA extends Component
         $awal = $filter['awal'];
         $akhir = $filter['akhir'];
 
-        // Base Query untuk Periode
         $baseQuery = BosqTemuan::with(['departemen', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut'])
             ->whereBetween('tanggal_temuan', [$awal, $akhir]);
 
         $allTemuan = (clone $baseQuery)->get();
 
-        // 1. Grafik Status BQA (Open vs Closed)
+        // 1. Status Open vs Closed
         $chartStatusData = [
             'Open'   => $allTemuan->whereIn('status', ['open', 'in_progress', 'closed_pending_qa'])->count(),
             'Closed' => $allTemuan->whereIn('status', ['closed', 'closed_acc'])->count(),
         ];
 
-        // 2. Grafik Temuan per Departemen (Bar Chart)
         $departemens = Departemen::orderBy('nama_departemen')->get();
-        $chartDeptGrouped = $allTemuan->groupBy('departemen_id')->mapWithKeys(function ($group) {
-            $deptName = $group->first()->departemen->nama_departemen ?? 'Lainnya';
-            return [$deptName => $group->count()];
-        });
-        
-        // Pastikan semua departemen terisi meski 0
+        $groupedByDept = $allTemuan->groupBy('departemen_id');
+
+        // 2. Temuan per Departemen (HANYA departemen yang ada laporan)
         $chartDeptData = [];
-        foreach ($departemens as $d) {
-            $chartDeptData[$d->nama_departemen] = $chartDeptGrouped->get($d->nama_departemen, 0);
+        foreach ($groupedByDept as $deptId => $items) {
+            $deptName = $items->first()->departemen->nama_departemen ?? 'Lainnya';
+            $chartDeptData[$deptName] = $items->count();
         }
 
-        // 3. Grafik Dampak Observasi (Negatif vs Positif)
+        // 3. Negatif vs Positif Berdampingan (HANYA departemen yang ada laporan)
         $chartDampakData = [
             'Negatif (Butuh Perbaikan)' => $allTemuan->where('dampak_temuan', 'negatif')->count(),
             'Positif (Perilaku Baik)'  => $allTemuan->where('dampak_temuan', 'positif')->count(),
         ];
 
-        // Query Tabel Temuan dengan Filter Tambahan
-        $tableQuery = clone $baseQuery;
+        $chartDampakLabels = [];
+        $chartDampakNegatif = [];
+        $chartDampakPositif = [];
 
-        if ($this->filter_departemen_id !== '') {
-            $tableQuery->where('departemen_id', $this->filter_departemen_id);
+        foreach ($groupedByDept as $deptId => $items) {
+            $deptName = $items->first()->departemen->nama_departemen ?? 'Lainnya';
+            $chartDampakLabels[] = $deptName;
+            $chartDampakNegatif[] = $items->where('dampak_temuan', 'negatif')->count();
+            $chartDampakPositif[] = $items->where('dampak_temuan', 'positif')->count();
         }
 
-        if ($this->filter_sub_area_id !== '') {
-            $tableQuery->where('sub_area_id', $this->filter_sub_area_id);
-        }
+        // 4. Sub Area Chart (berdasarkan filter departemen sub area)
+        $subAreasList = $this->filterDepartemenSubArea
+            ? BosqSubArea::where('departemen_id', $this->filterDepartemenSubArea)->orWhereNull('departemen_id')->orderBy('nama_sub_area')->get()
+            : BosqSubArea::orderBy('nama_sub_area')->get();
 
-        if ($this->filter_status !== '') {
-            if ($this->filter_status === 'open') {
-                $tableQuery->whereIn('status', ['open', 'in_progress', 'closed_pending_qa']);
-            } else {
-                $tableQuery->whereIn('status', ['closed', 'closed_acc']);
+        $subAreaLabels = [];
+        $subAreaData = [];
+        foreach ($subAreasList as $sa) {
+            $count = $allTemuan->where('sub_area_id', $sa->id)->count();
+            if ($count > 0) {
+                $subAreaLabels[] = $sa->nama_sub_area;
+                $subAreaData[] = $count;
             }
         }
 
-        if ($this->filter_tingkat_resiko !== '') {
-            $tableQuery->where('tingkat_resiko', $this->filter_tingkat_resiko);
+        // 5. Grafik Temuan per Elemen QFS (HANYA elemen QFS yang ada laporan)
+        $chartElemenGrouped = $allTemuan->groupBy('elemen_qfs_id');
+        $elemenLabels = [];
+        $elemenData = [];
+        foreach ($chartElemenGrouped as $elemId => $items) {
+            $elemName = $items->first()->elemenQfs->nama_elemen ?? 'Lainnya';
+            $elemenLabels[] = $elemName;
+            $elemenData[] = $items->count();
         }
 
-        if ($this->filter_dampak_temuan !== '') {
-            $tableQuery->where('dampak_temuan', $this->filter_dampak_temuan);
-        }
-
-        $temuans = $tableQuery->orderBy('tanggal_temuan', 'desc')->paginate(10);
-
-        $subAreas = $this->filter_departemen_id
-            ? BosqSubArea::where('departemen_id', $this->filter_departemen_id)->orWhereNull('departemen_id')->orderBy('nama_sub_area')->get()
-            : BosqSubArea::orderBy('nama_sub_area')->get();
+        $this->dispatch('bosq-chart-updated', [
+            'statusData'        => $chartStatusData,
+            'deptData'          => $chartDeptData,
+            'dampakData'        => $chartDampakData,
+            'dampakLabels'      => $chartDampakLabels,
+            'dampakNegatifData' => $chartDampakNegatif,
+            'dampakPositifData' => $chartDampakPositif,
+            'subAreaLabels'     => json_encode($subAreaLabels),
+            'subAreaData'       => json_encode($subAreaData),
+            'elemenLabels'      => json_encode($elemenLabels),
+            'elemenData'        => json_encode($elemenData),
+        ]);
 
         return view('livewire.bosq.dashboard-q-a', [
-            'filterLabel'      => $filter['label'],
-            'totalTemuan'      => $allTemuan->count(),
-            'totalOpen'        => $chartStatusData['Open'],
-            'totalClosed'      => $chartStatusData['Closed'],
-            'totalNegatif'     => $chartDampakData['Negatif (Butuh Perbaikan)'],
-            'totalPositif'     => $chartDampakData['Positif (Perilaku Baik)'],
-            'chartStatusData'  => $chartStatusData,
-            'chartDeptData'    => $chartDeptData,
-            'chartDampakData'  => $chartDampakData,
-            'temuans'          => $temuans,
-            'departemens'      => $departemens,
-            'subAreas'         => $subAreas,
-        ])->layout('layouts.bosq', ['title' => 'Dashboard QA — BOS\'Q']);
+            'filterLabel'        => $filter['label'],
+            'totalTemuan'        => $allTemuan->count(),
+            'totalOpen'          => $chartStatusData['Open'],
+            'totalClosed'        => $chartStatusData['Closed'],
+            'totalNegatif'       => $chartDampakData['Negatif (Butuh Perbaikan)'],
+            'totalPositif'       => $chartDampakData['Positif (Perilaku Baik)'],
+            'chartStatusData'    => $chartStatusData,
+            'chartDeptData'      => $chartDeptData,
+            'chartDampakData'    => $chartDampakData,
+            'chartDampakLabels'  => $chartDampakLabels,
+            'chartDampakNegatif' => $chartDampakNegatif,
+            'chartDampakPositif' => $chartDampakPositif,
+            'subAreaLabels'      => json_encode($subAreaLabels),
+            'subAreaData'        => json_encode($subAreaData),
+            'elemenLabels'       => json_encode($elemenLabels),
+            'elemenData'         => json_encode($elemenData),
+            'departemens'        => $departemens,
+        ])->layout('layouts.bosq', ['title' => 'Dashboard Analisis QA — BOS\'Q']);
     }
 }

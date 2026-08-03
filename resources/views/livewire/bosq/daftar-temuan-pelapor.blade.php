@@ -10,16 +10,16 @@
     @endphp
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px;" class="fu">
         {{-- Card Stat Open --}}
-        <div wire:click="setFilterStatus('open')" class="bstat" style="cursor:pointer;user-select:none;transition:all 0.2s ease;{{ $filterStatus === 'open' ? 'border:2px solid #e65100;background:#fff3e0;' : '' }}">
-            <div class="bstat-icon" style="background:#fff3e0;">
-                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:24px;">error</span>
+        <div wire:click="setFilterStatus('open')" class="bstat" style="cursor:pointer;user-select:none;transition:all 0.2s ease;{{ $filterStatus === 'open' ? 'border:2px solid #c62828;background:#ffebee;' : '' }}">
+            <div class="bstat-icon" style="background:#ffebee;">
+                <span class="material-symbols-outlined fil" style="color:#c62828;font-size:24px;">error</span>
             </div>
             <div style="flex:1;">
-                <div class="bstat-val" style="color:#e65100;">{{ $metrics['open'] }}</div>
+                <div class="bstat-val" style="color:#c62828;">{{ $metrics['open'] }}</div>
                 <div class="bstat-lbl">Open</div>
             </div>
             @if($filterStatus === 'open')
-                <span class="material-symbols-outlined" style="color:#e65100;font-size:20px;">check_circle</span>
+                <span class="material-symbols-outlined" style="color:#c62828;font-size:20px;">check_circle</span>
             @endif
         </div>
 

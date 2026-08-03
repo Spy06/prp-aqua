@@ -280,7 +280,7 @@
             font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
             border: 1px solid transparent; white-space: nowrap;
         }
-        .sbadge-open { background: #fff8e1; color: #e65100; border-color: #ffe082; }
+        .sbadge-open { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .sbadge-progress { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
         .sbadge-pending { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
         .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }

@@ -147,7 +147,7 @@
 
         /* ── Status Badges ── */
         .sbadge { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; border: 1px solid transparent; white-space: nowrap; }
-        .sbadge-open { background: #fff8e1; color: #e65100; border-color: #ffe082; }
+        .sbadge-open { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
         .sbadge-progress { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
         .sbadge-pending { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
         .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
@@ -300,7 +300,11 @@
                     <span class="qs-section-label">Menu Management</span>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
-                        <span>Dashboard QA</span>
+                        <span>Grafik Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Observasi</span>
                     </a>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.rekap') ? 'active' : '' }}" href="{{ route('bosq.qa.rekap') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.rekap') ? 'fil' : '' }}">bar_chart</span>
@@ -457,7 +461,8 @@
             document.addEventListener('DOMContentLoaded', () => { attachButtons(); setupMobileMenu(); });
             document.addEventListener('livewire:navigated', () => { attachButtons(); setupMobileMenu(); });
         })();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" data-navigate-once></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" data-navigate-once></script>
     @livewireScripts
 </body>
 </html>

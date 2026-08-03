@@ -91,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
             Route::get('/dashboard', \App\Livewire\BosQ\DashboardQA::class)->name('dashboard');
+            Route::get('/daftar-observasi', \App\Livewire\BosQ\DaftarObservasiQA::class)->name('daftar-observasi');
             Route::get('/rekap', \App\Livewire\BosQ\RekapKepatuhan::class)->name('rekap');
             Route::get('/master/line', \App\Livewire\BosQ\MasterLine::class)->name('master.line');
             Route::get('/master/subarea', \App\Livewire\BosQ\MasterSubArea::class)->name('master.subarea');

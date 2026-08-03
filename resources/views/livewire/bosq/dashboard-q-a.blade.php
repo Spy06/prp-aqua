@@ -1,4 +1,108 @@
-<div style="display:flex;flex-direction:column;gap:24px;" class="fu">
+<div style="display:flex;flex-direction:column;gap:24px;" class="fu" wire:poll.3s>
+    <style>
+        /* Card Abstract Circle Decorations — Persis SIVERA */
+        .berry-stat {
+            color: #fff !important;
+            position: relative;
+            overflow: hidden;
+            border: none !important;
+            border-radius: 12px;
+            padding: 22px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+        .berry-stat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        
+        .stat-purple { background: linear-gradient(135deg, #4527a0 0%, #673ab7 100%); }
+        .stat-purple::after {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #311b92; border-radius: 50%; top: -85px; right: -95px; opacity: 0.4;
+        }
+        .stat-purple::before {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #311b92; border-radius: 50%; top: -125px; right: -15px; opacity: 0.2;
+        }
+
+        .stat-red { background: linear-gradient(135deg, #c62828 0%, #ef5350 100%); }
+        .stat-red::after {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #b71c1c; border-radius: 50%; top: -85px; right: -95px; opacity: 0.35;
+        }
+        .stat-red::before {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #b71c1c; border-radius: 50%; top: -125px; right: -15px; opacity: 0.18;
+        }
+
+        .stat-green { background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); }
+        .stat-green::after {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #1b5e20; border-radius: 50%; top: -85px; right: -95px; opacity: 0.4;
+        }
+        .stat-green::before {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #1b5e20; border-radius: 50%; top: -125px; right: -15px; opacity: 0.2;
+        }
+
+        .stat-crimson { background: linear-gradient(135deg, #880e4f 0%, #e91e63 100%); }
+        .stat-crimson::after {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #4a148c; border-radius: 50%; top: -85px; right: -95px; opacity: 0.35;
+        }
+        .stat-crimson::before {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #4a148c; border-radius: 50%; top: -125px; right: -15px; opacity: 0.18;
+        }
+
+        .stat-blue { background: linear-gradient(135deg, #1565c0 0%, #2196f3 100%); }
+        .stat-blue::after {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #0d47a1; border-radius: 50%; top: -85px; right: -95px; opacity: 0.4;
+        }
+        .stat-blue::before {
+            content: ""; position: absolute; width: 210px; height: 210px;
+            background: #0d47a1; border-radius: 50%; top: -125px; right: -15px; opacity: 0.2;
+        }
+
+        .stat-avatar {
+            width: 44px; height: 44px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.22);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 14px;
+            position: relative; z-index: 2;
+        }
+        .stat-avatar span { color: #fff; font-size: 24px; }
+        .stat-content { position: relative; z-index: 2; }
+        .stat-title { font-size: 13px; font-weight: 600; opacity: 0.9; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .berry-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 1200px) {
+            .berry-stat-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .berry-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        }
+        @media (max-width: 480px) {
+            .berry-stat-grid { grid-template-columns: 1fr; gap: 8px; }
+        }
+
+        /* 2x2 Symmetric Grid Layout */
+        .charts-2x2-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .charts-2x2-grid { grid-template-columns: 1fr; gap: 16px; }
+        }
+    </style>
     
     {{-- Header & Title --}}
     <div class="bph fu1">
@@ -12,11 +116,7 @@
                 'bulan' => $bulan,
                 'tahun' => $tahun,
                 'awal' => $tgl_mulai,
-                'akhir' => $tgl_selesai,
-                'departemen_id' => $filter_departemen_id,
-                'status' => $filter_status,
-                'tingkat_resiko' => $filter_tingkat_resiko,
-                'dampak_temuan' => $filter_dampak_temuan
+                'akhir' => $tgl_selesai
             ]) }}" class="bbtn bbtn-secondary bbtn-sm">
                 <span class="material-symbols-outlined" style="font-size:18px;color:#2e7d32;">csv</span>
                 Export Excel / CSV
@@ -26,11 +126,7 @@
                 'bulan' => $bulan,
                 'tahun' => $tahun,
                 'awal' => $tgl_mulai,
-                'akhir' => $tgl_selesai,
-                'departemen_id' => $filter_departemen_id,
-                'status' => $filter_status,
-                'tingkat_resiko' => $filter_tingkat_resiko,
-                'dampak_temuan' => $filter_dampak_temuan
+                'akhir' => $tgl_selesai
             ]) }}" target="_blank" class="bbtn bbtn-primary bbtn-sm">
                 <span class="material-symbols-outlined" style="font-size:18px;">picture_as_pdf</span>
                 Export PDF Dashboard
@@ -82,326 +178,533 @@
         </div>
     </div>
 
-    {{-- Stat Summary Cards --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;" class="fu2">
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#e3f2fd;">
-                <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:22px;">visibility</span>
+    {{-- Top 5 Berry Stat Cards --}}
+    <div class="berry-stat-grid fu2">
+        <div class="berry-stat stat-purple">
+            <div class="stat-avatar">
+                <span class="material-symbols-outlined fil">visibility</span>
             </div>
-            <div>
-                <div class="bstat-val" style="color:#1565c0;">{{ $totalTemuan }}</div>
-                <div class="bstat-lbl">Total Observasi</div>
-            </div>
-        </div>
-
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#fff3e0;">
-                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:22px;">error</span>
-            </div>
-            <div>
-                <div class="bstat-val" style="color:#e65100;">{{ $totalOpen }}</div>
-                <div class="bstat-lbl">Status Open</div>
+            <div class="stat-content">
+                <p class="stat-title">Total Observasi</p>
+                <h3 style="font-size:32px;font-weight:800;margin:0;line-height:1;">{{ $totalTemuan }}</h3>
             </div>
         </div>
 
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#e8f5e9;">
-                <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:22px;">task_alt</span>
+        <div class="berry-stat stat-red">
+            <div class="stat-avatar">
+                <span class="material-symbols-outlined fil">error</span>
             </div>
-            <div>
-                <div class="bstat-val" style="color:#2e7d32;">{{ $totalClosed }}</div>
-                <div class="bstat-lbl">Status Closed</div>
-            </div>
-        </div>
-
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#ffebee;">
-                <span class="material-symbols-outlined fil" style="color:#c62828;font-size:22px;">thumb_down</span>
-            </div>
-            <div>
-                <div class="bstat-val" style="color:#c62828;">{{ $totalNegatif }}</div>
-                <div class="bstat-lbl">Dampak Negatif</div>
+            <div class="stat-content">
+                <p class="stat-title">Open</p>
+                <h3 style="font-size:32px;font-weight:800;margin:0;line-height:1;">{{ $totalOpen }}</h3>
             </div>
         </div>
 
-        <div class="bstat">
-            <div class="bstat-icon" style="background:#eff6ff;">
-                <span class="material-symbols-outlined fil" style="color:#2563eb;font-size:22px;">thumb_up</span>
+        <div class="berry-stat stat-green">
+            <div class="stat-avatar">
+                <span class="material-symbols-outlined fil">task_alt</span>
             </div>
-            <div>
-                <div class="bstat-val" style="color:#2563eb;">{{ $totalPositif }}</div>
-                <div class="bstat-lbl">Dampak Positif</div>
+            <div class="stat-content">
+                <p class="stat-title">Closed</p>
+                <h3 style="font-size:32px;font-weight:800;margin:0;line-height:1;">{{ $totalClosed }}</h3>
+            </div>
+        </div>
+
+        <div class="berry-stat stat-crimson">
+            <div class="stat-avatar">
+                <span class="material-symbols-outlined fil">thumb_down</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-title">Negatif</p>
+                <h3 style="font-size:32px;font-weight:800;margin:0;line-height:1;">{{ $totalNegatif }}</h3>
+            </div>
+        </div>
+
+        <div class="berry-stat stat-blue">
+            <div class="stat-avatar">
+                <span class="material-symbols-outlined fil">thumb_up</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-title">Positif</p>
+                <h3 style="font-size:32px;font-weight:800;margin:0;line-height:1;">{{ $totalPositif }}</h3>
             </div>
         </div>
     </div>
 
-    {{-- 3 Mandatory Charts Grid --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:16px;" class="fu2">
+    {{-- Charts 2x2 Symmetric Grid --}}
+    <div class="charts-2x2-grid fu2">
         
-        {{-- Chart 1: Status BQA (Open vs Closed) --}}
-        <div class="bcard" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                    <span class="material-symbols-outlined" style="color:#e65100;font-size:20px;">donut_small</span>
-                    <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0;">a. Status BQA (Open vs Closed)</h3>
+        {{-- Chart 1: Temuan per Departemen --}}
+        <div class="bcard fu" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;"
+             data-labels="{{ json_encode(array_keys($chartDeptData)) }}"
+             data-values="{{ json_encode(array_values($chartDeptData)) }}"
+             x-data="{
+                 init() {
+                     if (typeof Chart === 'undefined') return;
+                     if (typeof ChartDataLabels !== 'undefined') {
+                         Chart.register(ChartDataLabels);
+                     }
+                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const data = JSON.parse(this.$el.dataset.values);
+                     
+                     let chart = new Chart(this.$refs.canvas, {
+                         type: 'bar',
+                         data: {
+                             labels: labels,
+                             datasets: [{
+                                 label: 'Jumlah Observasi',
+                                 data: data,
+                                 backgroundColor: '#8b5cf6',
+                                 borderColor: '#7c3aed',
+                                 borderWidth: 0,
+                                 borderRadius: 8,
+                                 maxBarThickness: 18
+                             }]
+                         },
+                         options: {
+                             responsive: true, maintainAspectRatio: false,
+                             layout: { padding: { top: 20 } },
+                             plugins: {
+                                 tooltip: {
+                                     callbacks: {
+                                         title: function(ctx) { return ctx[0].label || ''; }
+                                     }
+                                 },
+                                 legend: { display: false },
+                                 datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 11 }, formatter: val => val > 0 ? val : '' }
+                             },
+                             scales: {
+                                 y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                                 x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10, weight: '600' }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
+                             }
+                         }
+                     });
+                     this.$wire.on('bosq-chart-updated', (event) => {
+                         const payload = Array.isArray(event) ? event[0] : event;
+                         if (chart && payload && payload.deptData) {
+                             chart.data.labels = Object.keys(payload.deptData);
+                             chart.data.datasets[0].data = Object.values(payload.deptData);
+                             chart.update();
+                         }
+                     });
+                 }
+             }"
+             wire:ignore>
+            <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Departemen</p>
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvas"></canvas></div>
+        </div>
+
+        {{-- Chart 2: Status Doughnut (SHADCN Donut Chart Replica) --}}
+        <div class="bcard fu1" style="padding:24px; display:flex; flex-direction:column; align-items:center;"
+             data-labels="{{ json_encode(array_keys($chartStatusData)) }}"
+             data-values="{{ json_encode(array_values($chartStatusData)) }}"
+             x-data="{
+                 statusLabels: [],
+                 statusData: [],
+                 colors: ['#c62828', '#2e7d32'],
+                 hiddenSegments: [],
+                 hoveredIndex: null,
+                 activeLabel: 'Total Observasi',
+                 activeValue: 0,
+                 activePercentage: null,
+                 totalValue: 0,
+                 size: 200,
+                 strokeWidth: 26,
+                 
+                 init() {
+                     this.statusLabels = JSON.parse(this.$el.dataset.labels);
+                     this.statusData = JSON.parse(this.$el.dataset.values);
+                     this.recalc();
+
+                     this.$wire.on('bosq-chart-updated', (event) => {
+                         const payload = Array.isArray(event) ? event[0] : event;
+                         if (payload && payload.statusData) {
+                             this.statusLabels = Object.keys(payload.statusData);
+                             this.statusData = Object.values(payload.statusData);
+                             this.hiddenSegments = [];
+                             this.recalc();
+                         }
+                     });
+                 },
+                 
+                 recalc() {
+                     let sum = 0;
+                     this.statusData.forEach((val, i) => {
+                         if (!this.hiddenSegments.includes(i)) {
+                             sum += val;
+                         }
+                     });
+                     this.totalValue = sum;
+                     this.activeValue = sum;
+                     this.activeLabel = 'Total Observasi';
+                     this.activePercentage = null;
+                 },
+                 
+                 get radius() {
+                     return this.size / 2 - this.strokeWidth / 2;
+                 },
+                 
+                 get circumference() {
+                     return 2 * Math.PI * this.radius;
+                 },
+                 
+                 getSegmentProps(idx) {
+                     const val = this.statusData[idx];
+                     const isHidden = this.hiddenSegments.includes(idx);
+                     
+                     if (val === 0 || isHidden || this.totalValue === 0) {
+                         return {
+                             visible: false,
+                             color: 'transparent',
+                             dasharray: '0 1000',
+                             dashoffset: 0
+                         };
+                     }
+                     
+                     let cumulativePercentage = 0;
+                     for (let i = 0; i < idx; i++) {
+                         const precedingVal = this.statusData[i];
+                         const precedingHidden = this.hiddenSegments.includes(i);
+                         if (precedingVal > 0 && !precedingHidden) {
+                             cumulativePercentage += (precedingVal / this.totalValue) * 100;
+                         }
+                     }
+                     
+                     const percentage = (val / this.totalValue) * 100;
+                     const dasharray = `${(percentage / 100) * this.circumference} ${this.circumference}`;
+                     const dashoffset = -((cumulativePercentage / 100) * this.circumference);
+                     
+                     return {
+                         visible: true,
+                         color: this.colors[idx] || '#1976d2',
+                         dasharray: dasharray,
+                         dashoffset: dashoffset
+                     };
+                 },
+                 
+                 toggleSegment(idx) {
+                     if (this.hiddenSegments.includes(idx)) {
+                         this.hiddenSegments = this.hiddenSegments.filter(i => i !== idx);
+                     } else {
+                         this.hiddenSegments.push(idx);
+                     }
+                     this.recalc();
+                 },
+                 
+                 hoverSegment(idx) {
+                     if (idx !== null && !this.hiddenSegments.includes(idx)) {
+                         this.hoveredIndex = idx;
+                         this.activeLabel = this.statusLabels[idx];
+                         this.activeValue = this.statusData[idx];
+                         this.activePercentage = this.totalValue > 0 ? ((this.activeValue / this.totalValue) * 100).toFixed(0) : 0;
+                     } else {
+                         this.hoveredIndex = null;
+                         this.activeLabel = 'Total Observasi';
+                         this.activeValue = this.totalValue;
+                         this.activePercentage = null;
+                     }
+                 }
+             }"
+             wire:ignore>
+            
+            <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px; width:100%;">Proporsi Status BQA</p>
+            
+            <div style="position:relative; width:200px; height:200px; margin-bottom:16px;">
+                <svg width="200" height="200" viewBox="0 0 200 200" class="overflow-visible -rotate-90">
+                    <circle cx="100" cy="100" :r="radius" fill="transparent" stroke="var(--bbor)" :stroke-width="strokeWidth" style="opacity: 0.35;"></circle>
+                    
+                    <circle cx="100" cy="100" :r="radius"
+                            fill="none" pointer-events="stroke"
+                            :stroke="getSegmentProps(0).color"
+                            :stroke-width="strokeWidth"
+                            :stroke-dasharray="getSegmentProps(0).dasharray"
+                            :stroke-dashoffset="getSegmentProps(0).dashoffset"
+                            stroke-linecap="round"
+                            class="transition-all duration-300 origin-center cursor-pointer"
+                            :style="{
+                                filter: hoveredIndex === 0 ? 'drop-shadow(0px 0px 6px ' + colors[0] + ') brightness(1.1)' : 'none',
+                                transform: hoveredIndex === 0 ? 'scale(1.04)' : 'scale(1)',
+                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                display: getSegmentProps(0).visible ? 'inline' : 'none'
+                            }"
+                            @mouseenter="hoverSegment(0)"
+                            @mouseleave="hoverSegment(null)">
+                    </circle>
+
+                    <circle cx="100" cy="100" :r="radius"
+                            fill="none" pointer-events="stroke"
+                            :stroke="getSegmentProps(1).color"
+                            :stroke-width="strokeWidth"
+                            :stroke-dasharray="getSegmentProps(1).dasharray"
+                            :stroke-dashoffset="getSegmentProps(1).dashoffset"
+                            stroke-linecap="round"
+                            class="transition-all duration-300 origin-center cursor-pointer"
+                            :style="{
+                                filter: hoveredIndex === 1 ? 'drop-shadow(0px 0px 6px ' + colors[1] + ') brightness(1.1)' : 'none',
+                                transform: hoveredIndex === 1 ? 'scale(1.04)' : 'scale(1)',
+                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                display: getSegmentProps(1).visible ? 'inline' : 'none'
+                            }"
+                            @mouseenter="hoverSegment(1)"
+                            @mouseleave="hoverSegment(null)">
+                    </circle>
+                </svg>
+                
+                <div style="position: absolute; top: 68px; left: 0; width: 200px; text-align: center; pointer-events: none; z-index: 10; display: block;">
+                    <div style="transition: transform 0.2s ease-out;"
+                         :style="hoveredIndex !== null ? 'transform: scale(1.04);' : 'transform: scale(1);'">
+                        <p style="font-size: 11px; color: var(--btxt2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 auto; max-width: 150px; text-align: center;" class="truncate" x-text="activeLabel"></p>
+                        <p style="font-size: 32px; font-weight: 700; color: var(--btxt); margin: 2px 0 0; line-height: 1; text-align: center;" x-text="activeValue"></p>
+                        <div x-show="activePercentage !== null" style="margin-top: 4px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 600; color: var(--btxt2); text-align: center;" x-text="'[' + activePercentage + '%]'"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div style="position:relative;width:100%;height:250px;display:flex;align-items:center;justify-content:center;"
-                 data-labels="{{ json_encode(array_keys($chartStatusData)) }}"
-                 data-values="{{ json_encode(array_values($chartStatusData)) }}"
-                 x-data="{
-                     init() {
-                         const labels = JSON.parse(this.$el.dataset.labels);
-                         const data = JSON.parse(this.$el.dataset.values);
-                         new Chart(this.$refs.canvasStatus, {
-                             type: 'doughnut',
-                             data: {
-                                 labels: labels,
-                                 datasets: [{
-                                     data: data,
-                                     backgroundColor: ['#e65100', '#2e7d32'],
-                                     borderWidth: 2,
-                                     borderColor: '#ffffff'
-                                 }]
-                             },
-                             options: {
-                                 responsive: true, maintainAspectRatio: false,
-                                 plugins: {
-                                     legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 12 } } },
-                                     datalabels: { color: '#ffffff', font: { weight: 'bold', family: 'Inter', size: 13 } }
-                                 }
-                             }
-                         });
-                     }
-                 }">
-                <canvas x-ref="canvasStatus"></canvas>
+
+            <div style="display:flex; flex-direction:column; gap:4px; width:100%; padding-top:16px; border-top:1px solid var(--bbor);">
+                <template x-for="(label, index) in statusLabels">
+                    <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-150"
+                         :style="{
+                             opacity: hiddenSegments.includes(index) ? '0.4' : '1',
+                             background: hoveredIndex === index ? 'var(--bsur)' : 'transparent'
+                         }"
+                         @click="toggleSegment(index)"
+                         @mouseenter="hoverSegment(index)"
+                         @mouseleave="hoverSegment(null)">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-3 h-3 rounded-full transition-transform duration-150"
+                                  :style="{
+                                      backgroundColor: colors[index],
+                                      transform: hoveredIndex === index ? 'scale(1.25)' : 'scale(1)'
+                                  }"></span>
+                            <span class="text-xs font-semibold" style="color: var(--btxt);" x-text="label"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold" style="color: var(--btxt);" x-text="statusData[index]"></span>
+                            <span class="text-[10px] font-medium text-slate-400" x-text="totalValue > 0 ? '(' + ((statusData[index] / totalValue) * 100).toFixed(0) + '%)' : '(0%)'"></span>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
 
-        {{-- Chart 2: Temuan Per Departemen (Bar Chart) --}}
-        <div class="bcard" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                    <span class="material-symbols-outlined" style="color:var(--bp);font-size:20px;">bar_chart</span>
-                    <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0;">b. Temuan per Departemen</h3>
-                </div>
+        {{-- Chart 3: Temuan Negatif vs Positif per Departemen (Grouped Bar Chart) --}}
+        <div class="bcard fu" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;"
+             data-labels="{{ json_encode($chartDampakLabels) }}"
+             data-negatif="{{ json_encode($chartDampakNegatif) }}"
+             data-positif="{{ json_encode($chartDampakPositif) }}"
+             x-data="{
+                 init() {
+                     if (typeof Chart === 'undefined') return;
+                     if (typeof ChartDataLabels !== 'undefined') {
+                         Chart.register(ChartDataLabels);
+                     }
+                     const labels = JSON.parse(this.$el.dataset.labels);
+                     const negatifData = JSON.parse(this.$el.dataset.negatif);
+                     const positifData = JSON.parse(this.$el.dataset.positif);
+                     
+                     let chart = new Chart(this.$refs.canvasDampak, {
+                         type: 'bar',
+                         data: {
+                             labels: labels,
+                             datasets: [
+                                 {
+                                     label: 'Negatif (Butuh Perbaikan)',
+                                     data: negatifData,
+                                     backgroundColor: '#ef4444',
+                                     borderColor: '#dc2626',
+                                     borderRadius: 8,
+                                     borderSkipped: false,
+                                     maxBarThickness: 14
+                                 },
+                                 {
+                                     label: 'Positif (Perilaku Baik)',
+                                     data: positifData,
+                                     backgroundColor: '#3b82f6',
+                                     borderColor: '#2563eb',
+                                     borderRadius: 8,
+                                     borderSkipped: false,
+                                     maxBarThickness: 14
+                                 }
+                             ]
+                         },
+                         options: {
+                             responsive: true,
+                             maintainAspectRatio: false,
+                             plugins: {
+                                 legend: {
+                                     position: 'bottom',
+                                     labels: {
+                                         font: { family: 'Inter', size: 11 },
+                                         usePointStyle: true,
+                                         pointStyle: 'rectRounded'
+                                     }
+                                 },
+                                 datalabels: {
+                                     anchor: 'end',
+                                     align: 'top',
+                                     color: 'var(--btxt)',
+                                     font: { weight: 'bold', family: 'Inter', size: 11 },
+                                     formatter: (val) => val > 0 ? val : ''
+                                 }
+                             },
+                             scales: {
+                                 y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                 x: { ticks: { font: { family: 'Inter', size: 10, weight: '600' } }, grid: { display: false } }
+                             }
+                         }
+                     });
+
+                     this.$wire.on('bosq-chart-updated', (evt) => {
+                         const payload = Array.isArray(evt) ? evt[0] : evt;
+                         if (chart && payload && payload.dampakLabels) {
+                             chart.data.labels = payload.dampakLabels;
+                             chart.data.datasets[0].data = payload.dampakNegatifData;
+                             chart.data.datasets[1].data = payload.dampakPositifData;
+                             chart.update();
+                         }
+                     });
+                 }
+             }"
+             wire:ignore>
+            <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan Negatif vs Positif per Departemen</p>
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvasDampak"></canvas></div>
+        </div>
+
+        {{-- Chart 4: Observasi tiap Sub Area --}}
+        <div class="bcard fu3" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;">
+                <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0;">Observasi tiap Sub Area</p>
+                <select wire:model.live="filterDepartemenSubArea" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                    @foreach($departemens as $dept)
+                        <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                    @endforeach
+                </select>
             </div>
-            <div style="position:relative;width:100%;height:250px;"
-                 data-labels="{{ json_encode(array_keys($chartDeptData)) }}"
-                 data-values="{{ json_encode(array_values($chartDeptData)) }}"
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"
+                 data-labels="{{ $subAreaLabels }}"
+                 data-values="{{ $subAreaData }}"
                  x-data="{
                      init() {
+                         if (typeof Chart === 'undefined') return;
+                         if (typeof ChartDataLabels !== 'undefined') {
+                             Chart.register(ChartDataLabels);
+                         }
                          const labels = JSON.parse(this.$el.dataset.labels);
                          const data = JSON.parse(this.$el.dataset.values);
-                         new Chart(this.$refs.canvasDept, {
+                         
+                         let chart = new Chart(this.$refs.canvas, {
                              type: 'bar',
                              data: {
                                  labels: labels,
                                  datasets: [{
                                      label: 'Jumlah Observasi',
                                      data: data,
-                                     backgroundColor: 'rgba(25, 118, 210, 0.75)',
-                                     borderColor: '#1976d2',
-                                     borderRadius: 6
+                                     backgroundColor: '#f59e0b',
+                                     borderColor: '#d97706',
+                                     borderWidth: 0,
+                                     borderRadius: 8,
+                                     maxBarThickness: 18
                                  }]
                              },
                              options: {
                                  responsive: true, maintainAspectRatio: false,
+                                 layout: { padding: { top: 20 } },
                                  plugins: {
+                                     tooltip: {
+                                         callbacks: {
+                                             title: function(ctx) { return ctx[0].label || ''; }
+                                         }
+                                     },
                                      legend: { display: false },
-                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 11 } }
+                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 11 }, formatter: val => val > 0 ? val : '' }
                                  },
                                  scales: {
-                                     y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } } },
-                                     x: { ticks: { font: { family: 'Inter', size: 10 } } }
+                                     y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10, weight: '600' }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
                                  }
                              }
                          });
+                         this.$wire.on('bosq-chart-updated', (event) => {
+                             const payload = Array.isArray(event) ? event[0] : event;
+                             if (chart && payload && payload.subAreaLabels) {
+                                 chart.data.labels = JSON.parse(payload.subAreaLabels);
+                                 chart.data.datasets[0].data = JSON.parse(payload.subAreaData);
+                                 chart.update();
+                             }
+                         });
                      }
-                 }">
-                <canvas x-ref="canvasDept"></canvas>
+                 }"
+                 wire:ignore>
+                <canvas x-ref="canvas"></canvas>
             </div>
         </div>
 
-        {{-- Chart 3: Temuan Negatif vs Positif --}}
-        <div class="bcard" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-                    <span class="material-symbols-outlined" style="color:#2563eb;font-size:20px;">pie_chart</span>
-                    <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0;">c. Temuan Negatif vs Positif</h3>
-                </div>
-            </div>
-            <div style="position:relative;width:100%;height:250px;display:flex;align-items:center;justify-content:center;"
-                 data-labels="{{ json_encode(array_keys($chartDampakData)) }}"
-                 data-values="{{ json_encode(array_values($chartDampakData)) }}"
+        {{-- Chart 5: Temuan per Elemen QFS --}}
+        <div class="bcard fu3" style="padding:24px; display:flex; flex-direction:column; justify-content:space-between; grid-column: 1 / -1;">
+            <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Elemen QFS</p>
+            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"
+                 data-labels="{{ $elemenLabels }}"
+                 data-values="{{ $elemenData }}"
                  x-data="{
                      init() {
+                         if (typeof Chart === 'undefined') return;
+                         if (typeof ChartDataLabels !== 'undefined') {
+                             Chart.register(ChartDataLabels);
+                         }
                          const labels = JSON.parse(this.$el.dataset.labels);
                          const data = JSON.parse(this.$el.dataset.values);
-                         new Chart(this.$refs.canvasDampak, {
-                             type: 'pie',
+                         
+                         let chart = new Chart(this.$refs.canvasElemen, {
+                             type: 'bar',
                              data: {
                                  labels: labels,
                                  datasets: [{
+                                     label: 'Jumlah Observasi',
                                      data: data,
-                                     backgroundColor: ['#ef4444', '#2563eb'],
-                                     borderWidth: 2,
-                                     borderColor: '#ffffff'
+                                     backgroundColor: '#3b82f6',
+                                     borderColor: '#2563eb',
+                                     borderWidth: 0,
+                                     borderRadius: 8,
+                                     maxBarThickness: 18
                                  }]
                              },
                              options: {
                                  responsive: true, maintainAspectRatio: false,
+                                 layout: { padding: { top: 20 } },
                                  plugins: {
-                                     legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 12 } } },
-                                     datalabels: { color: '#ffffff', font: { weight: 'bold', family: 'Inter', size: 13 } }
+                                     tooltip: {
+                                         callbacks: {
+                                             title: function(ctx) { return ctx[0].label || ''; }
+                                         }
+                                     },
+                                     legend: { display: false },
+                                     datalabels: { anchor: 'end', align: 'top', color: 'var(--btxt)', font: { weight: 'bold', family: 'Inter', size: 11 }, formatter: val => val > 0 ? val : '' }
+                                 },
+                                 scales: {
+                                     y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                                     x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10, weight: '600' }, autoSkip: false, maxRotation: 45, minRotation: 0 } }
                                  }
                              }
                          });
+                         this.$wire.on('bosq-chart-updated', (event) => {
+                             const payload = Array.isArray(event) ? event[0] : event;
+                             if (chart && payload && payload.elemenLabels) {
+                                 chart.data.labels = JSON.parse(payload.elemenLabels);
+                                 chart.data.datasets[0].data = JSON.parse(payload.elemenData);
+                                 chart.update();
+                             }
+                         });
                      }
-                 }">
-                <canvas x-ref="canvasDampak"></canvas>
+                 }"
+                 wire:ignore>
+                <canvas x-ref="canvasElemen"></canvas>
             </div>
         </div>
 
     </div>
 
-    {{-- Tabel Semua Temuan dengan Filter --}}
-    <div class="bcard fu3">
-        <div class="bcard-header" style="justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div class="bcard-hicon" style="background:var(--bp-light);">
-                    <span class="material-symbols-outlined fil" style="color:var(--bp-dark);font-size:20px;">list_alt</span>
-                </div>
-                <div>
-                    <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Daftar Observasi BOS'Q</h3>
-                    <p style="font-size:12px;color:var(--btxt2);margin:0;">Kelola dan tinjau seluruh data observasi yang tercatat</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- Filter Table Header --}}
-        <div style="padding:16px 20px;border-bottom:1px solid var(--bbor);background:var(--bsur);display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:10px;">
-            <div>
-                <label class="blabel" style="font-size:10.5px;margin-bottom:4px;">Departemen</label>
-                <select wire:model.live="filter_departemen_id" class="binput" style="padding:6px 10px;font-size:12px;">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departemens as $dept)
-                        <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="blabel" style="font-size:10.5px;margin-bottom:4px;">Sub Area</label>
-                <select wire:model.live="filter_sub_area_id" class="binput" style="padding:6px 10px;font-size:12px;">
-                    <option value="">Semua Sub Area</option>
-                    @foreach($subAreas as $sa)
-                        <option value="{{ $sa->id }}">{{ $sa->nama_sub_area }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="blabel" style="font-size:10.5px;margin-bottom:4px;">Status</label>
-                <select wire:model.live="filter_status" class="binput" style="padding:6px 10px;font-size:12px;">
-                    <option value="">Semua Status</option>
-                    <option value="open">Open</option>
-                    <option value="closed">Closed</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="blabel" style="font-size:10.5px;margin-bottom:4px;">Tingkat Risiko</label>
-                <select wire:model.live="filter_tingkat_resiko" class="binput" style="padding:6px 10px;font-size:12px;">
-                    <option value="">Semua Risiko</option>
-                    <option value="food_safety_risk">Food Safety Risk</option>
-                    <option value="major_quality_risk">Major Quality Risk</option>
-                    <option value="minor_quality_risk">Minor Quality Risk</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="blabel" style="font-size:10.5px;margin-bottom:4px;">Dampak Observasi</label>
-                <select wire:model.live="filter_dampak_temuan" class="binput" style="padding:6px 10px;font-size:12px;">
-                    <option value="">Semua Dampak</option>
-                    <option value="negatif">Negatif</option>
-                    <option value="positif">Positif</option>
-                </select>
-            </div>
-        </div>
-
-        {{-- Table Content --}}
-        <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
-                <thead>
-                    <tr style="background:var(--bsur);border-bottom:1px solid var(--bbor);color:var(--btxt2);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">
-                        <th style="padding:12px 16px;">ID / Tanggal</th>
-                        <th style="padding:12px 16px;">Departemen & Sub Area</th>
-                        <th style="padding:12px 16px;">Observer & Auditee</th>
-                        <th style="padding:12px 16px;">Risiko & Dampak</th>
-                        <th style="padding:12px 16px;">Status</th>
-                        <th style="padding:12px 16px;text-align:center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($temuans as $t)
-                        @php
-                            $isClosed = in_array($t->status, ['closed', 'closed_acc']);
-                            $statusBadgeClass = $isClosed ? 'sbadge-closed' : 'sbadge-open';
-                            $statusText = $isClosed ? 'CLOSED' : 'OPEN';
-                        @endphp
-                        <tr style="border-bottom:1px solid var(--bbor);transition:background 0.15s;" onmouseover="this.style.background='var(--bsur)'" onmouseout="this.style.background='none'">
-                            <td style="padding:12px 16px;">
-                                <div style="font-weight:700;color:var(--bp);">#{{ $t->id }}</div>
-                                <div style="font-size:11.5px;color:var(--btxt2);">{{ $t->tanggal_temuan->format('d/m/Y') }}</div>
-                            </td>
-                            <td style="padding:12px 16px;">
-                                <div style="font-weight:600;color:var(--btxt);">{{ $t->departemen->nama_departemen ?? '-' }}</div>
-                                <div style="font-size:12px;color:var(--btxt2);">
-                                    {{ $t->subArea->nama_sub_area ?? '-' }}
-                                    @if($t->detail_sub_area) <span>({{ $t->detail_sub_area }})</span> @endif
-                                </div>
-                            </td>
-                            <td style="padding:12px 16px;">
-                                <div style="font-size:12.5px;"><strong>Observer:</strong> {{ $t->pelapor->name ?? '-' }}</div>
-                                <div style="font-size:12px;color:var(--btxt2);"><strong>Auditee:</strong> {{ $t->auditee->name ?? '-' }}</div>
-                            </td>
-                            <td style="padding:12px 16px;">
-                                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                                    <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--bsur);border:1px solid var(--bbor);text-transform:uppercase;">
-                                        {{ str_replace('_', ' ', $t->tingkat_resiko) }}
-                                    </span>
-                                    <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;{{ $t->dampak_temuan === 'negatif' ? 'background:#ffebee;color:#c62828;' : 'background:#eff6ff;color:#2563eb;' }}">
-                                        {{ strtoupper($t->dampak_temuan) }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td style="padding:12px 16px;">
-                                <span class="sbadge {{ $statusBadgeClass }}">{{ $statusText }}</span>
-                            </td>
-                            <td style="padding:12px 16px;text-align:center;">
-                                <a href="{{ route('bosq.temuan.detail', $t->id) }}" class="bbtn bbtn-secondary bbtn-sm" style="text-decoration:none;">
-                                    <span class="material-symbols-outlined" style="font-size:16px;">visibility</span>
-                                    Detail
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" style="padding:36px;text-align:center;color:var(--btxt2);">
-                                Belum ada data observasi yang sesuai dengan filter.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        @if($temuans->hasPages())
-            <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
-                {{ $temuans->links() }}
-            </div>
-        @endif
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" data-navigate-once></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" data-navigate-once></script>
 </div>

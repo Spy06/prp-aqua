@@ -82,7 +82,7 @@ Temuan bergerak dalam 4 status utama:
 - Pada lembar detail temuan (`/temuan/{id}`), NIK Pelapor dan NIK PIC **disembunyikan/dihapus**, digantikan dengan tampilan **Nama Departemen** masing-masing user untuk privasi data karyawan.
 
 ### 2.6. Master Data Management
-- **Master Karyawan & Divisi Manajemen**: Pengelolaan data NIK, Nama, Departemen, Status Aktif, dan penanda Divisi Manajemen.
+- **Master PIC Management**: Pengelolaan data NIK, Nama, Departemen, dan Status Aktif PIC yang dapat ditunjuk oleh pelapor saat mengajukan temuan audit.
 - **Master Departemen**: Pengelolaan daftar unit kerja/departemen di perusahaan.
 - **Master Klausul PRP**: Pengelolaan daftar klausul mutu dan prasyarat operasional.
 - **Master Sub Area**: Pengelolaan sub-lokasi fisik per departemen.

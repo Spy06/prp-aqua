@@ -79,11 +79,15 @@ class FormTemuan extends Component
         $query = trim($this->picSearch);
 
         if (strlen($query) >= 1) {
-            $this->picResults = User::where('role', 'karyawan')
+            $this->picResults = User::whereHas('karyawan', function ($q) {
+                    $q->where('status_aktif', true);
+                })
+                ->where('role', '!=', 'superadmin')
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', '%' . $query . '%')
                         ->orWhere('nik', 'like', '%' . $query . '%');
                 })
+                ->orderBy('name', 'asc')
                 ->take(15)
                 ->get();
         } else {

@@ -146,7 +146,7 @@ class MasterAkunUser extends Component
             'edit_departemen_id' => 'nullable|exists:departemens,id',
             'edit_role'          => 'required|in:karyawan,qa,superadmin',
             'edit_no_whatsapp'   => 'required|string|regex:/^628[0-9]{8,12}$/',
-            'edit_password'      => 'nullable|string|min:4',
+            'edit_password'      => 'nullable|string|min:5|max:100',
         ]);
 
         $oldNik = $user->nik;

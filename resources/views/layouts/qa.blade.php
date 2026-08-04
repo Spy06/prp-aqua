@@ -499,8 +499,8 @@
                     <span>Manajemen Akun User</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">group</span>
-                    <span>Master Karyawan</span>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">badge</span>
+                    <span>Master PIC</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.departemen') ? 'fil' : '' }}">domain</span>
@@ -573,8 +573,8 @@
 
                 <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
                 <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic">group</span>
-                    <span>Karyawan</span>
+                    <span class="material-symbols-outlined ic">badge</span>
+                    <span>Master PIC</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
                     <span class="material-symbols-outlined ic">domain</span>

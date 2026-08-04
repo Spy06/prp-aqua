@@ -166,94 +166,145 @@ class BosqExportController extends Controller
     }
 
     /**
-     * Export CSV Rekap Kepatuhan
+     * Data helper untuk Rekap Kepatuhan (Summary Dept & Matrix Detail)
+     */
+    protected function getRekapKepatuhanData(string $selectedDate): array
+    {
+        $dateObj = Carbon::parse($selectedDate);
+        $monthShort = strtoupper($dateObj->translatedFormat('M'));
+        $monthName  = strtoupper($dateObj->translatedFormat('M Y'));
+
+        $year = $dateObj->year;
+        $month = sprintf('%02d', $dateObj->month);
+        $lastDay = $dateObj->daysInMonth;
+
+        $w1_start = "{$year}-{$month}-01";
+        $w1_end   = "{$year}-{$month}-07";
+        $w2_start = "{$year}-{$month}-08";
+        $w2_end   = "{$year}-{$month}-14";
+        $w3_start = "{$year}-{$month}-15";
+        $w3_end   = "{$year}-{$month}-21";
+        $w4_start = "{$year}-{$month}-22";
+        $w4_end   = "{$year}-{$month}-" . sprintf('%02d', $lastDay);
+
+        $w1_label = Carbon::parse($w1_start)->format('d') . '-' . Carbon::parse($w1_end)->format('d');
+        $w2_label = Carbon::parse($w2_start)->format('d') . '-' . Carbon::parse($w2_end)->format('d');
+        $w3_label = Carbon::parse($w3_start)->format('d') . '-' . Carbon::parse($w3_end)->format('d');
+        $w4_label = Carbon::parse($w4_start)->format('d') . '-' . Carbon::parse($w4_end)->format('d');
+
+        $weeks = [
+            'w1' => ['start' => $w1_start, 'end' => $w1_end, 'label' => $w1_label, 'title' => 'WEEK 1'],
+            'w2' => ['start' => $w2_start, 'end' => $w2_end, 'label' => $w2_label, 'title' => 'WEEK 2'],
+            'w3' => ['start' => $w3_start, 'end' => $w3_end, 'label' => $w3_label, 'title' => 'WEEK 3'],
+            'w4' => ['start' => $w4_start, 'end' => $w4_end, 'label' => $w4_label, 'title' => 'WEEK 4'],
+        ];
+
+        $departemens = Departemen::orderBy('nama_departemen')->get();
+
+        $matrixData  = [];
+        $deptSummary = [];
+
+        foreach ($departemens as $dept) {
+            $karyawans = Karyawan::with('user')
+                ->where('departemen_id', $dept->id)
+                ->where('status_aktif', true)
+                ->orderBy('nama')
+                ->get();
+
+            $memberCount = $karyawans->count();
+            $membersData = [];
+
+            $deptWeekTotals = [
+                'w1' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w2' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w3' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w4' => ['realisasi' => 0, 'target' => $memberCount * 2],
+            ];
+
+            foreach ($karyawans as $k) {
+                $scores = [];
+
+                foreach ($weeks as $wKey => $wVal) {
+                    $count = 0;
+                    if ($k->user) {
+                        $count = BosqTemuan::where('pelapor_id', $k->user->id)
+                            ->whereBetween('tanggal_temuan', [$wVal['start'], $wVal['end']])
+                            ->count();
+                    }
+
+                    $targetIndividu = 2;
+                    $persenIndividu = min(100, round(($count / $targetIndividu) * 100));
+
+                    $scores[$wKey] = [
+                        'count'  => $count,
+                        'target' => $targetIndividu,
+                        'persen' => $persenIndividu,
+                    ];
+
+                    $deptWeekTotals[$wKey]['realisasi'] += $count;
+                }
+
+                $membersData[] = [
+                    'nik'    => $k->nik,
+                    'nama'   => $k->nama,
+                    'scores' => $scores,
+                ];
+            }
+
+            $deptScores = [];
+            foreach ($weeks as $wKey => $wVal) {
+                $targetDept = $deptWeekTotals[$wKey]['target'];
+                $realisasiDept = $deptWeekTotals[$wKey]['realisasi'];
+
+                if ($targetDept > 0) {
+                    $persenDept = min(100, round(($realisasiDept / $targetDept) * 100));
+                } else {
+                    $persenDept = 0;
+                }
+
+                $deptScores[$wKey] = [
+                    'realisasi' => $realisasiDept,
+                    'target'    => $targetDept,
+                    'persen'    => $persenDept,
+                ];
+            }
+
+            $deptSummary[] = [
+                'nama'   => strtoupper($dept->nama_departemen),
+                'scores' => $deptScores,
+            ];
+
+            $matrixData[] = [
+                'departemen_id'   => $dept->id,
+                'nama_departemen' => strtoupper($dept->nama_departemen),
+                'members'         => $membersData,
+            ];
+        }
+
+        return [
+            'monthShort'  => $monthShort,
+            'monthName'   => $monthName,
+            'weeks'       => $weeks,
+            'deptSummary' => $deptSummary,
+            'matrixData'  => $matrixData,
+        ];
+    }
+
+    /**
+     * Export CSV Rekap Kepatuhan (Matriks Excel 2-Tabel)
      */
     public function rekapExcel(Request $request)
     {
         $this->requireQa();
 
         $selectedDate = $request->input('date', Carbon::now()->toDateString());
-        $dateObj = Carbon::parse($selectedDate);
-        $startOfWeek = $dateObj->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
-        $endOfWeek   = $dateObj->copy()->endOfWeek(Carbon::SUNDAY)->toDateString();
-        $isoWeek     = $dateObj->isoWeek();
-        $isoYear     = $dateObj->isoWeekYear();
+        $data = $this->getRekapKepatuhanData($selectedDate);
 
-        $bom = "\xEF\xBB\xBF";
-        $header = [
-            'Minggu Ke', 'Tahun', 'Periode Minggu', 'Departemen',
-            'NIK Karyawan', 'Nama Karyawan', 'Target Laporan', 'Realisasi Laporan',
-            'Status Kepatuhan Individu', 'Status Kepatuhan Departemen'
-        ];
+        $filename = "BOSQ_Rekap_Kepatuhan_BQA_" . str_replace(' ', '_', $data['monthName']) . ".xls";
 
-        $departemens = Departemen::orderBy('nama_departemen')->get();
-        $rows = [];
-
-        foreach ($departemens as $dept) {
-            $anggotaList = Karyawan::with('user')
-                ->where('departemen_id', $dept->id)
-                ->where('is_anggota_divisi_manajemen', true)
-                ->where('status_aktif', true)
-                ->orderBy('nama')
-                ->get();
-
-            $anggotaCount = $anggotaList->count();
-            $targetDept = $anggotaCount * 2;
-            $realisasiDept = 0;
-
-            $deptRows = [];
-            foreach ($anggotaList as $k) {
-                $realisasiIndividu = 0;
-                if ($k->user) {
-                    $realisasiIndividu = BosqTemuan::where('pelapor_id', $k->user->id)
-                        ->whereBetween('tanggal_temuan', [$startOfWeek, $endOfWeek])
-                        ->count();
-                }
-                $realisasiDept += $realisasiIndividu;
-
-                $deptRows[] = [
-                    $k->nik,
-                    $k->nama,
-                    2,
-                    $realisasiIndividu,
-                    $realisasiIndividu >= 2 ? 'Tercapai' : 'Belum Tercapai',
-                ];
-            }
-
-            $statusDeptStr = ($anggotaCount === 0) ? 'Belum Ada Anggota Terdaftar' : ($realisasiDept >= $targetDept ? 'Target Tercapai' : 'Belum Tercapai');
-
-            if ($anggotaCount === 0) {
-                $rows[] = [
-                    $isoWeek, $isoYear, "{$startOfWeek} s/d {$endOfWeek}", $dept->nama_departemen,
-                    '-', '- (Tanpa Anggota Divisi Manajemen)', 0, 0,
-                    '-', $statusDeptStr
-                ];
-            } else {
-                foreach ($deptRows as $dr) {
-                    $rows[] = [
-                        $isoWeek, $isoYear, "{$startOfWeek} s/d {$endOfWeek}", $dept->nama_departemen,
-                        $dr[0], $dr[1], $dr[2], $dr[3], $dr[4], $statusDeptStr
-                    ];
-                }
-            }
-        }
-
-        $callback = function () use ($bom, $header, $rows) {
-            $file = fopen('php://output', 'w');
-            fwrite($file, $bom);
-            fputcsv($file, $header);
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        $filename = "BOSQ_Rekap_Kepatuhan_Minggu_{$isoWeek}_{$isoYear}.csv";
-
-        return response()->stream($callback, 200, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-        ]);
+        return response()->view('excel.bosq-rekap', $data)
+            ->header('Content-Type', 'application/vnd.ms-excel; charset=UTF-8')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     /**
@@ -264,72 +315,10 @@ class BosqExportController extends Controller
         $this->requireQa();
 
         $selectedDate = $request->input('date', Carbon::now()->toDateString());
-        $dateObj = Carbon::parse($selectedDate);
-        $startOfWeek = $dateObj->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
-        $endOfWeek   = $dateObj->copy()->endOfWeek(Carbon::SUNDAY)->toDateString();
-        $isoWeek     = $dateObj->isoWeek();
-        $isoYear     = $dateObj->isoWeekYear();
+        $data = $this->getRekapKepatuhanData($selectedDate);
 
-        $weekLabel = "Minggu ke-{$isoWeek} ({$isoYear}): " . Carbon::parse($startOfWeek)->translatedFormat('d M Y') . " s/d " . Carbon::parse($endOfWeek)->translatedFormat('d M Y');
+        $pdf = Pdf::loadView('pdf.bosq-rekap', $data)->setPaper('a4', 'portrait');
 
-        $departemens = Departemen::orderBy('nama_departemen')->get();
-        $rekapData = [];
-        $totalTarget = 0;
-        $totalRealisasi = 0;
-
-        foreach ($departemens as $dept) {
-            $anggotaList = Karyawan::with('user')
-                ->where('departemen_id', $dept->id)
-                ->where('is_anggota_divisi_manajemen', true)
-                ->where('status_aktif', true)
-                ->orderBy('nama')
-                ->get();
-
-            $anggotaCount = $anggotaList->count();
-            $targetDept = $anggotaCount * 2;
-            $realisasiDept = 0;
-            $individuList = [];
-
-            foreach ($anggotaList as $k) {
-                $realisasiIndividu = 0;
-                if ($k->user) {
-                    $realisasiIndividu = BosqTemuan::where('pelapor_id', $k->user->id)
-                        ->whereBetween('tanggal_temuan', [$startOfWeek, $endOfWeek])
-                        ->count();
-                }
-                $realisasiDept += $realisasiIndividu;
-
-                $individuList[] = [
-                    'nik'       => $k->nik,
-                    'nama'      => $k->nama,
-                    'target'    => 2,
-                    'realisasi' => $realisasiIndividu,
-                    'status'    => $realisasiIndividu >= 2 ? 'Tercapai' : 'Belum',
-                ];
-            }
-
-            if ($anggotaCount > 0) {
-                $totalTarget += $targetDept;
-                $totalRealisasi += $realisasiDept;
-            }
-
-            $rekapData[] = [
-                'departemen'    => $dept->nama_departemen,
-                'anggota_count' => $anggotaCount,
-                'target'        => $targetDept,
-                'realisasi'     => $realisasiDept,
-                'status'        => $anggotaCount === 0 ? 'no_members' : ($realisasiDept >= $targetDept ? 'tercapai' : 'belum'),
-                'individu_list' => $individuList,
-            ];
-        }
-
-        $pdf = Pdf::loadView('pdf.bosq-rekap', [
-            'weekLabel'      => $weekLabel,
-            'rekapData'      => $rekapData,
-            'totalTarget'    => $totalTarget,
-            'totalRealisasi' => $totalRealisasi,
-        ])->setPaper('a4', 'portrait');
-
-        return $pdf->stream("BOSQ_Rekap_Kepatuhan_Minggu_{$isoWeek}_{$isoYear}.pdf");
+        return $pdf->stream("BOSQ_Rekap_Kepatuhan_BQA_" . str_replace(' ', '_', $data['monthName']) . ".pdf");
     }
 }

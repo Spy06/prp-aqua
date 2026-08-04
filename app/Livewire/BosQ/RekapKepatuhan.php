@@ -5,129 +5,181 @@ namespace App\Livewire\BosQ;
 use App\Models\BosqTemuan;
 use App\Models\Departemen;
 use App\Models\Karyawan;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 
 class RekapKepatuhan extends Component
 {
-    public string $selected_date = '';
-    public ?int $expanded_departemen_id = null;
+    public string $bulan_tahun = '';
+    
+    // Tanggal kustom untuk Week 1 s/d Week 4
+    public string $week1_start = '';
+    public string $week1_end   = '';
+    
+    public string $week2_start = '';
+    public string $week2_end   = '';
+    
+    public string $week3_start = '';
+    public string $week3_end   = '';
+    
+    public string $week4_start = '';
+    public string $week4_end   = '';
 
     public function mount(): void
     {
-        $this->selected_date = Carbon::now()->toDateString();
+        $this->bulan_tahun = Carbon::now()->format('Y-m');
+        $this->generateDefaultWeeks();
     }
 
-    public function prevWeek(): void
+    public function updatedBulanTahun(): void
     {
-        $this->selected_date = Carbon::parse($this->selected_date)->subWeek()->toDateString();
+        $this->generateDefaultWeeks();
     }
 
-    public function nextWeek(): void
+    /**
+     * Set patokan tanggal default Week 1-4 berdasarkan bulan yang dipilih.
+     */
+    public function generateDefaultWeeks(): void
     {
-        $this->selected_date = Carbon::parse($this->selected_date)->addWeek()->toDateString();
-    }
-
-    public function currentWeek(): void
-    {
-        $this->selected_date = Carbon::now()->toDateString();
-    }
-
-    public function toggleExpand(int $deptId): void
-    {
-        if ($this->expanded_departemen_id === $deptId) {
-            $this->expanded_departemen_id = null;
-        } else {
-            $this->expanded_departemen_id = $deptId;
+        try {
+            $date = Carbon::parse($this->bulan_tahun . '-01');
+        } catch (\Exception $e) {
+            $date = Carbon::now()->startOfMonth();
+            $this->bulan_tahun = $date->format('Y-m');
         }
+
+        $year = $date->year;
+        $month = sprintf('%02d', $date->month);
+        $lastDay = $date->daysInMonth;
+
+        // Week 1: tgl 1 - 07
+        $this->week1_start = "{$year}-{$month}-01";
+        $this->week1_end   = "{$year}-{$month}-07";
+
+        // Week 2: tgl 08 - 14
+        $this->week2_start = "{$year}-{$month}-08";
+        $this->week2_end   = "{$year}-{$month}-14";
+
+        // Week 3: tgl 15 - 21
+        $this->week3_start = "{$year}-{$month}-15";
+        $this->week3_end   = "{$year}-{$month}-21";
+
+        // Week 4: tgl 22 - akhir bulan
+        $this->week4_start = "{$year}-{$month}-22";
+        $this->week4_end   = "{$year}-{$month}-" . sprintf('%02d', $lastDay);
     }
 
     public function render()
     {
-        $dateObj = Carbon::parse($this->selected_date);
-        $startOfWeek = $dateObj->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
-        $endOfWeek   = $dateObj->copy()->endOfWeek(Carbon::SUNDAY)->toDateString();
-        $isoWeek     = $dateObj->isoWeek();
-        $isoYear     = $dateObj->isoWeekYear();
+        $dateObj = Carbon::parse($this->bulan_tahun . '-01');
+        $monthShort = strtoupper($dateObj->translatedFormat('M')); // e.g. JUL
+        $monthName  = strtoupper($dateObj->translatedFormat('M Y')); // e.g. JULI 2026
 
-        $weekLabel = "Minggu ke-{$isoWeek} ({$isoYear}): " . Carbon::parse($startOfWeek)->translatedFormat('d M Y') . " s/d " . Carbon::parse($endOfWeek)->translatedFormat('d M Y');
+        // Label rentang tanggal per week untuk header tabel
+        $w1_label = Carbon::parse($this->week1_start)->format('d') . '-' . Carbon::parse($this->week1_end)->format('d');
+        $w2_label = Carbon::parse($this->week2_start)->format('d') . '-' . Carbon::parse($this->week2_end)->format('d');
+        $w3_label = Carbon::parse($this->week3_start)->format('d') . '-' . Carbon::parse($this->week3_end)->format('d');
+        $w4_label = Carbon::parse($this->week4_start)->format('d') . '-' . Carbon::parse($this->week4_end)->format('d');
 
+        $weeks = [
+            'w1' => ['start' => $this->week1_start, 'end' => $this->week1_end, 'label' => $w1_label, 'title' => 'WEEK 1'],
+            'w2' => ['start' => $this->week2_start, 'end' => $this->week2_end, 'label' => $w2_label, 'title' => 'WEEK 2'],
+            'w3' => ['start' => $this->week3_start, 'end' => $this->week3_end, 'label' => $w3_label, 'title' => 'WEEK 3'],
+            'w4' => ['start' => $this->week4_start, 'end' => $this->week4_end, 'label' => $w4_label, 'title' => 'WEEK 4'],
+        ];
+
+        // Ambil semua departemen
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
-        $rekapData = [];
-        $totalTargetSemua = 0;
-        $totalRealisasiSemua = 0;
+        $matrixData  = [];
+        $deptSummary = [];
 
         foreach ($departemens as $dept) {
-            // Ambil semua karyawan anggota divisi manajemen aktif di departemen ini
-            $anggotaList = Karyawan::with('user')
+            // Ambil anggota karyawan di departemen ini
+            $karyawans = Karyawan::with('user')
                 ->where('departemen_id', $dept->id)
-                ->where('is_anggota_divisi_manajemen', true)
                 ->where('status_aktif', true)
                 ->orderBy('nama')
                 ->get();
 
-            $anggotaCount = $anggotaList->count();
-            $targetDept = $anggotaCount * 2; // Target 2 laporan/minggu per anggota
+            $memberCount = $karyawans->count();
+            $membersData = [];
 
-            $realisasiDept = 0;
-            $individuList = [];
+            // Hitungan total per-week per-departemen
+            $deptWeekTotals = [
+                'w1' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w2' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w3' => ['realisasi' => 0, 'target' => $memberCount * 2],
+                'w4' => ['realisasi' => 0, 'target' => $memberCount * 2],
+            ];
 
-            foreach ($anggotaList as $k) {
-                $realisasiIndividu = 0;
-                if ($k->user) {
-                    $realisasiIndividu = BosqTemuan::where('pelapor_id', $k->user->id)
-                        ->whereBetween('tanggal_temuan', [$startOfWeek, $endOfWeek])
-                        ->count();
+            foreach ($karyawans as $k) {
+                $scores = [];
+
+                foreach ($weeks as $wKey => $wVal) {
+                    $count = 0;
+                    if ($k->user) {
+                        $count = BosqTemuan::where('pelapor_id', $k->user->id)
+                            ->whereBetween('tanggal_temuan', [$wVal['start'], $wVal['end']])
+                            ->count();
+                    }
+
+                    $targetIndividu = 2;
+                    $persenIndividu = min(100, round(($count / $targetIndividu) * 100));
+
+                    $scores[$wKey] = [
+                        'count'  => $count,
+                        'target' => $targetIndividu,
+                        'persen' => $persenIndividu,
+                    ];
+
+                    $deptWeekTotals[$wKey]['realisasi'] += $count;
                 }
 
-                $realisasiDept += $realisasiIndividu;
-
-                $targetIndividu = 2;
-                $statusIndividu = $realisasiIndividu >= $targetIndividu ? 'tercapai' : 'belum';
-                $persenIndividu = min(100, round(($realisasiIndividu / $targetIndividu) * 100));
-
-                $individuList[] = [
-                    'nik'            => $k->nik,
-                    'nama'           => $k->nama,
-                    'has_user'       => (bool) $k->user,
-                    'target'         => $targetIndividu,
-                    'realisasi'      => $realisasiIndividu,
-                    'status'         => $statusIndividu,
-                    'persentase'     => $persenIndividu,
+                $membersData[] = [
+                    'nik'    => $k->nik,
+                    'nama'   => $k->nama,
+                    'scores' => $scores,
                 ];
             }
 
-            if ($anggotaCount == 0) {
-                $statusDept = 'no_members';
-                $persenDept = 'N/A';
-            } else {
-                $statusDept = $realisasiDept >= $targetDept ? 'tercapai' : 'belum';
-                $persenDept = min(100, round(($realisasiDept / $targetDept) * 100, 1)) . '%';
-                $totalTargetSemua += $targetDept;
-                $totalRealisasiSemua += $realisasiDept;
+            // Hitung persentase departemen per week
+            $deptScores = [];
+            foreach ($weeks as $wKey => $wVal) {
+                $targetDept = $deptWeekTotals[$wKey]['target'];
+                $realisasiDept = $deptWeekTotals[$wKey]['realisasi'];
+
+                if ($targetDept > 0) {
+                    $persenDept = min(100, round(($realisasiDept / $targetDept) * 100));
+                } else {
+                    $persenDept = 0;
+                }
+
+                $deptScores[$wKey] = [
+                    'realisasi' => $realisasiDept,
+                    'target'    => $targetDept,
+                    'persen'    => $persenDept,
+                ];
             }
 
-            $rekapData[] = [
-                'departemen_id' => $dept->id,
-                'nama'          => $dept->nama_departemen,
-                'anggota_count' => $anggotaCount,
-                'target'        => $targetDept,
-                'realisasi'     => $realisasiDept,
-                'status'        => $statusDept,
-                'persentase'    => $persenDept,
-                'individu_list' => $individuList,
+            $deptSummary[] = [
+                'nama'   => strtoupper($dept->nama_departemen),
+                'scores' => $deptScores,
+            ];
+
+            $matrixData[] = [
+                'departemen_id'   => $dept->id,
+                'nama_departemen' => strtoupper($dept->nama_departemen),
+                'members'         => $membersData,
             ];
         }
 
         return view('livewire.bosq.rekap-kepatuhan', [
-            'weekLabel'           => $weekLabel,
-            'startOfWeek'         => $startOfWeek,
-            'endOfWeek'           => $endOfWeek,
-            'rekapData'           => $rekapData,
-            'totalTargetSemua'    => $totalTargetSemua,
-            'totalRealisasiSemua' => $totalRealisasiSemua,
-        ])->layout('layouts.bosq', ['title' => 'Rekap Kepatuhan BOS\'Q']);
+            'monthShort'  => $monthShort,
+            'monthName'   => $monthName,
+            'weeks'       => $weeks,
+            'deptSummary' => $deptSummary,
+            'matrixData'  => $matrixData,
+        ])->layout('layouts.bosq', ['title' => 'Rekap Kepatuhan BQA — BOS\'Q']);
     }
 }

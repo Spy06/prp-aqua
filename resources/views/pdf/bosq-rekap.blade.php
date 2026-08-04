@@ -2,32 +2,34 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rekap Kepatuhan BOS'Q — {{ $weekLabel }}</title>
+    <title>Rekap Kepatuhan BQA BOS'Q — {{ $monthName }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 9.5px; color: #1f2937; background: #fff; padding: 20px; }
-        .header { border-bottom: 3px solid #1976d2; padding-bottom: 12px; margin-bottom: 16px; }
-        .company-name { font-size: 15px; font-weight: bold; color: #1565c0; }
-        .doc-title { font-size: 13px; font-weight: bold; color: #1e3a8a; text-align: right; }
-        .doc-meta { font-size: 9px; color: #6b7280; text-align: right; margin-top: 3px; }
+        body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 9px; color: #1e293b; background: #fff; padding: 18px; }
+        .header { border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 14px; }
+        .company-name { font-size: 14px; font-weight: bold; color: #0f172a; }
+        .doc-title { font-size: 12px; font-weight: bold; color: #0369a1; text-align: right; }
+        .doc-meta { font-size: 8.5px; color: #64748b; text-align: right; margin-top: 2px; }
 
-        .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-        .stat-table td { width: 33.3%; padding: 8px; border: 1px solid #e5e7eb; text-align: center; border-radius: 4px; }
-        .stat-val { font-size: 16px; font-weight: bold; }
-        .stat-lbl { font-size: 8px; color: #6b7280; text-transform: uppercase; margin-top: 2px; }
+        .section-title { font-size: 10px; font-weight: bold; color: #0f172a; margin-top: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        table.data-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 16px; }
-        table.data-table th { background: #f3f4f6; padding: 6px 8px; text-align: left; font-size: 8.5px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #d1d5db; }
-        table.data-table td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; font-size: 8.5px; vertical-align: middle; }
+        table.matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; border: 1px solid #94a3b8; }
+        table.matrix-table th, table.matrix-table td { border: 1px solid #cbd5e1; padding: 4px 6px; text-align: center; font-size: 8.5px; }
+        table.matrix-table th { background: #1e293b; color: #ffffff; font-weight: bold; }
 
-        .badge { font-weight: bold; padding: 2px 6px; border-radius: 10px; font-size: 7.5px; display: inline-block; }
-        .badge-tercapai { background: #e8f5e9; color: #2e7d32; }
-        .badge-belum { background: #fff3e0; color: #e65100; }
-        .badge-none { background: #f3f4f6; color: #6b7280; }
+        .dept-title-row { background: #cbd5e1; color: #0f172a; font-weight: bold; text-align: left !important; text-transform: uppercase; }
+        .member-name { text-align: left !important; font-weight: bold; color: #1e293b; }
 
-        .ind-table { width: 100%; border-collapse: collapse; margin-top: 4px; background: #f8fafc; }
-        .ind-table th { background: #e2e8f0; padding: 4px 6px; font-size: 8px; color: #475569; }
-        .ind-table td { padding: 4px 6px; font-size: 8px; border-bottom: 1px solid #cbd5e1; }
+        .score-100 { background: #334155; color: #ffffff; font-weight: bold; }
+        .score-partial { background: #ffffff; color: #0f172a; font-weight: bold; }
+        .score-0 { background: #0f172a; color: #ffffff; font-weight: bold; }
+
+        .score-ind-100 { background: #dcfce7; color: #15803d; font-weight: bold; }
+        .score-ind-partial { background: #fef08a; color: #854d0e; font-weight: bold; }
+        .score-ind-0 { background: #f1f5f9; color: #64748b; font-weight: bold; }
+
+        .legend-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; font-size: 8px; font-weight: bold; background: #f8fafc; margin-top: 12px; }
+        .legend-item { display: inline-block; margin-right: 12px; padding: 3px 8px; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -36,96 +38,106 @@
             <tr>
                 <td>
                     <div class="company-name">PRP PLANT AQUA</div>
-                    <div style="font-size:10px;font-weight:bold;color:#4b5563;margin-top:2px;">BOS'Q — Behavior Observation System Quality</div>
+                    <div style="font-size:9.5px;font-weight:bold;color:#475569;margin-top:2px;">BOS'Q — Behavior Observation System Quality</div>
                 </td>
                 <td>
-                    <div class="doc-title">REKAP KEPATUHAN TARGET</div>
-                    <div class="doc-meta">Periode: {{ $weekLabel }} | Diunduh: {{ now()->translatedFormat('d F Y H:i') }}</div>
+                    <div class="doc-title">PENCAPAIAN BQA — REKAP KEPATUHAN</div>
+                    <div class="doc-meta">Periode: {{ $monthName }} | Diunduh: {{ now()->translatedFormat('d F Y H:i') }}</div>
                 </td>
             </tr>
         </table>
     </div>
 
-    {{-- Summary Cards --}}
-    <table class="stat-table">
-        <tr>
-            <td>
-                <div class="stat-val" style="color:#1565c0;">{{ $totalTarget }}</div>
-                <div class="stat-lbl">Total Target Laporan</div>
-            </td>
-            <td>
-                <div class="stat-val" style="color:#2e7d32;">{{ $totalRealisasi }}</div>
-                <div class="stat-lbl">Total Realisasi Disubmit</div>
-            </td>
-            <td>
-                <div class="stat-val" style="color:#e65100;">
-                    {{ $totalTarget > 0 ? min(100, round(($totalRealisasi / $totalTarget) * 100, 1)) . '%' : 'N/A' }}
-                </div>
-                <div class="stat-lbl">Pencapaian Keseluruhan</div>
-            </td>
-        </tr>
-    </table>
-
-    <div style="font-size:10px;font-weight:bold;color:#1565c0;margin-bottom:6px;text-transform:uppercase;">Ringkasan Kepatuhan Departemen & Anggota</div>
-
-    <table class="data-table">
+    {{-- TABEL 1: REKAP RINGKASAN PER DEPARTEMEN --}}
+    <div class="section-title">1. REKAP KEPATUHAN PER DEPARTEMEN</div>
+    <table class="matrix-table">
         <thead>
-            <tr>
-                <th style="width:25%;">Departemen</th>
-                <th style="width:12%;text-align:center;">Anggota</th>
-                <th style="width:12%;text-align:center;">Target</th>
-                <th style="width:12%;text-align:center;">Realisasi</th>
-                <th style="width:15%;text-align:center;">Status Dept</th>
-                <th style="width:24%;">Detail Anggota (Rincian Target)</th>
+            <tr style="background:#0f172a;color:#ffffff;">
+                <th style="text-align:left;width:30%;">{{ $monthShort }}</th>
+                <th style="width:17.5%;">WEEK 1</th>
+                <th style="width:17.5%;">WEEK 2</th>
+                <th style="width:17.5%;">WEEK 3</th>
+                <th style="width:17.5%;">WEEK 4</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($rekapData as $row)
+            @foreach($deptSummary as $ds)
                 <tr>
-                    <td style="font-weight:bold;">{{ $row['departemen'] }}</td>
-                    <td style="text-align:center;">{{ $row['anggota_count'] }} Orang</td>
-                    <td style="text-align:center;font-weight:bold;color:#1565c0;">{{ $row['target'] }}</td>
-                    <td style="text-align:center;font-weight:bold;color:{{ $row['realisasi'] >= $row['target'] && $row['target'] > 0 ? '#2e7d32' : '#1f2937' }}">{{ $row['realisasi'] }}</td>
-                    <td style="text-align:center;">
-                        @if($row['status'] === 'no_members')
-                            <span class="badge badge-none">Tanpa Anggota</span>
-                        @elseif($row['status'] === 'tercapai')
-                            <span class="badge badge-tercapai">✅ Tercapai</span>
-                        @else
-                            <span class="badge badge-belum">⚠️ Belum</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($row['anggota_count'] > 0)
-                            <table class="ind-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Karyawan</th>
-                                        <th style="text-align:center;">Target</th>
-                                        <th style="text-align:center;">Realisasi</th>
-                                        <th style="text-align:center;">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($row['individu_list'] as $ind)
-                                        <tr>
-                                            <td>{{ $ind['nama'] }}</td>
-                                            <td style="text-align:center;">2</td>
-                                            <td style="text-align:center;font-weight:bold;">{{ $ind['realisasi'] }}</td>
-                                            <td style="text-align:center;">
-                                                <span class="badge {{ $ind['status'] === 'Tercapai' ? 'badge-tercapai' : 'badge-belum' }}">{{ $ind['status'] }}</span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <span style="font-style:italic;color:#9ca3af;">Belum ada anggota terdaftar</span>
-                        @endif
-                    </td>
+                    <td class="member-name">{{ $ds['nama'] }}</td>
+                    @php $p1 = $ds['scores']['w1']['persen']; @endphp
+                    <td class="{{ $p1 == 100 ? 'score-100' : ($p1 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p1 }}%</td>
+
+                    @php $p2 = $ds['scores']['w2']['persen']; @endphp
+                    <td class="{{ $p2 == 100 ? 'score-100' : ($p2 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p2 }}%</td>
+
+                    @php $p3 = $ds['scores']['w3']['persen']; @endphp
+                    <td class="{{ $p3 == 100 ? 'score-100' : ($p3 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p3 }}%</td>
+
+                    @php $p4 = $ds['scores']['w4']['persen']; @endphp
+                    <td class="{{ $p4 == 100 ? 'score-100' : ($p4 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p4 }}%</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    {{-- TABEL 2: DETAIL PENCAPAIAN BQA PER ANGGOTA DEPARTEMEN --}}
+    <div class="section-title" style="page-break-before: auto;">2. DETAIL PENCAPAIAN BQA PER ANGGOTA DEPARTEMEN</div>
+    <table class="matrix-table">
+        <thead>
+            <tr style="background:#0f172a;color:#ffffff;">
+                <th style="text-align:left;width:30%;">PENCAPAIAN BQA (Sum of % in WEEK)</th>
+                <th colspan="4" style="background:#1e293b;color:#38bdf8;">{{ $monthName }}</th>
+            </tr>
+            <tr style="background:#334155;color:#ffffff;">
+                <th style="text-align:left;">Row Labels</th>
+                <th>{{ $weeks['w1']['label'] }}</th>
+                <th>{{ $weeks['w2']['label'] }}</th>
+                <th>{{ $weeks['w3']['label'] }}</th>
+                <th>{{ $weeks['w4']['label'] }}</th>
+            </tr>
+            <tr style="background:#475569;color:#ffffff;">
+                <th style="text-align:left;">Column Labels</th>
+                <th>WEEK 1</th>
+                <th>WEEK 2</th>
+                <th>WEEK 3</th>
+                <th>WEEK 4</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($matrixData as $deptGroup)
+                <tr>
+                    <td colspan="5" class="dept-title-row">{{ $deptGroup['nama_departemen'] }}</td>
+                </tr>
+                @forelse($deptGroup['members'] as $m)
+                    <tr>
+                        <td class="member-name">{{ $m['nama'] }}</td>
+                        @php $w1 = $m['scores']['w1']; @endphp
+                        <td class="{{ $w1['persen'] == 100 ? 'score-ind-100' : ($w1['persen'] >= 50 ? 'score-ind-partial' : 'score-ind-0') }}">{{ $w1['persen'] }}</td>
+
+                        @php $w2 = $m['scores']['w2']; @endphp
+                        <td class="{{ $w2['persen'] == 100 ? 'score-ind-100' : ($w2['persen'] >= 50 ? 'score-ind-partial' : 'score-ind-0') }}">{{ $w2['persen'] }}</td>
+
+                        @php $w3 = $m['scores']['w3']; @endphp
+                        <td class="{{ $w3['persen'] == 100 ? 'score-ind-100' : ($w3['persen'] >= 50 ? 'score-ind-partial' : 'score-ind-0') }}">{{ $w3['persen'] }}</td>
+
+                        @php $w4 = $m['scores']['w4']; @endphp
+                        <td class="{{ $w4['persen'] == 100 ? 'score-ind-100' : ($w4['persen'] >= 50 ? 'score-ind-partial' : 'score-ind-0') }}">{{ $w4['persen'] }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" style="font-style:italic;color:#94a3b8;">Belum ada anggota terdaftar di departemen ini</td>
+                    </tr>
+                @endforelse
+            @endforeach
+        </tbody>
+    </table>
+
+    {{-- LEGENDA INDIKATOR --}}
+    <div class="legend-box">
+        <span style="margin-right:8px;color:#0f172a;">Indikator Target:</span>
+        <span class="legend-item" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;">100% (Tercapai - Target 2 Laporan/Minggu)</span>
+        <span class="legend-item" style="background:#fef08a;color:#854d0e;border:1px solid #fde047;">50% - 99% (Sebagian)</span>
+        <span class="legend-item" style="background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;">0% (Belum Mengirim)</span>
+    </div>
 </body>
 </html>

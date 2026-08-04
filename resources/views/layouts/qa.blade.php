@@ -510,6 +510,10 @@
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.klausul') ? 'fil' : '' }}">rule</span>
                     <span>Klausul PRP</span>
                 </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                    <span>Manajemen Akun User</span>
+                </a>
 
                 <span class="qs-group-label" style="margin-top:16px;">Master Data BOS'Q</span>
                 <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
@@ -583,6 +587,10 @@
                 <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
                     <span class="material-symbols-outlined ic">rule</span>
                     <span>Klausul PRP</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                    <span>Manajemen Akun User</span>
                 </a>
             @endif
         </div>

@@ -6,11 +6,17 @@
         <span>{{ session('success') }}</span>
     </div>
     @endif
+    @if(session('error'))
+    <div class="balert balert-error">
+        <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">error</span>
+        <span>{{ session('error') }}</span>
+    </div>
+    @endif
 
     <div class="bph">
         <div>
             <h2 class="bph-title">Manajemen Akun User</h2>
-            <p class="bph-sub">Kelola penuh data login, NIK, departemen, role, dan password user</p>
+            <p class="bph-sub">Kelola data login, NIK, departemen, role akses (Karyawan / QA), dan password user</p>
         </div>
         <button wire:click="openCreate" id="btn-buat-akun" class="bbtn bbtn-primary">
             <span class="material-symbols-outlined" style="font-size:18px;">manage_accounts</span>
@@ -26,7 +32,7 @@
 
         <div class="balert balert-warn" style="margin-bottom:16px;">
             <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">info</span>
-            <span>Akun hanya bisa dibuat untuk NIK yang <strong>terdaftar dan aktif</strong> di Master Karyawan. Jika NIK tidak ada, tambahkan dulu di tab Master Karyawan.</span>
+            <span>Akun hanya bisa dibuat untuk NIK yang <strong>terdaftar dan aktif</strong> di Master PIC. Jika NIK belum ada, tambahkan dulu di tab Master PIC.</span>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
@@ -51,35 +57,14 @@
                 @endif
             </div>
 
-            {{-- Email Perusahaan --}}
-            <div>
-                <label for="form-email-baru" class="blabel">Email Perusahaan</label>
-                <input type="email" id="form-email-baru" wire:model="email_baru"
-                       placeholder="nama@namaperusahaan.com"
-                       class="binput" />
-                <p style="font-size:11.5px;color:var(--btxt2);margin-top:4px;">Digunakan untuk menerima notifikasi penugasan PIC & audit</p>
-                @error('email_baru') <p class="berr-msg">{{ $message }}</p> @enderror
-            </div>
-
             {{-- Role --}}
-            <div>
-                <label for="form-role" class="blabel">Role <span style="color:var(--be);">*</span></label>
+            <div style="grid-column:1/-1;">
+                <label for="form-role" class="blabel">Role Access <span style="color:var(--be);">*</span></label>
                 <select id="form-role" wire:model="role_baru" class="binput">
-                    <option value="karyawan">Karyawan (dapat melaporkan & tindak lanjut)</option>
-                    <option value="qa">QA (akses verifikasi & master data)</option>
-                    <option value="superadmin">Super Admin (akses penuh administrator IT)</option>
+                    <option value="karyawan">Karyawan (Pelapor / PIC)</option>
+                    <option value="qa">QA (QA Admin / Verifikator)</option>
                 </select>
                 @error('role_baru') <p class="berr-msg">{{ $message }}</p> @enderror
-            </div>
-
-            {{-- No. WhatsApp --}}
-            <div>
-                <label for="form-wa" class="blabel">No. WhatsApp <span style="color:var(--be);">*</span></label>
-                <input type="text" id="form-wa" wire:model="no_whatsapp_baru"
-                       placeholder="628xxxxxxxxxx"
-                       class="binput" />
-                <p style="font-size:11.5px;color:var(--btxt2);margin-top:4px;">Format: 628xxx (diawali 628 tanpa +)</p>
-                @error('no_whatsapp_baru') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
         </div>
 
@@ -96,14 +81,14 @@
     </div>
     @endif
 
-    {{-- Form: Edit Akun (Full Access Super Admin) --}}
+    {{-- Form: Edit Akun --}}
     @if($showFormEdit)
-    <div class="bcard fu1" style="padding:20px;border:1.5px solid #7c3aed;">
+    <div class="bcard fu1" style="padding:20px;border:1.5px solid var(--bp);">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-            <span class="material-symbols-outlined" style="color:#7c3aed;font-size:24px;">admin_panel_settings</span>
+            <span class="material-symbols-outlined" style="color:var(--bp);font-size:24px;">manage_accounts</span>
             <div>
-                <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Edit Full Data Akun & Karyawan (Super Admin)</h3>
-                <p style="font-size:12px;color:var(--btxt2);margin:0;">Anda dapat mengedit NIK, Nama, Email, Departemen, Role, dan Password pengguna ini secara langsung.</p>
+                <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Edit Data Akun & Akses User</h3>
+                <p style="font-size:12px;color:var(--btxt2);margin:0;">Anda dapat mengedit NIK, Nama, Email, Departemen, dan Role Akses (Karyawan / QA) pengguna ini.</p>
             </div>
         </div>
 
@@ -145,46 +130,43 @@
             <div>
                 <label for="edit-role" class="blabel">Role Access <span style="color:var(--be);">*</span></label>
                 <select id="edit-role" wire:model="edit_role" class="binput">
-                    <option value="karyawan">Karyawan</option>
-                    <option value="qa">QA</option>
-                    <option value="superadmin">Super Admin</option>
+                    <option value="karyawan">Karyawan (Pelapor / PIC)</option>
+                    <option value="qa">QA (QA Admin / Verifikator)</option>
                 </select>
                 @error('edit_role') <p class="berr-msg">{{ $message }}</p> @enderror
-            </div>
-
-            {{-- Edit No WhatsApp --}}
-            <div>
-                <label for="edit-wa" class="blabel">No. WhatsApp <span style="color:var(--be);">*</span></label>
-                <input type="text" id="edit-wa" wire:model="edit_no_whatsapp" placeholder="628xxxxxxxxxx" class="binput" />
-                @error('edit_no_whatsapp') <p class="berr-msg">{{ $message }}</p> @enderror
-            </div>
-
-            {{-- Edit Password --}}
-            <div>
-                <label for="edit-pass" class="blabel">Reset Password Baru (Opsional)</label>
-                <input type="password" id="edit-pass" wire:model="edit_password" placeholder="Kosongkan jika tidak mau ubah password" class="binput" />
-                <p style="font-size:11px;color:var(--btxt2);margin-top:2px;">Isi hanya jika ingin mengganti password user ini.</p>
-                @error('edit_password') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
             <button wire:click="$set('showFormEdit', false)" class="bbtn bbtn-secondary">Batal</button>
-            <button wire:click="simpanEdit" wire:loading.attr="disabled" class="bbtn bbtn-primary" style="background:#7c3aed;border-color:#7c3aed;">
+            <button wire:click="simpanEdit" wire:loading.attr="disabled" class="bbtn bbtn-primary">
                 <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                Simpan Perubahan Full Access
+                Simpan Perubahan
             </button>
         </div>
     </div>
     @endif
 
-    {{-- Search --}}
-    <div style="max-width:340px;">
-        <div style="position:relative;">
-            <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
-            <input type="text" wire:model.live.debounce.300ms="search"
-                   placeholder="Cari NIK atau nama..."
-                   class="binput" style="padding-left:40px;" />
+    {{-- Search & Filter Bar --}}
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        {{-- Search Input --}}
+        <div style="max-width:320px;flex:1;">
+            <div style="position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+                <input type="text" wire:model.live.debounce.300ms="search"
+                       placeholder="Cari NIK, nama, atau email..."
+                       class="binput" style="padding-left:40px;" />
+            </div>
+        </div>
+
+        {{-- Filter Departemen --}}
+        <div style="min-width:220px;">
+            <select wire:model.live="filterDepartemen" class="binput">
+                <option value="">-- Semua Departemen --</option>
+                @foreach($departemens as $dept)
+                    <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                @endforeach
+            </select>
         </div>
     </div>
 
@@ -197,8 +179,7 @@
                         <th>NIK</th>
                         <th>Nama & Email</th>
                         <th>Departemen</th>
-                        <th style="text-align:center;">Role</th>
-                        <th>No. WA</th>
+                        <th style="text-align:center;">Role Access</th>
                         <th style="text-align:center;">Aksi</th>
                     </tr>
                 </thead>
@@ -222,24 +203,40 @@
                         <td style="font-size:13px;color:var(--btxt2);">{{ $u->karyawan?->departemen?->nama_departemen ?? '-' }}</td>
                         <td style="text-align:center;">
                             @if($u->role === 'superadmin')
-                                <span class="bbadge" style="background:#7c3aed;color:#ffffff;font-weight:700;">Super Admin</span>
+                                <span class="bbadge" style="background:linear-gradient(135deg, #7c3aed, #4f46e5);color:#ffffff;font-weight:700;padding:5px 12px;border-radius:20px;box-shadow:0 2px 6px rgba(124,58,237,0.3);display:inline-flex;align-items:center;gap:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">shield</span>
+                                    Super Admin
+                                </span>
                             @elseif($u->role === 'qa')
-                                <span class="bbadge bbadge-pending">QA</span>
+                                <span class="bbadge" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;font-weight:700;padding:5px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;color:#16a34a;">admin_panel_settings</span>
+                                    QA Admin
+                                </span>
                             @else
-                                <span class="bbadge bbadge-progress">Karyawan</span>
+                                <span class="bbadge" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;font-weight:600;padding:5px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;color:#0284c7;">person</span>
+                                    Karyawan
+                                </span>
                             @endif
                         </td>
-                        <td style="font-family:monospace;font-size:12px;color:var(--btxt2);">{{ $u->no_whatsapp ?? '-' }}</td>
                         <td style="text-align:center;">
-                            <button wire:click="openEdit({{ $u->id }})" title="Edit Full Access (Super Admin)"
-                                    class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
-                                <span class="material-symbols-outlined" style="font-size:15px;color:#7c3aed;">edit_square</span>
-                            </button>
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <button wire:click="openEdit({{ $u->id }})" title="Edit Akun & Role Access"
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;color:var(--bp);">edit</span>
+                                </button>
+                                <button wire:click="hapusAkun({{ $u->id }})"
+                                        wire:confirm="Yakin ingin menghapus akun '{{ $u->name }}' (NIK: {{ $u->nik }})?"
+                                        title="Hapus Akun"
+                                        class="bbtn bbtn-danger bbtn-sm" style="padding:5px 8px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" style="text-align:center;padding:32px;color:var(--btxt2);">
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
                             <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">manage_accounts</span>
                             Tidak ada akun user ditemukan
                         </td>

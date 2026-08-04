@@ -23,7 +23,7 @@
 |-------|-------------------|
 | Backend Framework | Laravel 13 (PHP 8.3) |
 | Frontend Interaktif | Livewire 4 + Volt (Single File Components) |
-| Admin & Portal Auth | Custom IT Admin Secret Portal (`/it-admin-portal`) + Fortify Auth |
+| Admin & Portal Auth | Custom IT Admin Secret Portal (`/admin-SiveraBosQ`) + Fortify Auth |
 | Styling & Theme | Tailwind CSS v4 (CSS-first config via `@import`) + Custom Zinc/Indigo Theme |
 | Charts & Visualization | Chart.js 4 + `chartjs-plugin-datalabels` + Custom Shadcn Replica SVG Donut |
 | Build Tool | Vite 8 |
@@ -48,8 +48,8 @@
      - `qa` → diarahkan ke Dashboard Analytics QA (`/qa/dashboard`).
    - Pendaftaran publik dinonaktifkan (`/register` mengembalikan 404). Akun dibuat dan dikelola secara tertutup oleh Super Admin.
 
-2. **IT Super Admin Secret Portal Access (`/it-admin-portal`)**
-   - Rute login rahasia khusus Tim IT/Administrator: `/it-admin-portal`.
+2. **IT Super Admin Secret Portal Access (`/admin-SiveraBosQ`)**
+   - Rute login rahasia khusus Tim IT/Administrator: `/admin-SiveraBosQ`.
    - Autentikasi 3 lapis: Nama/NIK + Password + Kode PIN Khusus IT (`2026`).
    - Rute `/login` biasa secara eksplisit **menolak** login untuk akun ber-role `superadmin`.
    - Super Admin terisolasi 100% dari alur operasi audit (tidak ada menu lapor temuan / audit), hanya berfokus pada **Master Data Akun User** (`/qa/master/akun`) dengan akses edit penuh (NIK, Nama, Departemen, Role, WA, dan Reset Password).
@@ -121,8 +121,8 @@ Temuan bergerak dalam 4 status utama:
 |--------|-----|------|----------------------------|------------|------------|
 | GET | `/` | `portal` | Closure (`view('portal')`) | - | Portal Pemilihan Sistem |
 | GET | `/register` | - | Closure (`abort(404)`) | - | Register publik dinonaktifkan |
-| GET | `/it-admin-portal` | `it.login.form` | `ItPortalAuthController@showLoginForm` | - | Form login rahasia IT |
-| POST | `/it-admin-portal` | `it.login.submit` | `ItPortalAuthController@login` | - | Eksekusi login rahasia IT |
+| GET | `/admin-SiveraBosQ` | `it.login.form` | `ItPortalAuthController@showLoginForm` | - | Form login rahasia IT |
+| POST | `/admin-SiveraBosQ` | `it.login.submit` | `ItPortalAuthController@login` | - | Eksekusi login rahasia IT |
 | POST | `/it-admin-portal/logout` | `it.logout` | `ItPortalAuthController@logout` | - | Logout IT Admin |
 | GET | `/dashboard` | `dashboard` | Closure (auto-redirect per role) | `auth` | Redirect sesuai role SIVERA |
 | GET | `/beranda` | `beranda` | `view('pages.beranda')` | `auth`, `system_guard:sivera`, `role:karyawan,qa` | Beranda Pelapor/PIC |

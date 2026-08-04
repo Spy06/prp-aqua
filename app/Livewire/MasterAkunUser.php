@@ -14,43 +14,34 @@ class MasterAkunUser extends Component
     use WithPagination;
 
     // Form Create Akun
-    public string $nik_baru = '';
-    public string $email_baru = '';
+    public string $nik_baru  = '';
     public string $role_baru = 'karyawan';
-    public string $no_whatsapp_baru = '';
 
-    // Form Edit Akun (Full Access for Super Admin)
-    public ?int $editingUserId = null;
-    public string $edit_nik = '';
-    public string $edit_nama = '';
-    public string $edit_email = '';
+    // Form Edit Akun
+    public ?int $editingUserId      = null;
+    public string $edit_nik         = '';
+    public string $edit_nama        = '';
+    public string $edit_email       = '';
     public ?int $edit_departemen_id = null;
-    public string $edit_role = '';
-    public string $edit_no_whatsapp = '';
-    public string $edit_password = ''; // Kosongkan jika tidak ingin mengubah password
+    public string $edit_role        = '';
 
-    public bool $showFormCreate = false;
-    public bool $showFormEdit = false;
-    public string $search = '';
+    // UI state & filters
+    public bool $showFormCreate     = false;
+    public bool $showFormEdit       = false;
+    public string $search           = '';
+    public string $filterDepartemen = '';
 
     // State hasil pencarian NIK
-    public ?string $nikSearchResult = null; // nama karyawan dari NIK yang diketik
-    public string $nikSearchError = '';
+    public ?string $nikSearchResult = null;
+    public string $nikSearchError   = '';
 
     protected function rulesCreate(): array
     {
         return [
-            'nik_baru' => 'required|string|max:20',
-            'email_baru' => 'nullable|email|max:255',
-            'role_baru' => 'required|in:karyawan,qa,superadmin',
-            'no_whatsapp_baru' => 'required|string|regex:/^628[0-9]{8,12}$/',
+            'nik_baru'  => 'required|string|max:20',
+            'role_baru' => 'required|in:karyawan,qa',
         ];
     }
-
-    protected array $messages = [
-        'no_whatsapp_baru.regex' => 'Format no. WhatsApp harus diawali 628 (contoh: 6281234567890).',
-        'edit_no_whatsapp.regex' => 'Format no. WhatsApp harus diawali 628 (contoh: 6281234567890).',
-    ];
 
     public function updatedNikBaru(): void
     {
@@ -75,7 +66,7 @@ class MasterAkunUser extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['nik_baru', 'email_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
+        $this->reset(['nik_baru', 'role_baru', 'nikSearchResult', 'nikSearchError']);
         $this->role_baru = 'karyawan';
         $this->showFormEdit = false;
         $this->showFormCreate = true;
@@ -85,14 +76,18 @@ class MasterAkunUser extends Component
     public function openEdit(int $userId): void
     {
         $user = User::with('karyawan')->findOrFail($userId);
+
+        if ($user->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
+            session()->flash('error', 'Akun Super Admin terproteksi dan hanya dapat dikelola melalui Portal Khusus IT Super Admin.');
+            return;
+        }
+
         $this->editingUserId       = $user->id;
         $this->edit_nik           = $user->nik ?? '';
         $this->edit_nama          = $user->name ?? '';
         $this->edit_email         = $user->email ?? '';
         $this->edit_departemen_id = $user->karyawan?->departemen_id;
-        $this->edit_role          = $user->role;
-        $this->edit_no_whatsapp   = $user->no_whatsapp ?? '';
-        $this->edit_password      = '';
+        $this->edit_role          = ($user->role === 'superadmin') ? 'qa' : $user->role;
 
         $this->showFormCreate = false;
         $this->showFormEdit = true;
@@ -103,15 +98,15 @@ class MasterAkunUser extends Component
     {
         $this->validate($this->rulesCreate());
 
-        $karyawan = Karyawan::where('nik', $this->nik_baru)->first();
+        $karyawan = Karyawan::with('user')->where('nik', $this->nik_baru)->first();
 
         if (!$karyawan) {
-            $this->addError('nik_baru', "NIK {$this->nik_baru} tidak ditemukan di data karyawan. Tambahkan dulu di Master Karyawan.");
+            $this->addError('nik_baru', "NIK {$this->nik_baru} tidak ditemukan di data karyawan. Tambahkan dulu di Master PIC.");
             return;
         }
 
         if (!$karyawan->status_aktif) {
-            $this->addError('nik_baru', "Karyawan dengan NIK {$this->nik_baru} tidak aktif. Aktifkan dulu di Master Karyawan.");
+            $this->addError('nik_baru', "Karyawan dengan NIK {$this->nik_baru} tidak aktif. Aktifkan dulu di Master PIC.");
             return;
         }
 
@@ -121,16 +116,15 @@ class MasterAkunUser extends Component
         }
 
         User::create([
-            'nik' => $this->nik_baru,
-            'name' => $karyawan->nama,
-            'email' => $this->email_baru ?: null,
-            'role' => $this->role_baru,
-            'no_whatsapp' => $this->no_whatsapp_baru,
+            'nik'      => $this->nik_baru,
+            'name'     => $karyawan->nama,
+            'email'    => $karyawan->user?->email ?: null,
+            'role'     => $this->role_baru,
             'password' => Hash::make($this->nik_baru),
         ]);
 
-        session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat.");
-        $this->reset(['nik_baru', 'email_baru', 'role_baru', 'no_whatsapp_baru', 'nikSearchResult', 'nikSearchError']);
+        session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat dengan role " . strtoupper($this->role_baru) . ".");
+        $this->reset(['nik_baru', 'role_baru', 'nikSearchResult', 'nikSearchError']);
         $this->showFormCreate = false;
         $this->resetPage();
     }
@@ -139,29 +133,27 @@ class MasterAkunUser extends Component
     {
         $user = User::with('karyawan')->findOrFail($this->editingUserId);
 
+        if ($user->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
+            session()->flash('error', 'Akun Super Admin terproteksi dan hanya dapat dikelola melalui Portal Khusus IT Super Admin.');
+            return;
+        }
+
         $this->validate([
             'edit_nik'           => 'required|string|max:20|unique:users,nik,' . $user->id,
             'edit_nama'          => 'required|string|max:255',
             'edit_email'         => 'nullable|email|max:255',
-            'edit_departemen_id' => 'nullable|exists:departemens,id',
-            'edit_role'          => 'required|in:karyawan,qa,superadmin',
-            'edit_no_whatsapp'   => 'required|string|regex:/^628[0-9]{8,12}$/',
-            'edit_password'      => 'nullable|string|min:5|max:100',
+            'edit_departemen_id' => 'nullable|exists:departemen,id',
+            'edit_role'          => 'required|in:karyawan,qa',
         ]);
 
         $oldNik = $user->nik;
         $newNik = $this->edit_nik;
 
         // Update User
-        $user->nik         = $newNik;
-        $user->name        = $this->edit_nama;
-        $user->email       = $this->edit_email ?: null;
-        $user->role        = $this->edit_role;
-        $user->no_whatsapp = $this->edit_no_whatsapp;
-
-        if (!empty($this->edit_password)) {
-            $user->password = Hash::make($this->edit_password);
-        }
+        $user->nik   = $newNik;
+        $user->name  = $this->edit_nama;
+        $user->email = $this->edit_email ?: null;
+        $user->role  = $this->edit_role;
 
         $user->save();
 
@@ -180,9 +172,39 @@ class MasterAkunUser extends Component
             ]);
         }
 
-        session()->flash('success', "Data akun & karyawan {$this->edit_nama} berhasil diperbarui.");
+        session()->flash('success', "Akses & data akun {$this->edit_nama} berhasil diperbarui (Role: " . strtoupper($this->edit_role) . ").");
         $this->showFormEdit = false;
         $this->editingUserId = null;
+    }
+
+    public function hapusAkun(int $userId): void
+    {
+        $user = User::with('karyawan')->findOrFail($userId);
+
+        if ($user->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
+            session()->flash('error', 'Akun Super Admin terproteksi dan tidak dapat dihapus.');
+            return;
+        }
+
+        // Cek keterikatan temuan audit
+        $hasFindings = \App\Models\Temuan::where('pelapor_id', $user->id)
+            ->orWhere('pic_id', $user->id)
+            ->exists();
+
+        if ($hasFindings) {
+            session()->flash('error', "Akun '{$user->name}' tidak dapat dihapus karena terikat dengan data temuan audit. Silakan non-aktifkan statusnya di Master PIC.");
+            return;
+        }
+
+        try {
+            $userName = $user->name;
+            // Hanya hapus data akun login (users table). Data karyawan di Master PIC tetap utuh.
+            $user->delete();
+
+            session()->flash('success', "Akun login '{$userName}' berhasil dihapus dari Manajemen Akun User (data karyawan di Master PIC tetap tersimpan).");
+        } catch (\Exception $e) {
+            session()->flash('error', "Gagal menghapus akun: " . $e->getMessage());
+        }
     }
 
     public function updatingSearch(): void
@@ -190,14 +212,31 @@ class MasterAkunUser extends Component
         $this->resetPage();
     }
 
+    public function updatingFilterDepartemen(): void
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
+        $isSuperAdmin = auth()->user()?->isSuperAdmin() ?? false;
+
         $users = User::with('karyawan.departemen')
+            ->when(!$isSuperAdmin, function ($query) {
+                // Sembunyikan akun Super Admin dari tampilan QA Admin biasa
+                $query->where('role', '!=', 'superadmin');
+            })
+            ->when($this->filterDepartemen, function ($q) {
+                $q->whereHas('karyawan', fn ($kq) => $kq->where('departemen_id', $this->filterDepartemen));
+            })
             ->when(
                 $this->search,
                 fn($q) => $q
-                    ->where('nik', 'like', "%{$this->search}%")
-                    ->orWhere('name', 'like', "%{$this->search}%")
+                    ->where(function ($sub) {
+                        $sub->where('nik', 'like', "%{$this->search}%")
+                            ->orWhere('name', 'like', "%{$this->search}%")
+                            ->orWhere('email', 'like', "%{$this->search}%");
+                    })
             )
             ->orderBy('name')
             ->paginate(15);
@@ -205,8 +244,9 @@ class MasterAkunUser extends Component
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
         return view('livewire.master-akun-user', [
-            'users'       => $users,
-            'departemens' => $departemens,
+            'users'        => $users,
+            'departemens'  => $departemens,
+            'isSuperAdmin' => $isSuperAdmin,
         ]);
     }
 }

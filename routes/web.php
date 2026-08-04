@@ -26,9 +26,9 @@ Route::get('/register', fn () => abort(404));
 Route::post('/register', fn () => abort(404));
 
 // ── Secret Portal Access Khusus IT Admin ──
-Route::get('/it-admin-portal', [\App\Http\Controllers\ItPortalAuthController::class, 'showLoginForm'])->name('it.login.form');
-Route::post('/it-admin-portal', [\App\Http\Controllers\ItPortalAuthController::class, 'login'])->name('it.login.submit');
-Route::post('/it-admin-portal/logout', [\App\Http\Controllers\ItPortalAuthController::class, 'logout'])->name('it.logout');
+Route::get('/admin-SiveraBosQ', [\App\Http\Controllers\ItPortalAuthController::class, 'showLoginForm'])->name('it.login.form');
+Route::post('/admin-SiveraBosQ', [\App\Http\Controllers\ItPortalAuthController::class, 'login'])->name('it.login.submit');
+Route::post('/admin-SiveraBosQ/logout', [\App\Http\Controllers\ItPortalAuthController::class, 'logout'])->name('it.logout');
 
 Route::middleware(['auth'])->group(function () {
     
@@ -65,8 +65,8 @@ Route::middleware(['auth'])->group(function () {
             Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
         });
 
-        // Role Super Admin Khusus IT — Manajemen Akun & Role System
-        Route::middleware(['role:superadmin'])->group(function () {
+        // Role QA Admin & Super Admin IT — Manajemen Akun & Role System
+        Route::middleware(['role:qa,superadmin'])->group(function () {
             Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
         });
 

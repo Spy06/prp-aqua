@@ -266,11 +266,9 @@ class MasterKaryawan extends Component
         $isSuperAdmin = auth()->user()?->isSuperAdmin() ?? false;
 
         $karyawans = Karyawan::with(['departemen', 'user'])
-            ->when(!$isSuperAdmin, function ($query) {
-                // Sembunyikan akun Super Admin dari daftar jika yang melihat adalah user biasa / QA
-                $query->whereDoesntHave('user', function ($q) {
-                    $q->where('role', 'superadmin');
-                });
+            ->where('nama', 'not like', '%super administrator%')
+            ->whereDoesntHave('user', function ($q) {
+                $q->where('role', 'superadmin');
             })
             ->when($this->filterDepartemen, function ($q) {
                 $q->where('departemen_id', $this->filterDepartemen);

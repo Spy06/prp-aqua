@@ -208,6 +208,7 @@ class BosqExportController extends Controller
             $karyawans = Karyawan::with('user')
                 ->where('departemen_id', $dept->id)
                 ->where('status_aktif', true)
+                ->where('nama', 'not like', '%super administrator%')
                 ->orderBy('nama')
                 ->get();
 

@@ -43,7 +43,11 @@ class DaftarObservasiQA extends Component
     public function updatingFilterType(): void { $this->resetPage(); }
     public function updatingBulan(): void { $this->resetPage(); }
     public function updatingTahun(): void { $this->resetPage(); }
-    public function updatingFilterDepartemenId(): void { $this->resetPage(); }
+    public function updatingFilterDepartemenId(): void
+    {
+        $this->filter_sub_area_id = '';
+        $this->resetPage();
+    }
     public function updatingFilterSubAreaId(): void { $this->resetPage(); }
     public function updatingFilterStatus(): void { $this->resetPage(); }
     public function updatingFilterTingkatResiko(): void { $this->resetPage(); }

@@ -165,8 +165,8 @@
         </div>
     </div>
 
-    {{-- Card: Action Ubah Status ke CLOSED oleh Observer / Pelapor --}}
-    @if($isPelapor || $isQa)
+    {{-- Card: Action Ubah Status ke CLOSED oleh Observer / Pelapor / Auditee --}}
+    @if($isPelapor || $isAuditee)
         <div class="bcard fu2" style="margin-bottom:20px;border:1.5px solid {{ $isClosed ? '#a5d6a7' : '#90caf9' }};background:{{ $isClosed ? '#f1f8e9' : '#f4f8fb' }};">
             <div class="bcard-header" style="justify-content:space-between;border-bottom:1px solid {{ $isClosed ? '#c8e6c9' : '#e0e0e0' }};">
                 <div style="display:flex;align-items:center;gap:12px;">
@@ -203,6 +203,56 @@
                     <div style="display:flex;align-items:center;gap:10px;color:#2e7d32;font-weight:600;font-size:14px;">
                         <span class="material-symbols-outlined fil" style="font-size:22px;">check_circle</span>
                         <span>Observasi ini sudah Selesai (CLOSED). Laporan disimpan sebagai arsip observasi Anda.</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    @elseif($isQa)
+        {{-- Card: Tampilan Khusus Pengawasan QA (Read-Only Monitoring) --}}
+        <div class="bcard fu2" style="margin-bottom:20px;border:1.5px solid {{ $isClosed ? '#a5d6a7' : '#90caf9' }};background:{{ $isClosed ? '#f1f8e9' : '#f4f8fb' }};">
+            <div class="bcard-header" style="justify-content:space-between;border-bottom:1px solid {{ $isClosed ? '#c8e6c9' : '#e0e0e0' }};">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="bcard-hicon" style="background:{{ $isClosed ? '#e8f5e9' : '#e3f2fd' }};">
+                        <span class="material-symbols-outlined fil" style="color:{{ $isClosed ? '#2e7d32' : '#1565c0' }};font-size:20px;">
+                            {{ $isClosed ? 'verified' : 'visibility' }}
+                        </span>
+                    </div>
+                    <div>
+                        <div style="font-size:15px;font-weight:700;color:var(--btxt);">
+                            Status Pengawasan QA (Oversight)
+                        </div>
+                        <div style="font-size:12px;color:var(--btxt2);">
+                            Sebagai QA, Anda memantau status laporan observasi ini.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bcard-body" style="padding:20px;">
+                @if(!$isClosed)
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span class="material-symbols-outlined fil" style="font-size:24px;color:#e65100;">pending_actions</span>
+                        <div>
+                            <div style="color:var(--btxt);font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;">
+                                <span>Status Observasi saat ini:</span>
+                                <span class="sbadge sbadge-open" style="font-size:11px;">OPEN</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--btxt2);margin-top:3px;">
+                                Laporan sedang dalam proses tindak lanjut oleh Observer (Pelapor) / Auditee. Tim QA bertindak sebagai pengawas laporan.
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span class="material-symbols-outlined fil" style="font-size:24px;color:#2e7d32;">check_circle</span>
+                        <div>
+                            <div style="color:var(--btxt);font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;">
+                                <span>Status Observasi saat ini:</span>
+                                <span class="sbadge sbadge-closed" style="font-size:11px;">CLOSED</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--btxt2);margin-top:3px;">
+                                Observasi ini telah ditandai Selesai (CLOSED) oleh Pelapor / Auditee.
+                            </div>
+                        </div>
                     </div>
                 @endif
             </div>

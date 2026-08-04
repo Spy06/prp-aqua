@@ -348,24 +348,13 @@
                         <span>Divisi Manajemen</span>
                     </a>
 
-                    @if(auth()->user()->role === 'superadmin')
-                        <span class="qs-section-label" style="margin-top:12px;">Master Data SIVERA</span>
-                        <a class="qs-item" href="{{ route('qa.master.akun') }}" wire:navigate>
-                            <span class="material-symbols-outlined ic">manage_accounts</span>
-                            <span>Manajemen Akun User</span>
-                        </a>
-                        <a class="qs-item" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                            <span class="material-symbols-outlined ic">group</span>
-                            <span>Master Karyawan</span>
-                        </a>
-                    @endif
 
                     <span class="qs-section-label" style="margin-top:12px;">Portals & Mode</span>
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">add_circle</span>
                         <span>Catat Observasi</span>
                     </a>
-                    <a class="qs-switch" href="{{ route('qa.dashboard') }}" wire:navigate style="margin-top:6px;">
+                    <a class="qs-switch" href="{{ route('qa.dashboard') }}" style="margin-top:6px;">
                         <span class="material-symbols-outlined" style="font-size:18px;color:#2563eb;">swap_horiz</span>
                         <span>Beralih ke SIVERA</span>
                     </a>

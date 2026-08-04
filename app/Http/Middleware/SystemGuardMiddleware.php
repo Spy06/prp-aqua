@@ -10,7 +10,7 @@ class SystemGuardMiddleware
 {
     /**
      * Handle an incoming request.
-     * Enforce strict separation between SIVERA and BOS'Q systems based on login_system session.
+     * Switch and enforce active system session context between SIVERA and BOS'Q seamlessly.
      */
     public function handle(Request $request, Closure $next, string $system): Response
     {
@@ -19,20 +19,8 @@ class SystemGuardMiddleware
             return $next($request);
         }
 
-        $activeSystem = session('login_system', 'sivera');
-
-        if ($activeSystem !== $system) {
-            if ($activeSystem === 'bosq') {
-                $target = $user->role === 'qa'
-                    ? route('bosq.qa.dashboard')
-                    : route('bosq.beranda');
-            } else {
-                $target = $user->role === 'qa'
-                    ? route('qa.dashboard')
-                    : route('beranda');
-            }
-            return redirect($target);
-        }
+        // Auto update active system session context when accessing valid routes
+        session(['login_system' => $system]);
 
         return $next($request);
     }

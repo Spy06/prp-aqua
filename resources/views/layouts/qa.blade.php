@@ -554,6 +554,10 @@
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
                     <span>Rekap Periode</span>
                 </a>
+                <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="margin-top:6px;background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
+                    <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
+                    <span>Beralih ke BOS'Q</span>
+                </a>
             @else
                 <span class="qs-group-label">Dashboard QA</span>
                 <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
@@ -576,21 +580,27 @@
                 </a>
 
                 <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                    <span>Manajemen Akun User</span>
+                </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
                     <span class="material-symbols-outlined ic">badge</span>
                     <span>Master PIC</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
                     <span class="material-symbols-outlined ic">domain</span>
-                    <span>Departemen</span>
+                    <span>Master Departemen</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
                     <span class="material-symbols-outlined ic">rule</span>
                     <span>Klausul PRP</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
-                    <span>Manajemen Akun User</span>
+
+                <span class="qs-group-label" style="margin-top:16px;">Sistem & Dual Portal</span>
+                <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
+                    <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
+                    <span>Beralih ke BOS'Q</span>
                 </a>
             @endif
         </div>

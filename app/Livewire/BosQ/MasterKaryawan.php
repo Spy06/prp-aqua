@@ -44,7 +44,11 @@ class MasterKaryawan extends Component
 
     public function render()
     {
-        $query = Karyawan::with(['departemen', 'user']);
+        $query = Karyawan::with(['departemen', 'user'])
+            ->where('nama', 'not like', '%super administrator%')
+            ->whereDoesntHave('user', function ($q) {
+                $q->where('role', 'superadmin');
+            });
 
         if ($this->search !== '') {
             $query->where(function ($q) {
@@ -65,8 +69,8 @@ class MasterKaryawan extends Component
 
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
-        $totalKaryawan = Karyawan::count();
-        $totalManajemen = Karyawan::where('is_anggota_divisi_manajemen', true)->count();
+        $totalKaryawan = Karyawan::where('nama', 'not like', '%super administrator%')->count();
+        $totalManajemen = Karyawan::where('nama', 'not like', '%super administrator%')->where('is_anggota_divisi_manajemen', true)->count();
 
         return view('livewire.bosq.master-karyawan', [
             'karyawans'      => $karyawans,

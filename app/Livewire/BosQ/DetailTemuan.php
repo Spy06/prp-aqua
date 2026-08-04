@@ -31,9 +31,9 @@ class DetailTemuan extends Component
     {
         $user = auth()->user();
 
-        // Hanya Pelapor (Observer) atau QA yang dapat mengubah status menjadi Closed
-        if ($user->id !== $this->temuan->pelapor_id && $user->role !== 'qa') {
-            session()->flash('error', 'Hanya observer (pelapor) yang berhak mengubah status observasi ini menjadi Closed.');
+        // Hanya Pelapor (Observer) atau Auditee yang berhak mengubah status observasi ini menjadi Closed. QA bertindak murni sebagai pengawas (oversight).
+        if ($user->id !== $this->temuan->pelapor_id && $user->id !== $this->temuan->auditee_id) {
+            session()->flash('error', 'Hanya observer (pelapor) atau auditee yang berhak mengubah status observasi ini menjadi Closed. QA hanya bertindak sebagai pengawas.');
             return;
         }
 

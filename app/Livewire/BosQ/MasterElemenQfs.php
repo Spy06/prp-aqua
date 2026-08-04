@@ -10,82 +10,118 @@ class MasterElemenQfs extends Component
 {
     use WithPagination;
 
-    protected string $paginationTheme = 'bootstrap';
-
     public string $search = '';
-    public ?int $elemenId = null;
+    public ?int $editingId = null;
+    public ?int $customId = null;
     public string $nama_elemen = '';
     public string $deskripsi = '';
-    public bool $isEditing = false;
+    public bool $showForm = false;
 
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function create(): void
+    public function openCreate(): void
     {
         $this->resetForm();
-        $this->isEditing = false;
+        $this->showForm = true;
     }
 
-    public function edit(int $id): void
+    public function openEdit(int $id): void
     {
         $elemen = BosqElemenQfs::findOrFail($id);
-        $this->elemenId = $elemen->id;
+        $this->editingId = $elemen->id;
+        $this->customId = $elemen->id;
         $this->nama_elemen = $elemen->nama_elemen;
         $this->deskripsi = $elemen->deskripsi ?? '';
-        $this->isEditing = true;
+        $this->showForm = true;
+        $this->resetValidation();
     }
 
-    public function save(): void
+    public function simpan(): void
     {
-        $this->validate([
-            'nama_elemen' => 'required|string|max:255',
-            'deskripsi'   => 'nullable|string',
-        ], [
-            'nama_elemen.required' => 'Nama Elemen QFS wajib diisi.',
-        ]);
+        if ($this->editingId) {
+            $this->validate([
+                'customId'    => 'required|integer|min:1|unique:bosq_elemen_qfs,id,' . $this->editingId,
+                'nama_elemen' => 'required|string|max:255',
+                'deskripsi'   => 'nullable|string',
+            ], [
+                'customId.required'    => 'ID Elemen QFS wajib diisi.',
+                'customId.unique'      => 'ID Elemen QFS tersebut sudah digunakan.',
+                'nama_elemen.required' => 'Nama Elemen QFS wajib diisi.',
+            ]);
 
-        if ($this->isEditing && $this->elemenId) {
-            $elemen = BosqElemenQfs::findOrFail($this->elemenId);
+            $elemen = BosqElemenQfs::findOrFail($this->editingId);
             $elemen->update([
+                'id'          => $this->customId,
                 'nama_elemen' => $this->nama_elemen,
                 'deskripsi'   => $this->deskripsi ?: null,
             ]);
-            session()->flash('success', 'Master Elemen QFS berhasil diperbarui!');
+            session()->flash('success', "Elemen QFS #{$this->customId} '{$this->nama_elemen}' berhasil diperbarui.");
         } else {
-            BosqElemenQfs::create([
+            $rules = [
+                'nama_elemen' => 'required|string|max:255',
+                'deskripsi'   => 'nullable|string',
+            ];
+            if ($this->customId) {
+                $rules['customId'] = 'integer|min:1|unique:bosq_elemen_qfs,id';
+            }
+            $this->validate($rules, [
+                'customId.unique'      => 'ID Elemen QFS tersebut sudah digunakan.',
+                'nama_elemen.required' => 'Nama Elemen QFS wajib diisi.',
+            ]);
+
+            $data = [
                 'nama_elemen' => $this->nama_elemen,
                 'deskripsi'   => $this->deskripsi ?: null,
-            ]);
-            session()->flash('success', 'Master Elemen QFS baru berhasil ditambahkan!');
+            ];
+            if ($this->customId) {
+                $data['id'] = $this->customId;
+            }
+
+            $created = BosqElemenQfs::create($data);
+            session()->flash('success', "Elemen QFS baru #{$created->id} '{$this->nama_elemen}' berhasil ditambahkan.");
         }
 
         $this->resetForm();
     }
 
-    public function delete(int $id): void
+    public function hapus(int $id): void
     {
-        $elemen = BosqElemenQfs::findOrFail($id);
+        $elemen = BosqElemenQfs::withCount('temuans')->findOrFail($id);
+
+        if ($elemen->temuans_count > 0) {
+            session()->flash('error', "Elemen QFS '{$elemen->nama_elemen}' tidak dapat dihapus karena sedang digunakan di {$elemen->temuans_count} data temuan/observasi.");
+            return;
+        }
+
+        $nama = $elemen->nama_elemen;
         $elemen->delete();
-        session()->flash('success', 'Master Elemen QFS berhasil dihapus!');
+        session()->flash('success', "Elemen QFS '{$nama}' berhasil dihapus.");
     }
 
     public function resetForm(): void
     {
-        $this->elemenId = null;
+        $this->editingId = null;
+        $this->customId = null;
         $this->nama_elemen = '';
         $this->deskripsi = '';
-        $this->isEditing = false;
+        $this->showForm = false;
         $this->resetValidation();
     }
 
     public function render()
     {
-        $elemens = BosqElemenQfs::where('nama_elemen', 'like', '%' . $this->search . '%')
-            ->orWhere('deskripsi', 'like', '%' . $this->search . '%')
-            ->orderBy('nama_elemen')
+        $elemens = BosqElemenQfs::withCount('temuans')
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('id', 'like', '%' . $this->search . '%')
+                        ->orWhere('nama_elemen', 'like', '%' . $this->search . '%')
+                        ->orWhere('deskripsi', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->orderBy('id', 'asc')
             ->paginate(10);
 
         return view('livewire.bosq.master-elemen-qfs', [

@@ -1,121 +1,133 @@
-<div style="display:flex;flex-direction:column;gap:24px;" class="fu">
-    
-    {{-- Header --}}
-    <div class="bph fu1">
+<div class="fu" id="master-elemen-qfs-container" style="display:flex;flex-direction:column;gap:16px;">
+
+    @if(session('success'))
+    <div class="balert balert-success">
+        <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">check_circle</span>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="balert balert-error">
+        <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">error</span>
+        <span>{{ session('error') }}</span>
+    </div>
+    @endif
+
+    {{-- Page Header --}}
+    <div class="bph">
         <div>
-            <h2 class="bph-title">Master Data Elemen QFS — BOS'Q</h2>
+            <h2 class="bph-title">Master Elemen QFS</h2>
             <p class="bph-sub">Kelola elemen Quality & Food Safety (QFS) untuk standar observasi BOS'Q</p>
         </div>
-        <div>
-            <button wire:click="create" class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">add</span>
-                Tambah Elemen QFS Baru
+        <button wire:click="openCreate" id="btn-tambah-elemen" class="bbtn bbtn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+            Tambah Elemen QFS
+        </button>
+    </div>
+
+    {{-- Form Tambah/Edit --}}
+    @if($showForm)
+    <div class="bcard fu1" style="padding:20px;">
+        <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
+            {{ $editingId ? 'Edit Elemen QFS' : 'Tambah Elemen QFS Baru' }}
+        </h3>
+        <div style="display:grid;grid-template-columns:120px 1.2fr 2fr;gap:14px;max-width:860px;">
+            <div>
+                <label for="form-custom-id" class="blabel">ID Elemen</label>
+                <input type="number" id="form-custom-id" wire:model="customId" min="1"
+                       placeholder="Auto"
+                       class="binput" style="font-family:monospace;font-weight:700;" />
+                <p style="font-size:11px;color:var(--btxt2);margin-top:2px;">(Kosongkan jika auto)</p>
+                @error('customId') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label for="form-nama-elemen" class="blabel">Nama Elemen QFS <span style="color:var(--be);">*</span></label>
+                <input type="text" id="form-nama-elemen" wire:model="nama_elemen"
+                       placeholder="Contoh: Personal Hygiene, Storage & Warehousing"
+                       class="binput" />
+                @error('nama_elemen') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label for="form-deskripsi" class="blabel">Deskripsi / Catatan (Opsional)</label>
+                <input type="text" id="form-deskripsi" wire:model="deskripsi"
+                       placeholder="Penjelasan detail cakupan elemen QFS..."
+                       class="binput" />
+                @error('deskripsi') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button wire:click="resetForm" class="bbtn bbtn-secondary">Batal</button>
+            <button wire:click="simpan" wire:loading.attr="disabled" id="btn-simpan-elemen" class="bbtn bbtn-primary">
+                <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                Simpan
             </button>
         </div>
     </div>
-
-    {{-- Alert Success --}}
-    @if (session()->has('success'))
-        <div class="balert balert-success fu">
-            <span class="material-symbols-outlined" style="font-size:20px;">check_circle</span>
-            <span>{{ session('success') }}</span>
-        </div>
     @endif
 
-    {{-- Form Tambah/Edit --}}
-    <div class="bcard fu1" style="padding:20px;">
-        <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
-            {{ $isEditing ? 'Edit Elemen QFS' : 'Tambah Elemen QFS Baru' }}
-        </h3>
-        <form wire:submit.prevent="save" style="display:flex;flex-direction:column;gap:14px;">
-            <div>
-                <label class="blabel">Nama Elemen QFS <span style="color:var(--error);">*</span></label>
-                <input type="text" wire:model="nama_elemen" class="binput" placeholder="Contoh: Personal Hygiene, Pest Control, Storage & Warehousing" required />
-                @error('nama_elemen') <span class="berr">{{ $message }}</span> @enderror
-            </div>
-
-            <div>
-                <label class="blabel">Deskripsi / Catatan (Opsional)</label>
-                <textarea wire:model="deskripsi" class="binput" rows="3" placeholder="Tuliskan penjelaskan detail cakupan elemen QFS ini..."></textarea>
-                @error('deskripsi') <span class="berr">{{ $message }}</span> @enderror
-            </div>
-
-            <div style="display:flex;gap:10px;margin-top:4px;">
-                <button type="submit" class="bbtn bbtn-primary bbtn-sm">
-                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                    {{ $isEditing ? 'Simpan Perubahan' : 'Tambah Elemen' }}
-                </button>
-                @if($isEditing || $nama_elemen || $deskripsi)
-                    <button type="button" wire:click="resetForm" class="bbtn bbtn-secondary bbtn-sm">
-                        Batal
-                    </button>
-                @endif
-            </div>
-        </form>
+    {{-- Search Bar --}}
+    <div style="display:flex;align-items:center;gap:12px;">
+        <div style="max-width:320px;flex:1;position:relative;">
+            <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+            <input type="text" wire:model.live.debounce.300ms="search"
+                   placeholder="Cari nama atau deskripsi elemen..."
+                   class="binput" style="padding-left:40px;" />
+        </div>
     </div>
 
-    {{-- Tabel Data --}}
-    <div class="bcard fu2">
-        <div class="bcard-header" style="justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div class="bcard-hicon" style="background:var(--bp-light);">
-                    <span class="material-symbols-outlined fil" style="color:var(--bp-dark);font-size:20px;">category</span>
-                </div>
-                <div>
-                    <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Daftar Master Elemen QFS</h3>
-                    <p style="font-size:12px;color:var(--btxt2);margin:0;">Total elemen QFS terdaftar</p>
-                </div>
-            </div>
-
-            <div style="width:240px;">
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari elemen..." class="binput" style="padding:6px 12px;font-size:12.5px;" />
-            </div>
-        </div>
-
+    {{-- Data Table --}}
+    <div class="bcard fu2" style="overflow:hidden;">
         <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+            <table class="btbl">
                 <thead>
-                    <tr style="background:var(--bsur);border-bottom:1px solid var(--bbor);color:var(--btxt2);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">
-                        <th style="padding:12px 16px;">ID</th>
-                        <th style="padding:12px 16px;">Nama Elemen QFS</th>
-                        <th style="padding:12px 16px;">Deskripsi</th>
-                        <th style="padding:12px 16px;text-align:center;">Aksi</th>
+                    <tr>
+                        <th style="width:80px;text-align:left;">ID</th>
+                        <th style="width:30%;text-align:left;">Nama Elemen QFS</th>
+                        <th style="text-align:left;">Deskripsi</th>
+                        <th style="width:110px;text-align:center;">Dipakai</th>
+                        <th style="width:120px;text-align:center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($elemens as $el)
-                        <tr style="border-bottom:1px solid var(--bbor);">
-                            <td style="padding:12px 16px;font-weight:700;color:var(--bp);">#{{ $el->id }}</td>
-                            <td style="padding:12px 16px;font-weight:600;color:var(--btxt);">{{ $el->nama_elemen }}</td>
-                            <td style="padding:12px 16px;color:var(--btxt2);max-width:320px;">{{ $el->deskripsi ?? '-' }}</td>
-                            <td style="padding:12px 16px;text-align:center;">
-                                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                                    <button wire:click="edit({{ $el->id }})" class="bbtn bbtn-secondary bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
-                                        Edit
-                                    </button>
-                                    <button wire:click="delete({{ $el->id }})" wire:confirm="Apakah Anda yakin ingin menghapus Elemen ini?" class="bbtn bbtn-danger bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:3px 8px;border-radius:6px;">#{{ $el->id }}</span>
+                        </td>
+                        <td style="font-weight:600;color:var(--btxt);">{{ $el->nama_elemen }}</td>
+                        <td style="color:var(--btxt2);max-width:360px;">{{ $el->deskripsi ?? '-' }}</td>
+                        <td style="text-align:center;">
+                            <span class="bbadge bbadge-progress">{{ $el->temuans_count }}</span>
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <button wire:click="openEdit({{ $el->id }})" title="Edit"
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                                </button>
+                                <button wire:click="hapus({{ $el->id }})"
+                                        wire:confirm="Hapus elemen QFS '{{ $el->nama_elemen }}'?"
+                                        class="bbtn bbtn-danger bbtn-sm" style="padding:5px 8px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" style="padding:32px;text-align:center;color:var(--btxt2);">
-                                Belum ada data Elemen QFS.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">category</span>
+                            Belum ada data Elemen QFS
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
         @if($elemens->hasPages())
-            <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
-                {{ $elemens->links() }}
-            </div>
+        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+            {{ $elemens->links('vendor.pagination.tailwind') }}
+        </div>
         @endif
     </div>
-
 </div>

@@ -87,7 +87,7 @@ class MasterKlausul extends Component
     public function render()
     {
         $klausuls = KlausulPrp::withCount('temuans')
-            ->orderBy('kode_klausul')
+            ->orderBy('id', 'asc')
             ->paginate(20);
 
         return view('livewire.master-klausul', [

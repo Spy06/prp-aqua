@@ -227,8 +227,27 @@
         .fu1 { animation: fadeUp 0.45s 0.05s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
         .fu2 { animation: fadeUp 0.45s 0.1s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
         .fu3 { animation: fadeUp 0.45s 0.15s cubic-bezier(0.25, 0.8, 0.25, 1) both; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* ── Berry Table (BOS'Q & SIVERA) ── */
+        .btbl { width: 100%; border-collapse: collapse; text-align: left; }
+        .btbl thead tr { background: var(--bp-light); }
+        .btbl th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bp-dark);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--bbor);
+        }
+        .btbl tbody tr { border-bottom: 1px solid var(--bbor); transition: background .15s; }
+        .btbl tbody tr:last-child { border-bottom: none; }
+        .btbl tbody tr:hover { background: rgba(25, 118, 210, 0.03); }
+        .btbl td { padding: 14px 16px; font-size: 13.5px; color: var(--btxt); vertical-align: middle; }
+        .bbadge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
+        .bbadge-progress { background: var(--bp-light); color: var(--bp-dark); }
+        .berr-msg { font-size: 11.5px; color: var(--error); margin-top: 4px; font-weight: 500; }
     </style>
     @livewireStyles
 </head>
@@ -461,6 +480,7 @@
             document.addEventListener('DOMContentLoaded', () => { attachButtons(); setupMobileMenu(); });
             document.addEventListener('livewire:navigated', () => { attachButtons(); setupMobileMenu(); });
         })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" data-navigate-once></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0" data-navigate-once></script>
     @livewireScripts

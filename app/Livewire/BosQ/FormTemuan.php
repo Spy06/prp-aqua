@@ -169,7 +169,19 @@ class FormTemuan extends Component
 
             DB::commit();
 
-            // Dispatch WA untuk temuan negatif -> dikirim ke tim QA
+            $emailService = app(\App\Services\EmailNotificationService::class);
+
+            // Kirim Notifikasi Email ke SELURUH PIC yang memegang Sub Area ini
+            $subAreaObj = BosqSubArea::with('pics')->find($this->sub_area_id);
+            if ($subAreaObj && $subAreaObj->pics->count() > 0) {
+                foreach ($subAreaObj->pics as $subAreaPic) {
+                    if (!empty($subAreaPic->email)) {
+                        $emailService->sendBosqNotification($temuan, 'subarea_pic', $subAreaPic->email);
+                    }
+                }
+            }
+
+            // Dispatch WA & Email untuk temuan negatif -> dikirim ke tim QA
             if ($isNegatif) {
                 $auditeeObj  = User::find($this->auditee_id);
                 $pelaporDept = $user->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
@@ -184,7 +196,6 @@ class FormTemuan extends Component
                       . "Buka dan verifikasi di:\n{$link}";
 
                 $qaUsers = User::where('role', 'qa')->get();
-                $emailService = app(\App\Services\EmailNotificationService::class);
                 $emailService->sendBosqNotification($temuan, 'baru');
 
                 foreach ($qaUsers as $qa) {

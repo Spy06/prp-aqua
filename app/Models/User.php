@@ -72,6 +72,14 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * Sub Area BOS'Q di mana user ini ditunjuk sebagai PIC Sub Area.
+     */
+    public function bosqSubAreas(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(BosqSubArea::class, 'bosq_sub_area_pics', 'user_id', 'sub_area_id')->withTimestamps();
+    }
+
+    /**
      * Apakah user ini berperan sebagai Super Admin.
      */
     public function isSuperAdmin(): bool

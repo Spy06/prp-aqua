@@ -1,145 +1,142 @@
-<div style="display:flex;flex-direction:column;gap:24px;" class="fu">
-    
-    {{-- Header --}}
-    <div class="bph fu1">
+<div class="fu" id="master-sub-area-container" style="display:flex;flex-direction:column;gap:18px;">
+
+    {{-- Page Header --}}
+    <div class="bph">
         <div>
             <h2 class="bph-title">Master Data Sub Area — BOS'Q</h2>
-            <p class="bph-sub">Kelola pemetaan Sub Area per Departemen dalam sistem BOS'Q</p>
+            <p class="bph-sub">Kelola pemetaan dan pendaftaran nama Sub Area per Departemen dalam sistem BOS'Q</p>
         </div>
-        <div>
-            <button wire:click="create" class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">add</span>
-                Tambah Sub Area Baru
-            </button>
-        </div>
+        <button wire:click="openCreateSubArea" class="bbtn bbtn-primary">
+            <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+            Tambah Sub Area Baru
+        </button>
     </div>
 
-    {{-- Alert Success --}}
+    {{-- Flash Alerts --}}
     @if (session()->has('success'))
         <div class="balert balert-success fu">
-            <span class="material-symbols-outlined" style="font-size:20px;">check_circle</span>
+            <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">check_circle</span>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    {{-- Form Tambah/Edit --}}
+    {{-- Form Tambah/Edit Sub Area --}}
+    @if($showSubAreaForm)
     <div class="bcard fu1" style="padding:20px;">
-        <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
-            {{ $isEditing ? 'Edit Sub Area' : 'Tambah Sub Area Baru' }}
+        <h3 style="font-size:14px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
+            {{ $subAreaId ? 'Edit Sub Area' : 'Tambah Sub Area Baru' }}
         </h3>
-        <form wire:submit.prevent="save" style="display:flex;flex-direction:column;gap:14px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="max-md:flex-col">
-                <div>
-                    <label class="blabel">Departemen (Opsional / Umum)</label>
-                    <select wire:model="departemen_id" class="binput">
-                        <option value="">-- Semua / Sub Area Umum --</option>
-                        @foreach($departemens as $d)
-                            <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
-                        @endforeach
-                    </select>
-                    @error('departemen_id') <span class="berr">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="blabel">Nama Sub Area <span style="color:var(--error);">*</span></label>
-                    <input type="text" wire:model="nama_sub_area" class="binput" placeholder="Contoh: SBO Filler Line 1, LAB Fiskim, Kantin" required />
-                    @error('nama_sub_area') <span class="berr">{{ $message }}</span> @enderror
-                </div>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;max-width:720px;">
+            <div>
+                <label for="form-dept" class="blabel">Departemen (Area) <span style="color:var(--error);">*</span></label>
+                <select id="form-dept" wire:model="departemen_id" class="binput">
+                    <option value="">-- Pilih Departemen --</option>
+                    @foreach($departemens as $d)
+                        <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
+                    @endforeach
+                </select>
+                @error('departemen_id') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
-
-            <div style="display:flex;gap:10px;margin-top:4px;">
-                <button type="submit" class="bbtn bbtn-primary bbtn-sm">
-                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                    {{ $isEditing ? 'Simpan Perubahan' : 'Tambah Sub Area' }}
-                </button>
-                @if($isEditing || $nama_sub_area || $departemen_id)
-                    <button type="button" wire:click="resetForm" class="bbtn bbtn-secondary bbtn-sm">
-                        Batal
-                    </button>
-                @endif
+            <div>
+                <label for="form-nama-sub" class="blabel">Nama Sub Area <span style="color:var(--error);">*</span></label>
+                <input type="text" id="form-nama-sub" wire:model="nama_sub_area"
+                       placeholder="Contoh: SBO Filler Line 1, LAB Fiskim, Kantin"
+                       class="binput" />
+                @error('nama_sub_area') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
-        </form>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button wire:click="resetForm" class="bbtn bbtn-secondary">Batal</button>
+            <button wire:click="saveSubArea" wire:loading.attr="disabled" class="bbtn bbtn-primary">
+                <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                Simpan Sub Area
+            </button>
+        </div>
     </div>
+    @endif
 
-    {{-- Tabel Data --}}
-    <div class="bcard fu2">
-        <div class="bcard-header" style="justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div class="bcard-hicon" style="background:var(--bp-light);">
-                    <span class="material-symbols-outlined fil" style="color:var(--bp-dark);font-size:20px;">location_on</span>
-                </div>
-                <div>
-                    <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Daftar Master Sub Area</h3>
-                    <p style="font-size:12px;color:var(--btxt2);margin:0;">Total Sub Area terdaftar dalam sistem</p>
-                </div>
-            </div>
-
+    {{-- Filter Bar Departemen & Search --}}
+    <div class="bcard fu1" style="padding:16px 20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                <select wire:model.live="filterDepartemenId" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                <span class="material-symbols-outlined" style="color:var(--bp-dark);font-size:20px;">location_on</span>
+                <span style="font-size:13px;font-weight:700;color:var(--btxt);">Filter Departemen (Area):</span>
+
+                <select wire:model.live="filterDepartemenId" class="binput" style="width:auto;padding:7px 14px;font-size:13px;font-weight:600;">
                     <option value="">Semua Departemen</option>
                     @foreach($departemens as $d)
                         <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
                     @endforeach
                 </select>
+            </div>
 
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari sub area..." class="binput" style="width:200px;padding:6px 12px;font-size:12.5px;" />
+            <div style="max-width:280px;flex:1;position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+                <input type="text" wire:model.live.debounce.300ms="search"
+                       placeholder="Cari nama sub area..."
+                       class="binput" style="padding-left:40px;padding-top:7px;padding-bottom:7px;font-size:12.5px;" />
             </div>
         </div>
+    </div>
 
+    {{-- Data Table Sub Area --}}
+    <div class="bcard fu2" style="overflow:hidden;">
         <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+            <table class="btbl">
                 <thead>
-                    <tr style="background:var(--bsur);border-bottom:1px solid var(--bbor);color:var(--btxt2);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">
-                        <th style="padding:12px 16px;">ID</th>
-                        <th style="padding:12px 16px;">Departemen</th>
-                        <th style="padding:12px 16px;">Nama Sub Area</th>
-                        <th style="padding:12px 16px;text-align:center;">Aksi</th>
+                    <tr>
+                        <th style="width:80px;text-align:left;">ID</th>
+                        <th style="width:200px;text-align:left;">Departemen (Area)</th>
+                        <th style="text-align:left;">Nama Sub Area</th>
+                        <th style="width:140px;text-align:center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($subAreas as $sa)
-                        <tr style="border-bottom:1px solid var(--bbor);">
-                            <td style="padding:12px 16px;font-weight:700;color:var(--bp);">#{{ $sa->id }}</td>
-                            <td style="padding:12px 16px;">
-                                @if($sa->departemen)
-                                    <span style="font-weight:600;color:var(--btxt);">{{ $sa->departemen->nama_departemen }}</span>
-                                @else
-                                    <span style="font-size:11.5px;color:var(--btxt2);background:var(--bsur);padding:3px 8px;border-radius:4px;border:1px solid var(--bbor);">Sub Area Umum</span>
-                                @endif
-                            </td>
-                            <td style="padding:12px 16px;font-weight:600;color:var(--btxt);">
-                                {{ $sa->nama_sub_area }}
-                                @if(strtolower(trim($sa->nama_sub_area)) === 'others')
-                                    <span style="font-size:10px;font-weight:700;background:#ffebee;color:#c62828;padding:2px 6px;border-radius:4px;margin-left:6px;">SPECIAL (OPSIONAL INPUT)</span>
-                                @endif
-                            </td>
-                            <td style="padding:12px 16px;text-align:center;">
-                                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                                    <button wire:click="edit({{ $sa->id }})" class="bbtn bbtn-secondary bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
-                                        Edit
-                                    </button>
-                                    <button wire:click="delete({{ $sa->id }})" wire:confirm="Apakah Anda yakin ingin menghapus Sub Area ini?" class="bbtn bbtn-danger bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:3px 8px;border-radius:6px;">#{{ $sa->id }}</span>
+                        </td>
+                        <td>
+                            <span style="font-weight:700;font-size:12.5px;color:var(--btxt);">{{ $sa->departemen->nama_departemen ?? 'Umum' }}</span>
+                        </td>
+                        <td style="font-weight:600;color:var(--btxt);">
+                            {{ $sa->nama_sub_area }}
+                            @if(strtolower(trim($sa->nama_sub_area)) === 'others')
+                                <span style="font-size:10px;font-weight:700;background:#ffebee;color:#c62828;padding:2px 6px;border-radius:4px;margin-left:4px;">OTHERS</span>
+                            @endif
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                                <button wire:click="editSubArea({{ $sa->id }})" title="Edit Sub Area"
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 10px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                                    Edit
+                                </button>
+                                <button wire:click="deleteSubArea({{ $sa->id }})"
+                                        wire:confirm="Apakah Anda yakin ingin menghapus Sub Area '{{ $sa->nama_sub_area }}'?"
+                                        class="bbtn bbtn-danger bbtn-sm" style="padding:5px 10px!important;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" style="padding:32px;text-align:center;color:var(--btxt2);">
-                                Belum ada data Sub Area.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;padding:32px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">location_off</span>
+                            Belum ada data Sub Area untuk filter ini.
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
         @if($subAreas->hasPages())
-            <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
-                {{ $subAreas->links() }}
-            </div>
+        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+            {{ $subAreas->links('vendor.pagination.tailwind') }}
+        </div>
         @endif
     </div>
 

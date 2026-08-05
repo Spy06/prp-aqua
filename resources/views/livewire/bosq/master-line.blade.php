@@ -1,135 +1,210 @@
-<div style="display:flex;flex-direction:column;gap:24px;" class="fu">
-    
-    {{-- Header --}}
-    <div class="bph fu1">
+<div class="fu" id="master-line-container" style="display:flex;flex-direction:column;gap:18px;">
+
+    {{-- Page Header --}}
+    <div class="bph">
         <div>
-            <h2 class="bph-title">Master Data Line — BOS'Q</h2>
-            <p class="bph-sub">Kelola data Line produksi dan penetapan Default Auditee</p>
-        </div>
-        <div>
-            <button wire:click="create" class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">add</span>
-                Tambah Line Baru
-            </button>
+            <h2 class="bph-title">Master Line & PIC Observasi</h2>
+            <p class="bph-sub">Kelola penunjukan PIC penanggung jawab per Sub Area & Departemen dalam sistem BOS'Q</p>
         </div>
     </div>
 
-    {{-- Alert Success --}}
+    {{-- Flash Alerts --}}
     @if (session()->has('success'))
         <div class="balert balert-success fu">
-            <span class="material-symbols-outlined" style="font-size:20px;">check_circle</span>
+            <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">check_circle</span>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    {{-- Form Tambah/Edit --}}
-    <div class="bcard fu1" style="padding:20px;">
-        <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0 0 16px;">
-            {{ $isEditing ? 'Edit Data Line' : 'Tambah Line Baru' }}
-        </h3>
-        <form wire:submit.prevent="save" style="display:flex;flex-direction:column;gap:14px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="max-md:flex-col">
-                <div>
-                    <label class="blabel">Nama Line <span style="color:var(--error);">*</span></label>
-                    <input type="text" wire:model="nama_line" class="binput" placeholder="Contoh: Line 1, Ergo Line 5, Husky" required />
-                    @error('nama_line') <span class="berr">{{ $message }}</span> @enderror
-                </div>
+    @if (session()->has('info'))
+        <div class="balert balert-info fu">
+            <span class="material-symbols-outlined fil" style="font-size:18px;flex-shrink:0;">info</span>
+            <span>{{ session('info') }}</span>
+        </div>
+    @endif
 
-                <div>
-                    <label class="blabel">Default Auditee (Opsional)</label>
-                    <select wire:model="default_auditee_id" class="binput">
-                        <option value="">-- Pilih Default Auditee --</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} (NIK: {{ $user->nik }})</option>
-                        @endforeach
-                    </select>
-                    @error('default_auditee_id') <span class="berr">{{ $message }}</span> @enderror
-                </div>
+    {{-- Filter Bar Departemen & Search --}}
+    <div class="bcard fu1" style="padding:16px 20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span class="material-symbols-outlined" style="color:var(--bp-dark);font-size:20px;">precision_manufacturing</span>
+                <span style="font-size:13px;font-weight:700;color:var(--btxt);">Filter Departemen (Area):</span>
+
+                <select wire:model.live="filterDepartemenId" class="binput" style="width:auto;padding:7px 14px;font-size:13px;font-weight:600;">
+                    <option value="">Semua Departemen</option>
+                    @foreach($departemens as $d)
+                        <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <div style="display:flex;gap:10px;margin-top:4px;">
-                <button type="submit" class="bbtn bbtn-primary bbtn-sm">
-                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                    {{ $isEditing ? 'Simpan Perubahan' : 'Tambah Line' }}
-                </button>
-                @if($isEditing || $nama_line || $default_auditee_id)
-                    <button type="button" wire:click="resetForm" class="bbtn bbtn-secondary bbtn-sm">
-                        Batal
-                    </button>
-                @endif
-            </div>
-        </form>
-    </div>
-
-    {{-- Tabel Data --}}
-    <div class="bcard fu2">
-        <div class="bcard-header" style="justify-content:space-between;flex-wrap:wrap;gap:12px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div class="bcard-hicon" style="background:var(--bp-light);">
-                    <span class="material-symbols-outlined fil" style="color:var(--bp-dark);font-size:20px;">precision_manufacturing</span>
-                </div>
-                <div>
-                    <h3 style="font-size:15px;font-weight:700;color:var(--btxt);margin:0;">Daftar Master Line</h3>
-                    <p style="font-size:12px;color:var(--btxt2);margin:0;">Total data Line terdaftar</p>
-                </div>
-            </div>
-
-            <div style="width:240px;">
-                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari line..." class="binput" style="padding:6px 12px;font-size:12.5px;" />
+            <div style="max-width:280px;flex:1;position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+                <input type="text" wire:model.live.debounce.300ms="search"
+                       placeholder="Cari sub area atau nama PIC..."
+                       class="binput" style="padding-left:40px;padding-top:7px;padding-bottom:7px;font-size:12.5px;" />
             </div>
         </div>
+    </div>
 
+    {{-- Data Table Sub Area & PICs (Vertical List) --}}
+    <div class="bcard fu2" style="overflow:hidden;">
         <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+            <table class="btbl">
                 <thead>
-                    <tr style="background:var(--bsur);border-bottom:1px solid var(--bbor);color:var(--btxt2);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">
-                        <th style="padding:12px 16px;">ID</th>
-                        <th style="padding:12px 16px;">Nama Line</th>
-                        <th style="padding:12px 16px;">Default Auditee</th>
-                        <th style="padding:12px 16px;text-align:center;">Aksi</th>
+                    <tr>
+                        <th style="width:70px;text-align:left;">ID</th>
+                        <th style="width:160px;text-align:left;">Departemen (Area)</th>
+                        <th style="width:220px;text-align:left;">Nama Sub Area</th>
+                        <th style="text-align:left;">PIC Penanggung Jawab (Vertical List)</th>
+                        <th style="width:140px;text-align:center;">Aksi Kelola PIC</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($lines as $line)
-                        <tr style="border-bottom:1px solid var(--bbor);">
-                            <td style="padding:12px 16px;font-weight:700;color:var(--bp);">#{{ $line->id }}</td>
-                            <td style="padding:12px 16px;font-weight:600;color:var(--btxt);">{{ $line->nama_line }}</td>
-                            <td style="padding:12px 16px;color:var(--btxt2);">
-                                @if($line->defaultAuditee)
-                                    <div style="font-weight:600;color:var(--btxt);">{{ $line->defaultAuditee->name }}</div>
-                                    <div style="font-size:11px;">NIK: {{ $line->defaultAuditee->nik }}</div>
-                                @else
-                                    <span style="font-style:italic;color:var(--btxt2);">- Belum ditentukan -</span>
-                                @endif
-                            </td>
-                            <td style="padding:12px 16px;text-align:center;">
-                                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                                    <button wire:click="edit({{ $line->id }})" class="bbtn bbtn-secondary bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
-                                        Edit
-                                    </button>
-                                    <button wire:click="delete({{ $line->id }})" wire:confirm="Apakah Anda yakin ingin menghapus Line ini?" class="bbtn bbtn-danger bbtn-sm">
-                                        <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    @forelse($subAreas as $sa)
+                    <tr>
+                        <td>
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:3px 8px;border-radius:6px;">#{{ $sa->id }}</span>
+                        </td>
+                        <td>
+                            <span style="font-weight:700;font-size:12.5px;color:var(--btxt);">{{ $sa->departemen->nama_departemen ?? 'Umum' }}</span>
+                        </td>
+                        <td style="font-weight:600;color:var(--btxt);">
+                            {{ $sa->nama_sub_area }}
+                            @if(strtolower(trim($sa->nama_sub_area)) === 'others')
+                                <span style="font-size:10px;font-weight:700;background:#ffebee;color:#c62828;padding:2px 6px;border-radius:4px;margin-left:4px;">OTHERS</span>
+                            @endif
+                        </td>
+                        <td style="padding:10px 14px;">
+                            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+                                @forelse($sa->pics as $pic)
+                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#e3f2fd;border:1px solid #90caf9;color:#1565c0;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;width:100%;max-width:340px;">
+                                        <div style="display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                            <span class="material-symbols-outlined" style="font-size:15px;color:#1565c0;flex-shrink:0;">person</span>
+                                            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $pic->name }}</span>
+                                            <span style="font-size:11px;opacity:0.8;font-family:monospace;flex-shrink:0;">({{ $pic->nik }})</span>
+                                        </div>
+                                        <button wire:click="removePic({{ $sa->id }}, {{ $pic->id }})"
+                                                wire:confirm="Hapus {{ $pic->name }} dari PIC Sub Area {{ $sa->nama_sub_area }}?"
+                                                title="Hapus PIC"
+                                                style="border:none;background:none;color:#c62828;cursor:pointer;padding:2px;display:flex;align-items:center;border-radius:4px;"
+                                                onmouseover="this.style.background='#ffcdd2'" onmouseout="this.style.background='none'">
+                                            <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+                                        </button>
+                                    </div>
+                                @empty
+                                    <span style="font-size:12px;color:var(--btxt2);font-style:italic;">- Belum ada PIC -</span>
+                                @endforelse
+                            </div>
+                        </td>
+                        <td style="text-align:center;">
+                            <button wire:click="openManagePics({{ $sa->id }})" class="bbtn bbtn-secondary bbtn-sm" style="padding:4px 10px!important;font-size:12px!important;">
+                                <span class="material-symbols-outlined" style="font-size:15px;">person_add</span>
+                                + Kelola PIC
+                            </button>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" style="padding:32px;text-align:center;color:var(--btxt2);">
-                                Belum ada data Line.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">location_off</span>
+                            Belum ada data Sub Area untuk filter ini.
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($lines->hasPages())
-            <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
-                {{ $lines->links() }}
-            </div>
+        @if($subAreas->hasPages())
+        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+            {{ $subAreas->links('vendor.pagination.tailwind') }}
+        </div>
         @endif
     </div>
 
+    {{-- MODAL INTERAKTIF KELOLA PIC SUB AREA --}}
+    @if($managingSubArea)
+    <dialog open id="manage-pic-modal" style="position:fixed;inset:0;margin:auto;border-radius:16px;border:1px solid var(--bbor);background:var(--bcard);padding:24px;max-width:540px;width:92%;color:var(--btxt);outline:none;box-shadow:0 24px 60px rgba(0,0,0,.2);z-index:100;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bbor);">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:#e3f2fd;display:flex;align-items:center;justify-content:center;">
+                    <span class="material-symbols-outlined" style="color:#1565c0;font-size:20px;">person_add</span>
+                </div>
+                <div>
+                    <h3 style="font-size:15px;font-weight:700;margin:0;color:var(--btxt);">Kelola PIC Sub Area</h3>
+                    <p style="font-size:12px;color:var(--btxt2);margin:0;">{{ $managingSubArea->nama_sub_area }} (Dept: {{ $managingSubArea->departemen->nama_departemen ?? 'Umum' }})</p>
+                </div>
+            </div>
+            <button wire:click="closeManagePics" style="border:none;background:none;color:var(--btxt2);cursor:pointer;">
+                <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+            </button>
+        </div>
+
+        {{-- Autocomplete Live Search Input --}}
+        <div style="position:relative;margin-bottom:20px;">
+            <label class="blabel">Cari & Tambah PIC Baru</label>
+            <div style="position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+                <input type="text" wire:model.live.debounce.200ms="picSearch"
+                       placeholder="Ketik nama atau NIK karyawan..."
+                       class="binput" style="padding-left:40px;" />
+            </div>
+
+            {{-- Recommendations Dropdown List --}}
+            @if(count($picResults) > 0)
+                <div style="position:absolute;top:100%;left:0;right:0;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);margin-top:4px;max-height:220px;overflow-y:auto;z-index:110;">
+                    @foreach($picResults as $user)
+                        <div wire:click="addPic({{ $user['id'] }})"
+                             style="padding:10px 14px;border-bottom:1px solid var(--bbor);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background 0.15s;"
+                             onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
+                            <div>
+                                <div style="font-weight:600;font-size:13px;color:var(--btxt);">{{ $user['name'] }}</div>
+                                <div style="font-size:11px;color:var(--btxt2);">NIK: {{ $user['nik'] }}</div>
+                            </div>
+                            <span class="bbtn bbtn-primary bbtn-sm" style="padding:3px 8px!important;font-size:11px!important;">+ Pilih</span>
+                        </div>
+                    @endforeach
+                </div>
+            @elseif(strlen(trim($picSearch)) >= 1)
+                <div style="position:absolute;top:100%;left:0;right:0;background:var(--bcard);border:1px solid var(--bbor);border-radius:10px;padding:12px;text-align:center;font-size:12px;color:var(--btxt2);box-shadow:0 8px 24px rgba(0,0,0,0.15);margin-top:4px;z-index:110;">
+                    Tidak ditemukan karyawan dengan kata kunci "{{ $picSearch }}".
+                </div>
+            @endif
+        </div>
+
+        {{-- Lista PIC Terdaftar saat ini --}}
+        <div>
+            <div class="blabel" style="margin-bottom:8px;">Daftar PIC Terdaftar ({{ $managingSubArea->pics->count() }} Orang):</div>
+            <div style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;">
+                @forelse($managingSubArea->pics as $pic)
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bsur);border:1px solid var(--bbor);border-radius:10px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--bp);color:#fff;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;">
+                                {{ strtoupper(substr($pic->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight:600;font-size:13px;color:var(--btxt);">{{ $pic->name }}</div>
+                                <div style="font-size:11px;color:var(--btxt2);">NIK: {{ $pic->nik }}</div>
+                            </div>
+                        </div>
+                        <button wire:click="removePic({{ $managingSubArea->id }}, {{ $pic->id }})"
+                                class="bbtn bbtn-danger bbtn-sm" style="padding:4px 8px!important;">
+                            <span class="material-symbols-outlined" style="font-size:14px;">delete</span>
+                            Hapus
+                        </button>
+                    </div>
+                @empty
+                    <div style="text-align:center;padding:16px;color:var(--btxt2);font-size:12.5px;font-style:italic;">
+                        Belum ada PIC yang ditunjuk untuk Sub Area ini. Cari dan pilih karyawan di atas untuk menambahkan.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:20px;padding-top:12px;border-top:1px solid var(--bbor);">
+            <button wire:click="closeManagePics" class="bbtn bbtn-primary">Selesai</button>
+        </div>
+    </dialog>
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);z-index:90;" wire:click="closeManagePics"></div>
+    @endif
 </div>

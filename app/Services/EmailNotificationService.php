@@ -80,9 +80,10 @@ class EmailNotificationService
                 'type'   => $type,
             ], function ($message) use ($email, $bosqTemuan, $type) {
                 $subject = match($type) {
-                    'baru'   => "[BOS'Q] Observasi Perilaku Baru (#{$bosqTemuan->id})",
-                    'closed' => "[BOS'Q] Observasi Perilaku Status CLOSED (#{$bosqTemuan->id})",
-                    default  => "[BOS'Q] Update Observasi Perilaku (#{$bosqTemuan->id})",
+                    'baru'        => "[BOS'Q] Observasi Perilaku Baru (#{$bosqTemuan->id})",
+                    'subarea_pic' => "[BOS'Q] Laporan Perilaku Baru di Sub Area Anda (#{$bosqTemuan->id})",
+                    'closed'      => "[BOS'Q] Observasi Perilaku Status CLOSED (#{$bosqTemuan->id})",
+                    default       => "[BOS'Q] Update Observasi Perilaku (#{$bosqTemuan->id})",
                 };
 
                 $message->to($email)

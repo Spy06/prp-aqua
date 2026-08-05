@@ -291,7 +291,7 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan per Departemen</p>
-            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvas"></canvas></div>
+            <div style="position:relative; width:100%; height:440px; flex:1; min-width:0;"><canvas x-ref="canvas"></canvas></div>
         </div>
 
         {{-- Chart 2: Status Doughnut (SHADCN Donut Chart Replica) --}}
@@ -516,7 +516,9 @@
                                      borderColor: '#dc2626',
                                      borderRadius: 8,
                                      borderSkipped: false,
-                                     maxBarThickness: 14
+                                     maxBarThickness: 20,
+                                     categoryPercentage: labels.length <= 2 ? 0.14 : (labels.length <= 4 ? 0.25 : 0.4),
+                                     barPercentage: 0.98
                                  },
                                  {
                                      label: 'Positif (Perilaku Baik)',
@@ -525,13 +527,18 @@
                                      borderColor: '#2563eb',
                                      borderRadius: 8,
                                      borderSkipped: false,
-                                     maxBarThickness: 14
+                                     maxBarThickness: 20,
+                                     categoryPercentage: labels.length <= 2 ? 0.14 : (labels.length <= 4 ? 0.25 : 0.4),
+                                     barPercentage: 0.98
                                  }
                              ]
                          },
                          options: {
                              responsive: true,
                              maintainAspectRatio: false,
+                             layout: {
+                                 padding: { top: 24 }
+                             },
                              plugins: {
                                  legend: {
                                      position: 'bottom',
@@ -545,13 +552,20 @@
                                      anchor: 'end',
                                      align: 'top',
                                      color: 'var(--btxt)',
-                                     font: { weight: 'bold', family: 'Inter', size: 11 },
-                                     formatter: (val) => val > 0 ? val : ''
+                                     font: { weight: '800', family: 'Inter', size: 12 },
+                                     offset: 2,
+                                     display: true,
+                                     formatter: (val) => val
                                  }
                              },
                              scales: {
-                                 y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                 x: { ticks: { font: { family: 'Inter', size: 10, weight: '600' } }, grid: { display: false } }
+                                 y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                                 x: {
+                                     categoryPercentage: labels.length <= 2 ? 0.14 : (labels.length <= 4 ? 0.25 : 0.4),
+                                     barPercentage: 0.98,
+                                     ticks: { font: { family: 'Inter', size: 10, weight: '600' } },
+                                     grid: { display: false }
+                                 }
                              }
                          }
                      });
@@ -569,7 +583,7 @@
              }"
              wire:ignore>
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px;">Temuan Negatif vs Positif per Departemen</p>
-            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"><canvas x-ref="canvasDampak"></canvas></div>
+            <div style="position:relative; width:100%; height:440px; flex:1; min-width:0;"><canvas x-ref="canvasDampak"></canvas></div>
         </div>
 
         {{-- Chart 4: Observasi tiap Sub Area --}}
@@ -582,7 +596,7 @@
                     @endforeach
                 </select>
             </div>
-            <div style="position:relative; width:100%; height:320px; flex:1; min-width:0;"
+            <div style="position:relative; width:100%; height:440px; flex:1; min-width:0;"
                  data-labels="{{ $subAreaLabels }}"
                  data-values="{{ $subAreaData }}"
                  x-data="{

@@ -3,8 +3,8 @@
     {{-- Header & Title --}}
     <div class="bph fu1">
         <div>
-            <h2 class="bph-title">Pencapaian BQA — Rekap Kepatuhan BOS'Q</h2>
-            <p class="bph-sub">Ringkasan kepatuhan per departemen & detail pencapaian per anggota (Week 1 s/d Week 4)
+            <h2 class="bph-title">Rekap persentase target observasi per departemen</h2>
+            <p class="bph-sub">Ringkasan persentase per departemen & detail target per anggota (Week 1 s/d Week 4)
             </p>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">

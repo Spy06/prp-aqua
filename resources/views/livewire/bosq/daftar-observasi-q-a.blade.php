@@ -6,7 +6,7 @@
             <h2 class="bph-title">Daftar Observasi Mutu — BOS'Q</h2>
             <p class="bph-sub">Kelola dan tinjau seluruh data hasil observasi perilaku mutu (Periode: <strong>{{ $filterLabel }}</strong>)</p>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <a href="{{ route('bosq.qa.export.csv', [
                 'tipe' => $filter_type,
                 'bulan' => $bulan,
@@ -17,9 +17,8 @@
                 'status' => $filter_status,
                 'tingkat_resiko' => $filter_tingkat_resiko,
                 'dampak_temuan' => $filter_dampak_temuan
-            ]) }}" class="bbtn bbtn-secondary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;color:#2e7d32;">csv</span>
-                Export Excel / CSV
+            ]) }}" class="bbtn" style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">table_chart</span> Excel
             </a>
             <a href="{{ route('bosq.qa.export.pdf.dashboard', [
                 'tipe' => $filter_type,
@@ -31,9 +30,8 @@
                 'status' => $filter_status,
                 'tingkat_resiko' => $filter_tingkat_resiko,
                 'dampak_temuan' => $filter_dampak_temuan
-            ]) }}" target="_blank" class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">picture_as_pdf</span>
-                Export PDF
+            ]) }}" target="_blank" class="bbtn" style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">picture_as_pdf</span> PDF
             </a>
         </div>
     </div>
@@ -157,9 +155,9 @@
                             </td>
                             <td style="padding:12px 16px;text-align:center;">
                                 @if($t->dampak_temuan === 'positif')
-                                    <span class="bbadge bbadge-success" style="font-size:11px;">👍 Positif</span>
+                                    <span style="font-size:11px;font-weight:700;background:#e3f2fd;color:#1565c0;padding:4px 10px;border-radius:6px;border:1px solid #bbdefb;text-transform:uppercase;display:inline-block;">POSITIF</span>
                                 @else
-                                    <span class="bbadge bbadge-error" style="font-size:11px;">👎 Negatif</span>
+                                    <span style="font-size:11px;font-weight:700;background:#ffebee;color:#c62828;padding:4px 10px;border-radius:6px;border:1px solid #ffcdd2;text-transform:uppercase;display:inline-block;">NEGATIF</span>
                                 @endif
                             </td>
                             <td style="padding:12px 16px;text-align:center;">

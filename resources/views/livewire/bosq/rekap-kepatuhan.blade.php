@@ -7,16 +7,16 @@
             <p class="bph-sub">Ringkasan kepatuhan per departemen & detail pencapaian per anggota (Week 1 s/d Week 4)
             </p>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <a href="{{ route('bosq.qa.export.rekap.csv', ['date' => $bulan_tahun . '-01']) }}"
-                class="bbtn bbtn-secondary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;color:#2e7d32;">csv</span>
-                Export Excel / CSV
+               class="bbtn"
+               style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">table_chart</span> Excel
             </a>
             <a href="{{ route('bosq.qa.export.rekap.pdf', ['date' => $bulan_tahun . '-01']) }}" target="_blank"
-                class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">picture_as_pdf</span>
-                Export PDF Rekap
+               class="bbtn"
+               style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">picture_as_pdf</span> PDF
             </a>
         </div>
     </div>

@@ -113,9 +113,9 @@
                         <p class="tcard-desc">{{ $temuan->elemenQfs->nama_elemen ?? '-' }}</p>
                         <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
                             @if($temuan->dampak_temuan === 'positif')
-                                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;">✓ Positif</span>
+                                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb;text-transform:uppercase;">POSITIF</span>
                             @else
-                                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;">⚠ Negatif</span>
+                                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#ffebee;color:#c62828;border:1px solid #ffcdd2;text-transform:uppercase;">NEGATIF</span>
                             @endif
                         </div>
                     </div>

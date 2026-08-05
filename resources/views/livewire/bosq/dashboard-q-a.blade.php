@@ -110,28 +110,6 @@
             <h2 class="bph-title">Dashboard Analisis QA — BOS'Q</h2>
             <p class="bph-sub">Hasil analisis kepatuhan dan observasi perilaku mutu (Periode: <strong>{{ $filterLabel }}</strong>)</p>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <a href="{{ route('bosq.qa.export.csv', [
-                'tipe' => $filter_type,
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'awal' => $tgl_mulai,
-                'akhir' => $tgl_selesai
-            ]) }}" class="bbtn bbtn-secondary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;color:#2e7d32;">csv</span>
-                Export Excel / CSV
-            </a>
-            <a href="{{ route('bosq.qa.export.pdf.dashboard', [
-                'tipe' => $filter_type,
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'awal' => $tgl_mulai,
-                'akhir' => $tgl_selesai
-            ]) }}" target="_blank" class="bbtn bbtn-primary bbtn-sm">
-                <span class="material-symbols-outlined" style="font-size:18px;">picture_as_pdf</span>
-                Export PDF Dashboard
-            </a>
-        </div>
     </div>
 
     {{-- Filter Periode Card --}}

@@ -6,8 +6,6 @@ use App\Models\Departemen;
 use App\Models\Karyawan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,68 +13,72 @@ class MasterKaryawan extends Component
 {
     use WithPagination;
 
-    // Form fields
-    public string  $nik           = '';
-    public string  $nama          = '';
-    public string  $email         = '';
-    public string  $departemen_id  = '';
+    // Autocomplete Search & Selection for Adding PIC
+    public string  $searchKaryawan = '';
+    public ?string $selectedNik    = null;
+    public string  $selectedNama   = '';
+    public string  $selectedDept   = '';
+    public string  $email          = '';
     public bool    $status_aktif   = true;
+    public array   $recommendations= [];
 
-    // State UI & Filters
+    // Edit PIC State
+    public ?string $editingNik     = null;
+
+    // UI state & filters
     public bool    $showForm         = false;
-    public ?string $editingNik       = null;
     public string  $search           = '';
     public string  $filterDepartemen = '';
 
-    protected function rules(): array
+    public function updatedSearchKaryawan(): void
     {
-        $user = $this->editingNik ? Karyawan::where('nik', $this->editingNik)->first()?->user : null;
-        $userId = $user ? $user->id : null;
+        $query = trim($this->searchKaryawan);
 
-        return [
-            'nik' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('karyawan', 'nik')->ignore($this->editingNik, 'nik'),
-                Rule::unique('users', 'nik')->ignore($userId, 'id'),
-            ],
-            'nama'          => 'required|string|max:255',
-            'email'         => 'nullable|email|max:255',
-            'departemen_id' => 'required|exists:departemen,id',
-            'status_aktif'  => 'boolean',
-        ];
+        if (strlen($query) >= 1) {
+            $this->recommendations = Karyawan::with('departemen', 'user')
+                ->where('is_pic', false)
+                ->where(function ($q) use ($query) {
+                    $q->where('nama', 'like', "%{$query}%")
+                      ->orWhere('nik', 'like', "%{$query}%");
+                })
+                ->orderBy('nama')
+                ->take(8)
+                ->get()
+                ->toArray();
+        } else {
+            $this->recommendations = [];
+        }
     }
 
-    protected array $messages = [
-        'nik.required'         => 'NIK wajib diisi.',
-        'nik.unique'           => 'NIK ini sudah terdaftar di sistem.',
-        'nama.required'        => 'Nama lengkap PIC wajib diisi.',
-        'email.email'          => 'Format alamat email tidak valid.',
-        'departemen_id.exists' => 'Departemen tidak ditemukan.',
-    ];
-
-    /**
-     * Cek proteksi isolasi akun Super Admin.
-     */
-    private function checkSuperAdminProtection(Karyawan $k): bool
+    public function selectKaryawan(string $nik): void
     {
-        if ($k->user?->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
-            session()->flash('error', 'Akun Super Administrator terproteksi dan tidak dapat diubah/dilihat selain oleh Super Admin.');
-            return true;
+        $k = Karyawan::with('departemen', 'user')->find($nik);
+        if ($k) {
+            $this->selectedNik    = $k->nik;
+            $this->selectedNama   = $k->nama;
+            $this->selectedDept   = $k->departemen->nama_departemen ?? '-';
+            $this->email          = $k->user?->email ?? '';
+            $this->status_aktif   = true;
+            $this->searchKaryawan = "{$k->nama} (NIK: {$k->nik})";
+            $this->recommendations = [];
         }
-        return false;
+    }
+
+    public function clearSelectedKaryawan(): void
+    {
+        $this->selectedNik     = null;
+        $this->selectedNama    = '';
+        $this->selectedDept    = '';
+        $this->email           = '';
+        $this->searchKaryawan  = '';
+        $this->recommendations = [];
     }
 
     public function resetForm(): void
     {
-        $this->nik           = '';
-        $this->nama          = '';
-        $this->email         = '';
-        $this->departemen_id = '';
-        $this->status_aktif  = true;
-        $this->editingNik    = null;
-        $this->showForm      = false;
+        $this->clearSelectedKaryawan();
+        $this->editingNik   = null;
+        $this->showForm     = false;
         $this->resetValidation();
     }
 
@@ -88,113 +90,50 @@ class MasterKaryawan extends Component
 
     public function openEdit(string $nik): void
     {
-        $k = Karyawan::with('user')->findOrFail($nik);
-        
-        if ($this->checkSuperAdminProtection($k)) {
-            return;
-        }
+        $k = Karyawan::with('departemen', 'user')->where('is_pic', true)->findOrFail($nik);
 
         $this->editingNik    = $k->nik;
-        $this->nik           = $k->nik;
-        $this->nama          = $k->nama;
+        $this->selectedNik   = $k->nik;
+        $this->selectedNama  = $k->nama;
+        $this->selectedDept  = $k->departemen->nama_departemen ?? '-';
         $this->email         = $k->user?->email ?? '';
-        $this->departemen_id = (string) $k->departemen_id;
         $this->status_aktif  = $k->status_aktif;
         $this->showForm      = true;
     }
 
     public function simpan(): void
     {
-        $this->nik   = trim($this->nik);
-        $this->email = trim($this->email);
-        $this->validate();
-
-        $oldNik     = $this->editingNik;
-        $newNik     = $this->nik;
-        $cleanEmail = !empty($this->email) ? $this->email : null;
-
-        if ($oldNik) {
-            $karyawan = Karyawan::with('user')->findOrFail($oldNik);
+        if ($this->editingNik) {
+            $karyawan = Karyawan::with('user')->where('is_pic', true)->findOrFail($this->editingNik);
             
-            if ($this->checkSuperAdminProtection($karyawan)) {
+            $karyawan->update([
+                'status_aktif' => $this->status_aktif,
+            ]);
+
+            if ($karyawan->user) {
+                $karyawan->user->update([
+                    'email' => !empty($this->email) ? trim($this->email) : null,
+                ]);
+            }
+
+            session()->flash('success', "Status & data PIC {$karyawan->nama} berhasil diperbarui.");
+        } else {
+            if (!$this->selectedNik) {
+                $this->addError('searchKaryawan', 'Pilih nama karyawan dari daftar rekomendasi hasil pencarian.');
                 return;
             }
 
-            $user = $karyawan->user;
+            $karyawan = Karyawan::with('user')->findOrFail($this->selectedNik);
+            $karyawan->update([
+                'is_pic'       => true,
+                'status_aktif' => true,
+            ]);
 
-            DB::transaction(function () use ($karyawan, $user, $oldNik, $newNik, $cleanEmail) {
-                if ($oldNik !== $newNik) {
-                    // Temporarily detach user foreign key to avoid FK constraint error
-                    if ($user) {
-                        $user->update(['nik' => null]);
-                    }
+            if ($karyawan->user && !empty($this->email)) {
+                $karyawan->user->update(['email' => trim($this->email)]);
+            }
 
-                    // Update primary key NIK on Karyawan table
-                    DB::table('karyawan')->where('nik', $oldNik)->update([
-                        'nik'           => $newNik,
-                        'nama'          => $this->nama,
-                        'departemen_id' => $this->departemen_id,
-                        'status_aktif'  => $this->status_aktif,
-                    ]);
-
-                    // Update User with new NIK and NEW PASSWORD (Hash::make($newNik))
-                    if ($user) {
-                        $user->update([
-                            'nik'      => $newNik,
-                            'name'     => $this->nama,
-                            'email'    => $cleanEmail,
-                            'password' => Hash::make($newNik),
-                        ]);
-                    } else {
-                        User::create([
-                            'nik'      => $newNik,
-                            'name'     => $this->nama,
-                            'email'    => $cleanEmail,
-                            'role'     => 'karyawan',
-                            'password' => Hash::make($newNik),
-                        ]);
-                    }
-                } else {
-                    // NIK unchanged
-                    $karyawan->update([
-                        'nama'          => $this->nama,
-                        'departemen_id' => $this->departemen_id,
-                        'status_aktif'  => $this->status_aktif,
-                    ]);
-
-                    if ($user) {
-                        $user->update([
-                            'name'  => $this->nama,
-                            'email' => $cleanEmail,
-                        ]);
-                    }
-                }
-            });
-
-            $passMsg = ($oldNik !== $newNik) ? " NIK & Password login telah diperbarui menjadi '{$newNik}'." : "";
-            session()->flash('success', "Data PIC {$this->nama} berhasil diperbarui.{$passMsg}");
-        } else {
-            // New record creation
-            DB::transaction(function () use ($newNik, $cleanEmail) {
-                Karyawan::create([
-                    'nik'           => $newNik,
-                    'nama'          => $this->nama,
-                    'departemen_id' => $this->departemen_id,
-                    'status_aktif'  => $this->status_aktif,
-                ]);
-
-                User::updateOrCreate(
-                    ['nik' => $newNik],
-                    [
-                        'name'     => $this->nama,
-                        'email'    => $cleanEmail,
-                        'role'     => 'karyawan',
-                        'password' => Hash::make($newNik),
-                    ]
-                );
-            });
-
-            session()->flash('success', "PIC {$this->nama} (NIK: {$newNik}) berhasil ditambahkan dengan password login NIK.");
+            session()->flash('success', "Karyawan {$karyawan->nama} (NIK: {$karyawan->nik}) berhasil ditambahkan sebagai Master PIC SIVERA.");
         }
 
         $this->resetForm();
@@ -203,52 +142,20 @@ class MasterKaryawan extends Component
 
     public function toggleStatus(string $nik): void
     {
-        $this->toggleAktif($nik);
-    }
-
-    public function toggleAktif(string $nik): void
-    {
-        $k = Karyawan::with('user')->findOrFail($nik);
-        
-        if ($this->checkSuperAdminProtection($k)) {
-            return;
-        }
-
+        $k = Karyawan::where('is_pic', true)->findOrFail($nik);
         $k->update(['status_aktif' => !$k->status_aktif]);
-        $statusStr = $k->status_aktif ? 'diaktifkan (dapat ditunjuk sebagai PIC)' : 'dinonaktifkan';
+        $statusStr = $k->status_aktif ? 'diaktifkan kembali' : 'dinonaktifkan';
         session()->flash('success', "Status PIC {$k->nama} berhasil {$statusStr}.");
     }
 
-    public function hapus(string $nik): void
+    public function hapusPic(string $nik): void
     {
-        $k = Karyawan::with('user')->findOrFail($nik);
-        
-        if ($this->checkSuperAdminProtection($k)) {
-            return;
-        }
-
-        $user = $k->user;
-
-        if ($user) {
-            $hasFindings = \App\Models\Temuan::where('pelapor_id', $user->id)
-                ->orWhere('pic_id', $user->id)
-                ->exists();
-
-            if ($hasFindings) {
-                session()->flash('error', "PIC {$k->nama} tidak dapat dihapus karena pernah ditunjuk/terikat dengan data temuan. Silakan non-aktifkan saja.");
-                return;
-            }
-        }
-
-        try {
-            if ($user) {
-                $user->delete();
-            }
-            $k->delete();
-            session()->flash('success', "PIC {$k->nama} beserta akunnya berhasil dihapus.");
-        } catch (\Exception $e) {
-            session()->flash('error', "Gagal menghapus PIC: " . $e->getMessage());
-        }
+        $k = Karyawan::where('is_pic', true)->findOrFail($nik);
+        $k->update([
+            'is_pic'       => false,
+            'status_aktif' => true,
+        ]);
+        session()->flash('success', "Karyawan {$k->nama} berhasil dihapus dari Master PIC SIVERA (akses kembali ke Karyawan biasa).");
     }
 
     public function updatingSearch(): void
@@ -263,13 +170,8 @@ class MasterKaryawan extends Component
 
     public function render()
     {
-        $isSuperAdmin = auth()->user()?->isSuperAdmin() ?? false;
-
-        $karyawans = Karyawan::with(['departemen', 'user'])
-            ->where('nama', 'not like', '%super administrator%')
-            ->whereDoesntHave('user', function ($q) {
-                $q->where('role', 'superadmin');
-            })
+        $pics = Karyawan::with(['departemen', 'user'])
+            ->where('is_pic', true)
             ->when($this->filterDepartemen, function ($q) {
                 $q->where('departemen_id', $this->filterDepartemen);
             })
@@ -286,7 +188,7 @@ class MasterKaryawan extends Component
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
         return view('livewire.master-karyawan', [
-            'karyawans'   => $karyawans,
+            'pics'        => $pics,
             'departemens' => $departemens,
         ]);
     }

@@ -58,8 +58,20 @@ Route::middleware(['auth'])->group(function () {
         // Role Karyawan & QA — Beranda, Dashboard Analytics & Daftar Temuan SIVERA
         Route::middleware(['role:karyawan,qa'])->group(function () {
             Route::view('/beranda', 'pages.beranda')->name('beranda');
-            Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
-            Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
+
+            Route::get('/qa/dashboard', function () {
+                if (auth()->user()->role === 'karyawan' && !auth()->user()->isPicUser()) {
+                    return redirect()->route('beranda');
+                }
+                return view('dashboard');
+            })->name('qa.dashboard');
+
+            Route::get('/qa/daftar-temuan', function () {
+                if (auth()->user()->role === 'karyawan' && !auth()->user()->isPicUser()) {
+                    return redirect()->route('beranda');
+                }
+                return view('pages.qa.daftar-temuan');
+            })->name('qa.daftar-temuan');
         });
 
         // Role QA Only — Rekap Periode & Master Data SIVERA
@@ -70,8 +82,16 @@ Route::middleware(['auth'])->group(function () {
             Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
         });
 
-        // Role QA Admin & Super Admin IT — Manajemen Akun & Role System
+        // Role QA & Super Admin — SIVERA Operational Master Data
         Route::middleware(['role:qa,superadmin'])->group(function () {
+            Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
+            Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');
+            Route::view('/qa/master/klausul', 'pages.qa.master-klausul')->name('qa.master.klausul');
+        });
+
+        // Role Super Admin IT Only — Pusat Data Karyawan & Manajemen Akun User
+        Route::middleware(['role:superadmin'])->group(function () {
+            Route::view('/qa/master/seluruh-karyawan', 'pages.qa.master-seluruh-karyawan')->name('qa.master.seluruh-karyawan');
             Route::view('/qa/master/akun', 'pages.qa.master-akun')->name('qa.master.akun');
         });
 

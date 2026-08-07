@@ -56,6 +56,22 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * Cek apakah user ini adalah PIC terdaftar di SIVERA.
+     */
+    public function isPicUser(): bool
+    {
+        if ($this->role === 'qa' || $this->role === 'superadmin') {
+            return true;
+        }
+
+        if ($this->karyawan && $this->karyawan->is_pic && $this->karyawan->status_aktif) {
+            return true;
+        }
+
+        return Temuan::where('pic_id', $this->id)->exists();
+    }
+
+    /**
      * Temuan yang dilaporkan oleh user ini (sebagai Pelapor).
      */
     public function temuanDilaporkan(): HasMany

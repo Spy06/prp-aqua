@@ -125,7 +125,6 @@
                 </select>
                 @error('edit_departemen_id') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
-
             {{-- Edit Role --}}
             <div>
                 <label for="edit-role" class="blabel">Role Access <span style="color:var(--be);">*</span></label>
@@ -134,6 +133,14 @@
                     <option value="qa">QA (QA Admin / Verifikator)</option>
                 </select>
                 @error('edit_role') <p class="berr-msg">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Edit Password --}}
+            <div>
+                <label for="edit-password" class="blabel">Password Akun User <span style="color:var(--be);">*</span></label>
+                <input type="text" id="edit-password" wire:model="edit_password" class="binput" placeholder="Masukkan password user..." />
+                <span style="font-size:11px;color:var(--btxt2);margin-top:3px;display:block;">Default awal terisi NIK saat ini. Super Admin dapat langsung menghapus & menggantinya secara bebas.</span>
+                @error('edit_password') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
         </div>
 
@@ -170,14 +177,13 @@
         </div>
     </div>
 
-    {{-- Table --}}
+    {{-- Table Akun User --}}
     <div class="bcard fu2" style="overflow:hidden;">
         <div style="overflow-x:auto;">
-            <table class="btbl" style="min-width:520px;">
+            <table class="btbl" style="min-width:700px;">
                 <thead>
                     <tr>
-                        <th>NIK</th>
-                        <th>Nama & Email</th>
+                        <th>User / Karyawan</th>
                         <th>Departemen</th>
                         <th style="text-align:center;">Role Access</th>
                         <th style="text-align:center;">Aksi</th>
@@ -186,17 +192,19 @@
                 <tbody>
                     @forelse($users as $u)
                     <tr>
-                        <td style="font-family:monospace;font-size:12.5px;font-weight:600;">{{ $u->nik }}</td>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <div class="qs-av" style="width:30px;height:30px;font-size:11px;flex-shrink:0;{{ $u->role === 'superadmin' ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr($u->name, 0, 1)) }}</div>
+                                <div class="qs-av" style="width:36px;height:36px;font-size:14px;background:var(--bp);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:10px;">
+                                    {{ strtoupper(substr($u->name, 0, 1)) }}
+                                </div>
                                 <div>
-                                    <div style="font-weight:600;font-size:13.5px;">{{ $u->name }}</div>
-                                    @if($u->email)
-                                        <div style="font-size:11.5px;color:var(--btxt2);">✉️ {{ $u->email }}</div>
-                                    @else
-                                        <div style="font-size:11.5px;color:#ef4444;">⚠️ Email belum diisi</div>
-                                    @endif
+                                    <div style="font-weight:700;color:var(--btxt);font-size:13.5px;">{{ $u->name }}</div>
+                                    <div style="font-size:11.5px;color:var(--btxt2);display:flex;align-items:center;gap:8px;">
+                                        <span style="font-family:monospace;font-weight:600;color:var(--bp);">NIK: {{ $u->nik ?? '-' }}</span>
+                                        @if($u->email)
+                                            <span>• {{ $u->email }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </td>
@@ -221,9 +229,15 @@
                         </td>
                         <td style="text-align:center;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                                <button wire:click="openEdit({{ $u->id }})" title="Edit Akun & Role Access"
+                                <button wire:click="openEdit({{ $u->id }})" title="Edit Akun, Role & Set Password Custom"
                                         class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
                                     <span class="material-symbols-outlined" style="font-size:15px;color:var(--bp);">edit</span>
+                                </button>
+                                <button wire:click="resetPasswordDefault({{ $u->id }})"
+                                        wire:confirm="Reset password akun '{{ $u->name }}' kembali ke NIK default ({{ $u->nik }})?"
+                                        title="Reset Password Default ke NIK"
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;color:#d97706;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">lock_reset</span>
                                 </button>
                                 <button wire:click="hapusAkun({{ $u->id }})"
                                         wire:confirm="Yakin ingin menghapus akun '{{ $u->name }}' (NIK: {{ $u->nik }})?"

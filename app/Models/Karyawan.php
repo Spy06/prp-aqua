@@ -26,6 +26,7 @@ class Karyawan extends Model
         'nama',
         'departemen_id',
         'status_aktif',
+        'is_pic',
         'is_anggota_divisi_manajemen',
     ];
 
@@ -33,6 +34,7 @@ class Karyawan extends Model
     {
         return [
             'status_aktif' => 'boolean',
+            'is_pic' => 'boolean',
             'is_anggota_divisi_manajemen' => 'boolean',
         ];
     }

@@ -565,12 +565,12 @@
             </button>
 
             <div class="logo-area qtop-logo">
-                <div class="logo-box">
-                    <span class="material-symbols-outlined">verified_user</span>
+                <div class="logo-box" style="background: linear-gradient(135deg, #7c3aed, #9333ea); border-radius: 12px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3); flex-shrink: 0;">
+                    <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1>SIVERA</h1>
-                    <p>Internal System</p>
+                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
+                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
                 </div>
             </div>
         </div>
@@ -580,9 +580,9 @@
         <div class="qtop-act">
             {{-- Static User Profile Display --}}
             @auth
-            <div class="qtop-profile-pill">
-                <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <span class="name">{{ auth()->user()->name }}</span>
+            <div class="qtop-profile-pill" style="background:#f3e8ff; border:1px solid rgba(124,58,237,0.2); color:#6b21a8;">
+                <div class="qtop-av" style="background:#7c3aed; color:#fff; font-weight:700;">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <span class="name" style="font-size:13px; font-weight:600; color:#6b21a8;">{{ auth()->user()->name }}</span>
             </div>
             @endauth
         </div>
@@ -593,12 +593,12 @@
         {{-- Sidebar Logo Area --}}
         <div class="qs-header">
             <div class="logo-area">
-                <div class="logo-box">
-                    <span class="material-symbols-outlined">verified_user</span>
+                <div class="logo-box" style="background: linear-gradient(135deg, #7c3aed, #9333ea); border-radius: 12px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3); flex-shrink: 0;">
+                    <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1>SIVERA</h1>
-                    <p>Version 1.0.0</p>
+                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
+                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
                 </div>
             </div>
             <button id="mobile-menu-close" class="qs-close-btn" aria-label="Close Menu">
@@ -609,73 +609,74 @@
         {{-- Sidebar Menu Content --}}
         <div class="qs-content">
             @if(auth()->user()->isSuperAdmin())
-                <span class="qs-group-label">Super Admin Panel</span>
-                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}">
+                <span class="qs-group-label" style="color:#059669;font-weight:700;">PUSAT DATA KARYAWAN</span>
+                <a class="qs-item {{ request()->routeIs('qa.master.seluruh-karyawan') ? 'active' : '' }}" href="{{ route('qa.master.seluruh-karyawan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.seluruh-karyawan') ? 'fil' : '' }}">badge</span>
+                    <span>Master Data Karyawan</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
                     <span>Manajemen Akun User</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}">
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">badge</span>
+
+                <span class="qs-group-label" style="margin-top:16px;color:#7c3aed;font-weight:700;">MASTER SIVERA</span>
+                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">group</span>
                     <span>Master PIC</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}">
+                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.departemen') ? 'fil' : '' }}">domain</span>
                     <span>Master Departemen</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}">
+                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.klausul') ? 'fil' : '' }}">rule</span>
                     <span>Klausul PRP</span>
                 </a>
 
-                <span class="qs-group-label" style="margin-top:16px;">Master Data BOS'Q</span>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}">
+                <span class="qs-group-label" style="margin-top:16px;color:#1976d2;font-weight:700;">MASTER BOS'Q</span>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">precision_manufacturing</span>
                     <span>Master Line</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}">
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.subarea') ? 'fil' : '' }}">location_on</span>
                     <span>Master Sub Area</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}">
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.elemen') ? 'fil' : '' }}">category</span>
                     <span>Master Elemen QFS</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}">
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.karyawan') ? 'fil' : '' }}">groups</span>
                     <span>Divisi Manajemen</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}">
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
-                    <span>Grafik Temuan BOS'Q</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}">
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
-                    <span>Daftar Observasi BOS'Q</span>
-                </a>
 
-                <span class="qs-group-label" style="margin-top:16px;">Monitoring & Analytics</span>
-                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}">
+                <span class="qs-group-label" style="margin-top:16px;color:var(--btxt2);font-weight:700;">MONITORING & REKAP SIVERA</span>
+                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                     <span>Grafik Temuan</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}">
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
                     <span>Daftar Temuan</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}">
+                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
                     <span>Rekap Periode</span>
                 </a>
-                <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="margin-top:6px;background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
-                    <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
-                    <span>Beralih ke BOS'Q</span>
+
+                <span class="qs-group-label" style="margin-top:16px;color:var(--btxt2);font-weight:700;">MONITORING BOS'Q</span>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
+                    <span>Grafik Temuan BOS'Q</span>
+                </a>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
+                    <span>Daftar Observasi BOS'Q</span>
                 </a>
             @else
                 @php
-                    $isPicUser = auth()->check() && auth()->user()->role === 'karyawan' && (
-                        \App\Models\Temuan::where('pic_id', auth()->id())->exists() ||
-                        \App\Models\Karyawan::where('nik', auth()->user()->nik)->where('status_aktif', true)->exists()
-                    );
+                    $isPicUser = auth()->check() && auth()->user()->isPicUser();
                 @endphp
 
                 @if(auth()->user()->role === 'qa')
@@ -700,10 +701,6 @@
                     </a>
 
                     <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
-                    <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
-                        <span>Manajemen Akun User</span>
-                    </a>
                     <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
                         <span class="material-symbols-outlined ic">badge</span>
                         <span>Master PIC</span>
@@ -715,12 +712,6 @@
                     <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
                         <span class="material-symbols-outlined ic">rule</span>
                         <span>Klausul PRP</span>
-                    </a>
-
-                    <span class="qs-group-label" style="margin-top:16px;">Sistem & Dual Portal</span>
-                    <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
-                        <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
-                        <span>Beralih ke BOS'Q</span>
                     </a>
                 @elseif($isPicUser)
                     <span class="qs-group-label">Monitoring & Analytics</span>
@@ -762,10 +753,10 @@
                         } elseif (auth()->user()->role === 'qa') {
                             $displayRole = 'QA Admin';
                         } else {
-                            $isPicUser = \App\Models\Temuan::where('pic_id', auth()->id())->exists() ||
-                                         \App\Models\Karyawan::where('nik', auth()->user()->nik)->where('status_aktif', true)->exists();
+                            $isPicUser = auth()->user()->isPicUser();
                             $dept = auth()->user()->karyawan?->departemen?->nama_departemen;
-                            $displayRole = $isPicUser ? ('PIC' . ($dept ? ' (' . $dept . ')' : '')) : 'Karyawan';
+                            $deptLabel = $dept ? " ({$dept})" : '';
+                            $displayRole = $isPicUser ? "PIC{$deptLabel}" : "Karyawan{$deptLabel}";
                         }
                     @endphp
                     <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">{{ $displayRole }}</div>

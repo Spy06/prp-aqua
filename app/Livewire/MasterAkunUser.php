@@ -24,12 +24,20 @@ class MasterAkunUser extends Component
     public string $edit_email       = '';
     public ?int $edit_departemen_id = null;
     public string $edit_role        = '';
+    public string $edit_password    = '';
 
     // UI state & filters
     public bool $showFormCreate     = false;
     public bool $showFormEdit       = false;
     public string $search           = '';
     public string $filterDepartemen = '';
+
+    public function mount(): void
+    {
+        if (!auth()->user()?->isSuperAdmin()) {
+            abort(403, 'Akses Manajemen Akun User terbatas khusus untuk IT Super Admin.');
+        }
+    }
 
     // State hasil pencarian NIK
     public ?string $nikSearchResult = null;
@@ -88,6 +96,7 @@ class MasterAkunUser extends Component
         $this->edit_email         = $user->email ?? '';
         $this->edit_departemen_id = $user->karyawan?->departemen_id;
         $this->edit_role          = ($user->role === 'superadmin') ? 'qa' : $user->role;
+        $this->edit_password      = $user->nik ?? '';
 
         $this->showFormCreate = false;
         $this->showFormEdit = true;
@@ -123,7 +132,7 @@ class MasterAkunUser extends Component
             'password' => Hash::make($this->nik_baru),
         ]);
 
-        session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat dengan role " . strtoupper($this->role_baru) . ".");
+        session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat dengan password default NIK.");
         $this->reset(['nik_baru', 'role_baru', 'nikSearchResult', 'nikSearchError']);
         $this->showFormCreate = false;
         $this->resetPage();
@@ -144,6 +153,7 @@ class MasterAkunUser extends Component
             'edit_email'         => 'nullable|email|max:255',
             'edit_departemen_id' => 'nullable|exists:departemen,id',
             'edit_role'          => 'required|in:karyawan,qa',
+            'edit_password'      => 'nullable|string|min:4',
         ]);
 
         $oldNik = $user->nik;
@@ -154,6 +164,10 @@ class MasterAkunUser extends Component
         $user->name  = $this->edit_nama;
         $user->email = $this->edit_email ?: null;
         $user->role  = $this->edit_role;
+
+        if (!empty($this->edit_password)) {
+            $user->password = Hash::make($this->edit_password);
+        }
 
         $user->save();
 
@@ -167,14 +181,28 @@ class MasterAkunUser extends Component
         } elseif ($oldNik) {
             Karyawan::where('nik', $oldNik)->update([
                 'nik'           => $newNik,
-                'nama'          => $this->edit_nama,
+                'nama'          => $this->nama,
                 'departemen_id' => $this->edit_departemen_id,
             ]);
         }
 
-        session()->flash('success', "Akses & data akun {$this->edit_nama} berhasil diperbarui (Role: " . strtoupper($this->edit_role) . ").");
+        $passMsg = !empty($this->edit_password) ? " Password login berhasil diubah secara khusus." : "";
+        session()->flash('success', "Akses & data akun {$this->edit_nama} berhasil diperbarui (Role: " . strtoupper($this->edit_role) . ").{$passMsg}");
         $this->showFormEdit = false;
         $this->editingUserId = null;
+    }
+
+    public function resetPasswordDefault(int $userId): void
+    {
+        $user = User::findOrFail($userId);
+
+        if ($user->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
+            session()->flash('error', 'Akun Super Admin terproteksi.');
+            return;
+        }
+
+        $user->update(['password' => Hash::make($user->nik)]);
+        session()->flash('success', "Password akun {$user->name} berhasil di-reset kembali ke NIK default ({$user->nik}).");
     }
 
     public function hapusAkun(int $userId): void

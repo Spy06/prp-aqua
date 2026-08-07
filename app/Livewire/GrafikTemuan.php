@@ -4,23 +4,77 @@ namespace App\Livewire;
 
 use App\Models\Departemen;
 use App\Models\Temuan;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 
 class GrafikTemuan extends Component
 {
+    // Filter Periode
+    public string $filter_type = 'bulan'; // 'bulan', 'tahun', 'custom'
+    public int $bulan = 1;
+    public int $tahun = 2026;
+    public string $tgl_mulai = '';
+    public string $tgl_selesai = '';
+
+    // Filter Sub Area Chart
     public $filterDepartemenSubArea = '';
 
-    public function mount()
+    public function mount(): void
     {
+        $this->bulan = (int) now()->month;
+        $this->tahun = (int) now()->year;
+        $this->tgl_mulai = Carbon::now()->startOfMonth()->toDateString();
+        $this->tgl_selesai = Carbon::now()->toDateString();
+
         $firstDept = Departemen::orderBy('nama_departemen')->first();
         if ($firstDept) {
             $this->filterDepartemenSubArea = $firstDept->id;
         }
     }
 
+    public function updatingFilterType(): void {}
+    public function updatingBulan(): void {}
+    public function updatingTahun(): void {}
+    public function updatingTglMulai(): void {}
+    public function updatingTglSelesai(): void {}
+    public function updatingFilterDepartemenSubArea(): void {}
+
+    public function parseFilter(): array
+    {
+        $tahun = (int) ($this->tahun ?: now()->year);
+        $bulan = (int) ($this->bulan ?: now()->month);
+        if ($bulan < 1 || $bulan > 12) {
+            $bulan = (int) now()->month;
+        }
+
+        return match($this->filter_type) {
+            'custom' => [
+                'awal'  => $this->tgl_mulai ?: Carbon::now()->startOfMonth()->toDateString(),
+                'akhir' => $this->tgl_selesai ?: Carbon::now()->toDateString(),
+                'label' => ($this->tgl_mulai ?: '-') . ' s/d ' . ($this->tgl_selesai ?: '-'),
+            ],
+            'tahun' => [
+                'awal'  => Carbon::createFromDate($tahun, 1, 1)->startOfYear()->toDateString(),
+                'akhir' => Carbon::createFromDate($tahun, 1, 1)->endOfYear()->toDateString(),
+                'label' => "Tahun {$tahun}",
+            ],
+            default => [ // 'bulan'
+                'awal'  => Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->toDateString(),
+                'akhir' => Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->toDateString(),
+                'label' => Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y'),
+            ],
+        };
+    }
+
     public function render()
     {
-        $allTemuan = Temuan::with(['departemen', 'klausul'])->get();
+        $filter = $this->parseFilter();
+        $awal = $filter['awal'];
+        $akhir = $filter['akhir'];
+
+        $allTemuan = Temuan::with(['departemen', 'klausul'])
+            ->whereBetween('tanggal_temuan', [$awal, $akhir])
+            ->get();
 
         // 1. Departemen Chart
         $chartDataGrouped = $allTemuan->groupBy('departemen_id')->mapWithKeys(function ($group) {
@@ -56,8 +110,8 @@ class GrafikTemuan extends Component
             'Closed (ACC)' => $allTemuan->where('status', 'closed_acc')->count(),
         ];
 
-        // 4. Sub Area Chart (Filtered by Departemen - Top 10 Sub Areas)
-        $subAreaQuery = Temuan::query();
+        // 4. Sub Area Chart (Filtered by Departemen & Date Range - Top 10 Sub Areas)
+        $subAreaQuery = Temuan::query()->whereBetween('tanggal_temuan', [$awal, $akhir]);
         if ($this->filterDepartemenSubArea) {
             $subAreaQuery->where('departemen_id', $this->filterDepartemenSubArea);
         }
@@ -73,7 +127,6 @@ class GrafikTemuan extends Component
             })
             ->take(10);
 
-
         $this->dispatch('chart-updated', [
             'deptLabels' => $chartDataGrouped->keys()->toJson(), 
             'deptData' => $chartDataGrouped->values()->toJson(),
@@ -88,6 +141,7 @@ class GrafikTemuan extends Component
         $departemens = Departemen::orderBy('nama_departemen')->get();
 
         return view('livewire.grafik-temuan', [
+            'filterLabel'    => $filter['label'],
             'departemens'    => $departemens,
             'chartLabels'    => $chartDataGrouped->keys()->toJson(),
             'chartData'      => $chartDataGrouped->values()->toJson(),

@@ -121,6 +121,61 @@
         }
     </style>
 
+    {{-- Filter Periode Card (Matching BOS'Q Analytics) --}}
+    <div class="bcard fu" style="padding:16px 20px;">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="material-symbols-outlined" style="color:var(--bp-dark);font-size:20px;">filter_alt</span>
+                <span style="font-size:13px;font-weight:700;color:var(--btxt);">Filter Periode Analytics:</span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;">
+                <select wire:model.live="filter_type" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
+                    <option value="bulan">Per Bulan</option>
+                    <option value="tahun">Per Tahun</option>
+                    <option value="custom">Rentang Tanggal Custom</option>
+                </select>
+
+                @if($filter_type === 'bulan')
+                    <select wire:model.live="bulan" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
+                        @php
+                            $bulanNames = [
+                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                            ];
+                        @endphp
+                        @foreach($bulanNames as $mKey => $mName)
+                            <option value="{{ $mKey }}">{{ $mName }}</option>
+                        @endforeach
+                    </select>
+
+                    <select wire:model.live="tahun" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
+                        @for($y = now()->year; $y >= 2024; $y--)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endfor
+                    </select>
+                @elseif($filter_type === 'tahun')
+                    <select wire:model.live="tahun" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
+                        @for($y = now()->year; $y >= 2024; $y--)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endfor
+                    </select>
+                @elseif($filter_type === 'custom')
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <input type="date" wire:model.live="tgl_mulai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
+                        <span style="font-size:12px;color:var(--btxt2);">s/d</span>
+                        <input type="date" wire:model.live="tgl_selesai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
+                    </div>
+                @endif
+            </div>
+
+            <div style="font-size:12.5px;color:var(--btxt2);font-weight:600;">
+                Periode: <strong style="color:var(--bp);">{{ $filterLabel }}</strong>
+            </div>
+        </div>
+    </div>
+
     {{-- Stat Cards Grid (Berry style gradient blocks) --}}
     <div class="berry-stat-grid">
         <div class="berry-stat stat-purple fu">

@@ -39,8 +39,8 @@
         html, body { font-family: 'Inter', sans-serif; background: var(--bsur); color: var(--btxt); margin: 0; min-height: 100vh; max-width: 100vw; overflow-x: hidden !important; width: 100%; }
 
         /* ── Top Header ── */
-        .qtop { background: var(--bcard); border-bottom: 1px solid var(--bbor); height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: fixed; top: 0; left: 250px; right: 0; z-index: 40; box-shadow: 0 1px 12px rgba(0,0,0,0.05); transition: left 0.3s ease; box-sizing: border-box; }
-        .qtop-menu-btn { display: none; background: var(--bp-light); color: var(--bp-dark); border: none; width: 36px; height: 36px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+        .qtop { background: var(--bcard); border-bottom: 1px solid var(--bbor); height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: fixed; top: 0; left: 260px; right: 0; z-index: 40; box-shadow: 0 1px 12px rgba(0,0,0,0.05); transition: left 0.3s ease; box-sizing: border-box; }
+        .qtop-menu-btn { display: none; background: var(--bp-light); color: var(--bp-dark); border: none; width: 38px; height: 38px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
         .qtop-menu-btn:hover { background: var(--bp); color: #fff; }
         .qs-close-btn { display: none; background: var(--bsur); color: var(--btxt2); border: none; width: 32px; height: 32px; border-radius: 8px; align-items: center; justify-content: center; cursor: pointer; margin-left: auto; flex-shrink: 0; }
         .qs-backdrop { display: none; }
@@ -50,11 +50,11 @@
         .qtop-profile-pill .name { font-size: 13px; font-weight: 600; }
 
         /* ── Sidebar BOS'Q ── */
-        .qs { width: 250px; background: var(--bside); height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 50; border-right: 1px solid var(--bbor); overflow: hidden; }
-        .qs-header { height: 68px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--bbor); flex-shrink: 0; }
+        .qs { width: 260px; background: var(--bside); height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 50; border-right: 1px solid var(--bbor); overflow: hidden; }
+        .qs-header { height: 80px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--bbor); flex-shrink: 0; }
         .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
 
-        /* BOS'Q Logo Box — biru sama SIVERA */
+        /* BOS'Q Logo Box */
         .logo-box { width: 36px; height: 36px; background: linear-gradient(135deg, #1976d2, #42a5f5); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(25,118,210,0.3); flex-shrink: 0; }
         .logo-box span { color: #fff; font-size: 18px; }
         .logo-text h1 { font-size: 15px; font-weight: 700; color: var(--bp); letter-spacing: -0.2px; margin: 0; }
@@ -65,23 +65,23 @@
         .qs-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
 
         .qs-section-label { font-size: 10.5px; font-weight: 700; color: var(--btxt2); text-transform: uppercase; letter-spacing: 1px; padding: 10px 10px 5px; display: block; }
-        .qs-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: var(--btxt); font-size: 13.5px; font-weight: 500; text-decoration: none; margin-bottom: 2px; }
-        .qs-item:hover { background: var(--bp-light); color: var(--bp-dark); }
-        .qs-item.active { background: linear-gradient(135deg, var(--bp-light), rgba(25,118,210,0.12)); color: var(--bp-dark); font-weight: 600; box-shadow: 0 2px 8px rgba(25,118,210,0.1); }
-        .qs-item .ic { font-size: 19px; width: 20px; text-align: center; }
+        .qs-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s; color: var(--btxt); font-size: 14px; font-weight: 500; text-decoration: none; margin-bottom: 4px; }
+        .qs-item:hover { background: var(--bs-light); color: var(--bs-dark); }
+        .qs-item.active { background: #ede7f6; color: #5e35b1; font-weight: 600; box-shadow: 0 2px 8px rgba(103,58,183,0.1); }
+        .qs-item .ic { font-size: 20px; width: 22px; text-align: center; }
 
         /* Switch System Link */
         .qs-switch { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--btxt2); text-decoration: none; transition: all 0.2s; border: 1px solid var(--bbor); background: var(--bsur); }
         .qs-switch:hover { background: var(--bp-light); color: var(--bp-dark); border-color: var(--bp); }
 
-        .qs-footer { padding: 14px; border-top: 1px solid var(--bbor); background: var(--bsur); flex-shrink: 0; width: 100%; box-sizing: border-box; }
-        .qs-user { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bcard); border-radius: 10px; border: 1px solid var(--bbor); margin-bottom: 8px; width: 100%; box-sizing: border-box; overflow: hidden; }
+        .qs-footer { padding: 16px; border-top: 1px solid var(--bbor); background: var(--bsur); flex-shrink: 0; width: 100%; box-sizing: border-box; }
+        .qs-user { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bcard); border-radius: 12px; border: 1px solid var(--bbor); margin-bottom: 8px; width: 100%; box-sizing: border-box; overflow: hidden; }
         .qs-av { width: 32px; height: 32px; background: var(--bp); color: #fff; font-weight: 700; font-size: 13px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .qs-logout { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: var(--btxt2); font-size: 13px; font-weight: 600; transition: all 0.2s; cursor: pointer; width: 100%; background: none; border: none; text-align: left; font-family: inherit; box-sizing: border-box; }
         .qs-logout:hover { background: var(--error-light); color: var(--error); }
 
         /* ── Layout Wrapper ── */
-        .qmain { min-height: 100vh; padding-top: 68px; margin-left: 250px; max-width: 100vw; overflow-x: hidden !important; }
+        .qmain { min-height: 100vh; padding-top: 80px; margin-left: 260px; max-width: 100vw; overflow-x: hidden !important; }
         .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; overflow-x: hidden !important; }
         .qtop-logo { display: none; }
 
@@ -243,8 +243,6 @@
         }
         .btbl tbody tr { border-bottom: 1px solid var(--bbor); transition: background .15s; }
         .btbl tbody tr:last-child { border-bottom: none; }
-        .btbl tbody tr:hover { background: rgba(25, 118, 210, 0.03); }
-        .btbl td { padding: 14px 16px; font-size: 13.5px; color: var(--btxt); vertical-align: middle; }
         .bbadge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
         .bbadge-progress { background: var(--bp-light); color: var(--bp-dark); }
         .berr-msg { font-size: 11.5px; color: var(--error); margin-top: 4px; font-weight: 500; }
@@ -256,13 +254,24 @@
     {{-- ═══ MOBILE BACKDROP OVERLAY ═══ --}}
     <div id="mobile-drawer-backdrop" class="qs-backdrop"></div>
 
-    {{-- ═══ TOP HEADER BOS'Q ═══ --}}
+    {{-- ═══ TOP HEADER ═══ --}}
     <header class="qtop">
         <div style="display:flex; align-items:center; gap:10px;">
             <button id="mobile-menu-btn" class="qtop-menu-btn" aria-label="Toggle Menu">
                 <span class="material-symbols-outlined">menu</span>
             </button>
 
+            @if(auth()->user()?->isSuperAdmin())
+            <div class="logo-area qtop-logo">
+                <div class="logo-box" style="background: linear-gradient(135deg, #7c3aed, #9333ea);">
+                    <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
+                </div>
+                <div class="logo-text">
+                    <h1 style="color:#7c3aed;">SIVERA</h1>
+                    <p>Internal System</p>
+                </div>
+            </div>
+            @else
             <div class="logo-area qtop-logo">
                 <div class="logo-box">
                     <span class="material-symbols-outlined">visibility</span>
@@ -272,6 +281,7 @@
                     <p>Obs. Perilaku QFS</p>
                 </div>
             </div>
+            @endif
         </div>
 
         <div style="flex:1;"></div>
@@ -279,8 +289,8 @@
         <div class="qtop-act">
             @auth
             <div style="display:flex; align-items:center; gap:10px;">
-                <div class="qtop-profile-pill">
-                    <div class="qtop-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="qtop-profile-pill" style="{{ auth()->user()->isSuperAdmin() ? 'background:#f3e8ff; border-color:rgba(124,58,237,0.2); color:#6b21a8;' : '' }}">
+                    <div class="qtop-av" style="{{ auth()->user()->isSuperAdmin() ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                     <span class="name">{{ auth()->user()->name }}</span>
                 </div>
                 {{-- Mobile Logout --}}
@@ -298,6 +308,17 @@
     {{-- ═══ SIDEBAR BOS'Q ═══ --}}
     <aside id="sidebar-drawer" class="qs">
         <div class="qs-header">
+            @if(auth()->user()?->isSuperAdmin())
+            <div class="logo-area">
+                <div class="logo-box" style="background: linear-gradient(135deg, #7c3aed, #9333ea); border-radius: 12px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);">
+                    <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
+                </div>
+                <div class="logo-text">
+                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px;">SIVERA</h1>
+                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px;">VERSION 1.0.0</p>
+                </div>
+            </div>
+            @else
             <div class="logo-area">
                 <div class="logo-box">
                     <span class="material-symbols-outlined">visibility</span>
@@ -307,6 +328,7 @@
                     <p>Behavior Obs. System</p>
                 </div>
             </div>
+            @endif
             <button id="mobile-menu-close" class="qs-close-btn" aria-label="Close Menu">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -314,8 +336,67 @@
 
         <div class="qs-content">
             @auth
-                @if(in_array(auth()->user()->role, ['qa', 'superadmin'], true))
-                    {{-- QA & Super Admin Menu --}}
+                @if(auth()->user()->isSuperAdmin())
+                    {{-- Super Admin Menu --}}
+                    <span class="qs-section-label" style="color:#7c3aed;font-weight:700;">SUPER ADMIN PANEL</span>
+                    <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                        <span>Manajemen Akun User</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">badge</span>
+                        <span>Master PIC</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.departemen') ? 'fil' : '' }}">domain</span>
+                        <span>Master Departemen</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.klausul') ? 'fil' : '' }}">rule</span>
+                        <span>Klausul PRP</span>
+                    </a>
+
+                    <span class="qs-section-label" style="margin-top:16px;">MASTER DATA BOS'Q</span>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">precision_manufacturing</span>
+                        <span>Master Line</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.subarea') ? 'fil' : '' }}">location_on</span>
+                        <span>Master Sub Area</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.elemen') ? 'fil' : '' }}">category</span>
+                        <span>Master Elemen QFS</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.karyawan') ? 'fil' : '' }}">groups</span>
+                        <span>Divisi Manajemen</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
+                        <span>Grafik Temuan BOS'Q</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Observasi BOS'Q</span>
+                    </a>
+
+                    <span class="qs-section-label" style="margin-top:16px;">MONITORING & ANALYTICS</span>
+                    <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
+                        <span>Grafik Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
+                        <span>Rekap Periode</span>
+                    </a>
+                @elseif(auth()->user()->role === 'qa')
+                    {{-- QA Menu --}}
                     <span class="qs-section-label">Menu Management</span>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
@@ -327,7 +408,7 @@
                     </a>
                     <a class="qs-item {{ request()->routeIs('bosq.qa.rekap') ? 'active' : '' }}" href="{{ route('bosq.qa.rekap') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.rekap') ? 'fil' : '' }}">bar_chart</span>
-                        <span>Rekap Kepatuhan</span>
+                        <span>Rekap Target</span>
                     </a>
 
                     <span class="qs-section-label" style="margin-top:12px;">Master Data BOS'Q</span>
@@ -347,7 +428,6 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.karyawan') ? 'fil' : '' }}">groups</span>
                         <span>Divisi Manajemen</span>
                     </a>
-
 
                     <span class="qs-section-label" style="margin-top:12px;">Portals & Mode</span>
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
@@ -372,10 +452,10 @@
         <div class="qs-footer">
             @auth
             <div class="qs-user">
-                <div class="qs-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="qs-av" style="{{ auth()->user()->isSuperAdmin() ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="overflow:hidden;flex:1;min-width:0;">
                     <div style="color:var(--btxt);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</div>
-                    <div style="color:var(--btxt2);font-size:11px;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->role }}</div>
+                    <div style="color:var(--btxt2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->isSuperAdmin() ? 'Super Admin' : 'QA Admin' }}</div>
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="qs-logout" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">

@@ -26,7 +26,7 @@ class DaftarObservasiQA extends Component
 
     // Filter Tabel Temuan
     public string $filter_departemen_id = '';
-    public string $filter_sub_area_id = '';
+    public array $filter_sub_area_ids = [];
     public string $filter_status = '';
     public string $filter_tingkat_resiko = '';
     public string $filter_dampak_temuan = '';
@@ -45,14 +45,28 @@ class DaftarObservasiQA extends Component
     public function updatingTahun(): void { $this->resetPage(); }
     public function updatingFilterDepartemenId(): void
     {
-        $this->filter_sub_area_id = '';
+        $this->filter_sub_area_ids = [];
         $this->resetPage();
     }
-    public function updatingFilterSubAreaId(): void { $this->resetPage(); }
+    public function updatingFilterSubAreaIds(): void { $this->resetPage(); }
     public function updatingFilterStatus(): void { $this->resetPage(); }
     public function updatingFilterTingkatResiko(): void { $this->resetPage(); }
     public function updatingFilterDampakTemuan(): void { $this->resetPage(); }
     public function updatingSearch(): void { $this->resetPage(); }
+
+    public function selectAllSubAreas(): void
+    {
+        $allIds = $this->filter_departemen_id
+            ? BosqSubArea::where('departemen_id', $this->filter_departemen_id)->orWhereNull('departemen_id')->pluck('id')->toArray()
+            : BosqSubArea::pluck('id')->toArray();
+
+        if (count(array_filter($this->filter_sub_area_ids)) >= count($allIds)) {
+            $this->filter_sub_area_ids = [];
+        } else {
+            $this->filter_sub_area_ids = array_map('strval', $allIds);
+        }
+        $this->resetPage();
+    }
 
     public function parseFilter(): array
     {
@@ -88,8 +102,9 @@ class DaftarObservasiQA extends Component
             $query->where('departemen_id', $this->filter_departemen_id);
         }
 
-        if ($this->filter_sub_area_id !== '') {
-            $query->where('sub_area_id', $this->filter_sub_area_id);
+        $activeSubAreaIds = array_filter($this->filter_sub_area_ids);
+        if (!empty($activeSubAreaIds)) {
+            $query->whereIn('sub_area_id', $activeSubAreaIds);
         }
 
         if ($this->filter_status !== '') {

@@ -7,7 +7,7 @@
         <x:ExcelWorkbook>
             <x:ExcelWorksheets>
                 <x:ExcelWorksheet>
-                    <x:Name>Rekap Kepatuhan BQA</x:Name>
+                    <x:Name>Rekap Target BQA</x:Name>
                     <x:WorksheetOptions>
                         <x:DisplayGridlines/>
                     </x:WorksheetOptions>
@@ -55,7 +55,7 @@
             <td colspan="5" class="header-title">PRP PLANT AQUA — BOS'Q (Behavior Observation System Quality)</td>
         </tr>
         <tr>
-            <td colspan="5" class="header-sub">REKAP KEPATUHAN TARGET OBSERVASI BQA — Periode: {{ $monthName }}</td>
+            <td colspan="5" class="header-sub">REKAP TARGET OBSERVASI BQA — Periode: {{ $monthName }}</td>
         </tr>
         <tr class="empty-row"><td colspan="5" class="empty-row"></td></tr>
     </table>

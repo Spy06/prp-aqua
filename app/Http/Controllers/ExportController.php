@@ -86,58 +86,38 @@ class ExportController extends Controller
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
         $temuans = $this->getTemuans($awal, $akhir, $request);
 
-        // Build CSV content dengan BOM agar Excel baca UTF-8 dengan benar
-        $bom = "\xEF\xBB\xBF";
-
-        $header = [
-            'ID', 'Tanggal Temuan', 'Departemen', 'Sub Area',
-            'Pelapor (NIK)', 'Pelapor (Nama)', 'PIC (NIK)', 'PIC (Nama)',
-            'Status', 'Klausul PRP', 'Saran & Masukan', 'Tindakan Perbaikan', 'Due Date',
-            'Foto Bukti', 'Tanggal ACC QA', 'Catatan QA',
+        $total     = $temuans->count();
+        $perStatus = [
+            'open'              => $temuans->where('status', 'open')->count(),
+            'in_progress'       => $temuans->where('status', 'in_progress')->count(),
+            'closed_pending_qa' => $temuans->where('status', 'closed_pending_qa')->count(),
+            'closed_acc'        => $temuans->where('status', 'closed_acc')->count(),
         ];
-
-        $rows = [];
-        foreach ($temuans as $t) {
-            $tl = $t->tindakLanjut;
-            $rows[] = [
-                $t->id,
-                $t->tanggal_temuan->format('d/m/Y'),
-                $t->departemen->nama_departemen ?? '',
-                $t->sub_area,
-                $t->pelapor->nik ?? '',
-                $t->pelapor->name ?? '',
-                $t->pic->nik ?? '',
-                $t->pic->name ?? '',
-                $t->status,
-                $t->klausul ? $t->klausul->kode_klausul . ' - ' . $t->klausul->nama_klausul : '',
-                $t->saran ?? '',
-                $tl?->action ?? '',
-                $tl?->due_date?->format('d/m/Y') ?? '',
-                $tl?->foto_bukti_path ? 'Ada' : 'Belum',
-                $tl?->tanggal_acc?->format('d/m/Y') ?? '',
-                $tl?->catatan_qa ?? '',
+        $perDepartemen = $temuans->groupBy('departemen_id')->map(function ($group) {
+            $dept = $group->first()->departemen;
+            return [
+                'nama'              => $dept->nama_departemen ?? 'Tidak Diketahui',
+                'total'             => $group->count(),
+                'open'              => $group->where('status', 'open')->count(),
+                'in_progress'       => $group->where('status', 'in_progress')->count(),
+                'closed_pending_qa' => $group->where('status', 'closed_pending_qa')->count(),
+                'closed_acc'        => $group->where('status', 'closed_acc')->count(),
             ];
-        }
+        })->values();
 
-        // Generate CSV string
-        $csvContent = $bom;
+        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd_His') . '.xls';
 
-        // Header row
-        $csvContent .= implode(';', array_map(fn($h) => '"' . str_replace('"', '""', $h) . '"', $header)) . "\r\n";
-
-        // Data rows
-        foreach ($rows as $row) {
-            $csvContent .= implode(';', array_map(fn($v) => '"' . str_replace('"', '""', (string)$v) . '"', $row)) . "\r\n";
-        }
-
-        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd_His') . '.csv';
-
-        return response($csvContent, 200, [
-            'Content-Type'        => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'no-store, no-cache, must-revalidate',
-        ]);
+        return response()->view('excel.rekap', [
+            'temuans'       => $temuans,
+            'total'         => $total,
+            'perStatus'     => $perStatus,
+            'perDepartemen' => $perDepartemen,
+            'periodeLabel'  => $label,
+            'awal'          => $awal,
+            'akhir'         => $akhir,
+        ])
+        ->header('Content-Type', 'application/vnd.ms-excel; charset=UTF-8')
+        ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     // =====================================================================

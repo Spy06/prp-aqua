@@ -53,61 +53,61 @@
             <table class="btbl">
                 <thead>
                     <tr>
-                        <th style="width:70px;text-align:left;">ID</th>
-                        <th style="width:160px;text-align:left;">Departemen (Area)</th>
-                        <th style="width:220px;text-align:left;">Nama Sub Area</th>
-                        <th style="text-align:left;">PIC Penanggung Jawab (Vertical List)</th>
-                        <th style="width:140px;text-align:center;">Aksi Kelola PIC</th>
+                        <th style="width:80px;padding:16px 20px;text-align:left;">ID</th>
+                        <th style="width:180px;padding:16px 20px;text-align:left;">Departemen (Area)</th>
+                        <th style="width:240px;padding:16px 20px;text-align:left;">Nama Sub Area</th>
+                        <th style="padding:16px 20px;text-align:left;">PIC Penanggung Jawab</th>
+                        <th style="width:170px;padding:16px 20px;text-align:center;">Aksi Kelola PIC</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($subAreas as $sa)
-                    <tr>
-                        <td>
-                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:3px 8px;border-radius:6px;">#{{ $sa->id }}</span>
+                    <tr style="border-bottom:1px solid var(--bbor);transition:background 0.15s;">
+                        <td style="padding:16px 20px;vertical-align:middle;">
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:4px 10px;border-radius:6px;display:inline-block;">#{{ $sa->id }}</span>
                         </td>
-                        <td>
-                            <span style="font-weight:700;font-size:12.5px;color:var(--btxt);">{{ $sa->departemen->nama_departemen ?? 'Umum' }}</span>
+                        <td style="padding:16px 20px;vertical-align:middle;">
+                            <span style="font-weight:700;font-size:13px;color:var(--btxt);">{{ $sa->departemen->nama_departemen ?? 'Umum' }}</span>
                         </td>
-                        <td style="font-weight:600;color:var(--btxt);">
+                        <td style="padding:16px 20px;vertical-align:middle;font-weight:600;font-size:13.5px;color:var(--btxt);">
                             {{ $sa->nama_sub_area }}
                             @if(strtolower(trim($sa->nama_sub_area)) === 'others')
-                                <span style="font-size:10px;font-weight:700;background:#ffebee;color:#c62828;padding:2px 6px;border-radius:4px;margin-left:4px;">OTHERS</span>
+                                <span style="font-size:10px;font-weight:700;background:#ffebee;color:#c62828;padding:2px 8px;border-radius:4px;margin-left:6px;">OTHERS</span>
                             @endif
                         </td>
-                        <td style="padding:10px 14px;">
-                            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+                        <td style="padding:16px 20px;vertical-align:middle;">
+                            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;">
                                 @forelse($sa->pics as $pic)
-                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#e3f2fd;border:1px solid #90caf9;color:#1565c0;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;width:100%;max-width:340px;">
-                                        <div style="display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                            <span class="material-symbols-outlined" style="font-size:15px;color:#1565c0;flex-shrink:0;">person</span>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#e3f2fd;border:1px solid #90caf9;color:#1565c0;padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:600;width:100%;max-width:360px;">
+                                        <div style="display:flex;align-items:center;gap:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                            <span class="material-symbols-outlined" style="font-size:16px;color:#1565c0;flex-shrink:0;">person</span>
                                             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $pic->name }}</span>
                                             <span style="font-size:11px;opacity:0.8;font-family:monospace;flex-shrink:0;">({{ $pic->nik }})</span>
                                         </div>
                                         <button wire:click="removePic({{ $sa->id }}, {{ $pic->id }})"
                                                 wire:confirm="Hapus {{ $pic->name }} dari PIC Sub Area {{ $sa->nama_sub_area }}?"
                                                 title="Hapus PIC"
-                                                style="border:none;background:none;color:#c62828;cursor:pointer;padding:2px;display:flex;align-items:center;border-radius:4px;"
+                                                style="border:none;background:none;color:#c62828;cursor:pointer;padding:2px 4px;display:flex;align-items:center;border-radius:4px;"
                                                 onmouseover="this.style.background='#ffcdd2'" onmouseout="this.style.background='none'">
-                                            <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+                                            <span class="material-symbols-outlined" style="font-size:16px;">close</span>
                                         </button>
                                     </div>
                                 @empty
-                                    <span style="font-size:12px;color:var(--btxt2);font-style:italic;">- Belum ada PIC -</span>
+                                    <span style="font-size:12.5px;color:var(--btxt2);font-style:italic;">- Belum ada PIC -</span>
                                 @endforelse
                             </div>
                         </td>
-                        <td style="text-align:center;">
-                            <button wire:click="openManagePics({{ $sa->id }})" class="bbtn bbtn-secondary bbtn-sm" style="padding:4px 10px!important;font-size:12px!important;">
-                                <span class="material-symbols-outlined" style="font-size:15px;">person_add</span>
+                        <td style="padding:16px 20px;vertical-align:middle;text-align:center;">
+                            <button wire:click="openManagePics({{ $sa->id }})" class="bbtn bbtn-secondary bbtn-sm" style="padding:7px 14px!important;border-radius:8px;font-size:12.5px!important;font-weight:600;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">person_add</span>
                                 + Kelola PIC
                             </button>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
-                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">location_off</span>
+                        <td colspan="5" style="text-align:center;padding:40px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:40px;display:block;margin-bottom:10px;opacity:.3;">location_off</span>
                             Belum ada data Sub Area untuk filter ini.
                         </td>
                     </tr>
@@ -116,7 +116,7 @@
             </table>
         </div>
         @if($subAreas->hasPages())
-        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+        <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
             {{ $subAreas->links('vendor.pagination.tailwind') }}
         </div>
         @endif

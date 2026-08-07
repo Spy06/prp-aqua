@@ -2,7 +2,7 @@
     {{-- Card Header --}}
     <div class="bcard-header" style="justify-content:space-between; border-bottom: 1px solid var(--bbor); padding: 20px 24px;">
         <div style="display:flex;align-items:center;gap:12px;">
-            <div class="bcard-hicon" style="background:var(--bp-light); width: 44px; height: 44px; border-radius: 12px;">
+            <div class="bcard-hicon" style="background:var(--bp-light); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <span class="material-symbols-outlined fil" style="color:var(--bp);font-size:22px;">edit_note</span>
             </div>
             <div>
@@ -58,8 +58,9 @@
                     {{-- Sub Area --}}
                     <div>
                         <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
-                        <select wire:model.live="sub_area" id="subarea" class="binput" {{ empty($departemen_id) ? 'disabled' : '' }}>
-                            <option value="">Pilih Sub Area</option>
+                        <select wire:model.live="sub_area" id="subarea" class="binput"
+                            {{ empty($departemen_id) ? 'disabled style=cursor:not-allowed;opacity:0.65;background:var(--bsur);' : '' }}>
+                            <option value="">{{ empty($departemen_id) ? 'Pilih Departemen Terlebih Dahulu' : 'Pilih Sub Area' }}</option>
                             @foreach($subAreas as $area)
                                 <option value="{{ $area->nama_sub_area }}">{{ $area->nama_sub_area }}</option>
                             @endforeach
@@ -91,17 +92,17 @@
                     {{-- Upload Foto --}}
                     <div>
                         <label class="blabel">Upload Foto Temuan <span style="color:var(--error);">*</span></label>
-                        <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:140px;gap:10px;">
+                        <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:160px;gap:12px;text-align:center;">
                             <input type="file" id="foto-gallery" wire:model="foto_temuan" accept="image/*" style="display:none;" />
                             <input type="file" id="foto-camera" wire:model="foto_temuan" accept="image/*" capture="environment" style="display:none;" />
 
                             @if ($foto_temuan)
-                                <div style="position:relative;width:100%;max-width:200px;text-align:center;">
-                                    <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-width:100%;max-height:120px;border-radius:8px;object-fit:cover;" />
-                                    <span style="display:block;font-size:11px;color:var(--btxt2);margin-top:4px;">{{ $foto_temuan->getClientOriginalName() }}</span>
+                                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;">
+                                    <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-width:180px;max-height:130px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
+                                    <span style="display:block;font-size:11px;color:var(--btxt2);margin-top:6px;text-align:center;word-break:break-all;max-width:220px;">{{ $foto_temuan->getClientOriginalName() }}</span>
                                 </div>
                             @else
-                                <span class="material-symbols-outlined" style="font-size:36px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
+                                <span class="material-symbols-outlined" style="font-size:38px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
                                 <div style="font-size:13px;font-weight:600;color:var(--btxt);">Pilih Sumber Foto</div>
                             @endif
 

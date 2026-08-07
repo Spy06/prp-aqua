@@ -7,7 +7,7 @@
             <p class="bph-sub">Kelola dan tinjau seluruh data hasil observasi perilaku mutu (Periode: <strong>{{ $filterLabel }}</strong>)</p>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <a href="{{ route('bosq.qa.export.csv', [
+            <a href="{{ route('bosq.qa.export.csv', array_merge([
                 'tipe' => $filter_type,
                 'bulan' => $bulan,
                 'tahun' => $tahun,
@@ -16,11 +16,11 @@
                 'departemen_id' => $filter_departemen_id,
                 'status' => $filter_status,
                 'tingkat_resiko' => $filter_tingkat_resiko,
-                'dampak_temuan' => $filter_dampak_temuan
-            ]) }}" class="bbtn" style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+                'dampak_temuan' => $filter_dampak_temuan,
+            ], !empty(array_filter($filter_sub_area_ids)) ? ['sub_area_ids' => array_values(array_filter($filter_sub_area_ids))] : [])) }}" class="bbtn" style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
                 <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">table_chart</span> Excel
             </a>
-            <a href="{{ route('bosq.qa.export.pdf.dashboard', [
+            <a href="{{ route('bosq.qa.export.pdf.dashboard', array_merge([
                 'tipe' => $filter_type,
                 'bulan' => $bulan,
                 'tahun' => $tahun,
@@ -29,95 +29,121 @@
                 'departemen_id' => $filter_departemen_id,
                 'status' => $filter_status,
                 'tingkat_resiko' => $filter_tingkat_resiko,
-                'dampak_temuan' => $filter_dampak_temuan
-            ]) }}" target="_blank" class="bbtn" style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
+                'dampak_temuan' => $filter_dampak_temuan,
+            ], !empty(array_filter($filter_sub_area_ids)) ? ['sub_area_ids' => array_values(array_filter($filter_sub_area_ids))] : [])) }}" target="_blank" class="bbtn" style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
                 <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">picture_as_pdf</span> PDF
             </a>
         </div>
     </div>
 
-    {{-- Filter Card --}}
-    <div class="bcard fu1" style="padding:16px 20px;">
-        <div style="display:flex;flex-direction:column;gap:12px;">
-            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="material-symbols-outlined" style="color:var(--bp-dark);font-size:20px;">filter_alt</span>
-                    <span style="font-size:13px;font-weight:700;color:var(--btxt);">Filter Periode:</span>
+    {{-- Unified Card Container (Matching SIVERA) --}}
+    <div class="bcard fu1" style="padding:20px;overflow:visible!important;position:relative;z-index:100;">
+        
+        {{-- Unified Filter Row --}}
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;position:relative;z-index:105;">
+            
+            {{-- Filter Periode Selects --}}
+            <select wire:model.live="filter_type" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                <option value="bulan">Per Bulan</option>
+                <option value="tahun">Per Tahun</option>
+                <option value="custom">Rentang Tanggal Custom</option>
+            </select>
+
+            @if($filter_type === 'bulan')
+                <select wire:model.live="bulan" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                    @php
+                        $bulanNames = [
+                            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                        ];
+                    @endphp
+                    @foreach($bulanNames as $mKey => $mName)
+                        <option value="{{ $mKey }}">{{ $mName }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="tahun" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                    @for($y = now()->year; $y >= 2024; $y--)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endfor
+                </select>
+            @elseif($filter_type === 'tahun')
+                <select wire:model.live="tahun" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                    @for($y = now()->year; $y >= 2024; $y--)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endfor
+                </select>
+            @elseif($filter_type === 'custom')
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="date" wire:model.live="tgl_mulai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
+                    <span style="font-size:12px;color:var(--btxt2);">s/d</span>
+                    <input type="date" wire:model.live="tgl_selesai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
+                </div>
+            @endif
+
+            {{-- Departemen Filter --}}
+            <select wire:model.live="filter_departemen_id" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                <option value="">Semua Departemen</option>
+                @foreach($departemens as $d)
+                    <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
+                @endforeach
+            </select>
+
+            {{-- Simpel Native-Style Multi-Select Sub Area Dropdown --}}
+            <div style="position:relative;" x-data="{ open: false }" @click.outside="open = false">
+                <div @click="open = !open" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;display:inline-flex;align-items:center;gap:14px;cursor:pointer;background:var(--bcard);user-select:none;justify-content:space-between;min-width:150px;">
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;font-weight:{{ count(array_filter($filter_sub_area_ids)) > 0 ? '700' : '400' }};color:{{ count(array_filter($filter_sub_area_ids)) > 0 ? 'var(--bp)' : 'var(--btxt)' }};">
+                        @php $count = count(array_filter($filter_sub_area_ids)); @endphp
+                        @if($count === 0)
+                            Semua Sub Area
+                        @elseif($count === 1)
+                            @php $firstSa = $subAreas->firstWhere('id', reset($filter_sub_area_ids)); @endphp
+                            {{ $firstSa ? $firstSa->nama_sub_area : '1 Sub Area' }}
+                        @else
+                            {{ $count }} Sub Area Dipilih
+                        @endif
+                    </span>
+                    <span class="material-symbols-outlined" style="font-size:16px;color:var(--btxt2);transition:transform 0.2s;" :style="open ? 'transform:rotate(180deg)' : ''">expand_more</span>
                 </div>
 
-                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;">
-                    <select wire:model.live="filter_type" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
-                        <option value="bulan">Per Bulan</option>
-                        <option value="tahun">Per Tahun</option>
-                        <option value="custom">Rentang Tanggal Custom</option>
-                    </select>
-
-                    @if($filter_type === 'bulan')
-                        <select wire:model.live="bulan" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}">{{ \Carbon\Carbon::createFromDate(null, $m, 1)->translatedFormat('F') }}</option>
-                            @endfor
-                        </select>
-
-                        <select wire:model.live="tahun" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
-                            @for($y = now()->year; $y >= 2024; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
-                    @elseif($filter_type === 'tahun')
-                        <select wire:model.live="tahun" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
-                            @for($y = now()->year; $y >= 2024; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
-                    @elseif($filter_type === 'custom')
-                        <div style="display:flex;align-items:center;gap:6px;">
-                            <input type="date" wire:model.live="tgl_mulai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
-                            <span style="font-size:12px;color:var(--btxt2);">s/d</span>
-                            <input type="date" wire:model.live="tgl_selesai" class="binput" style="width:auto;padding:6px 10px;font-size:12.5px;">
-                        </div>
-                    @endif
+                {{-- Simple Native-Style Dropdown Menu Box --}}
+                <div x-show="open" x-cloak x-transition.origin.top.left style="position:absolute;top:calc(100% + 4px);left:0;z-index:9999;background:var(--bcard);border:1px solid var(--bbor);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.15);min-width:210px;max-height:260px;overflow-y:auto;padding:4px 0;">
+                    <label style="display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;font-size:12.5px;color:var(--btxt);user-select:none;font-weight:700;border-bottom:1px solid var(--bbor);" onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
+                        <input type="checkbox" wire:click="selectAllSubAreas" {{ count(array_filter($filter_sub_area_ids)) === $subAreas->count() && $subAreas->count() > 0 ? 'checked' : '' }} style="width:15px;height:15px;accent-color:var(--bp);cursor:pointer;" />
+                        <span>Semua Sub Area</span>
+                    </label>
+                    @foreach($subAreas as $sa)
+                        <label style="display:flex;align-items:center;gap:10px;padding:6px 14px;cursor:pointer;font-size:12.5px;color:var(--btxt);user-select:none;" onmouseover="this.style.background='var(--bp-light)'" onmouseout="this.style.background='none'">
+                            <input type="checkbox" wire:model.live="filter_sub_area_ids" value="{{ $sa->id }}" style="width:15px;height:15px;accent-color:var(--bp);cursor:pointer;" />
+                            <span>{{ $sa->nama_sub_area }}</span>
+                        </label>
+                    @endforeach
                 </div>
             </div>
 
-            {{-- Filter Kategori --}}
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--bbor);">
-                <select wire:model.live="filter_departemen_id" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
-                    <option value="">Semua Departemen</option>
-                    @foreach($departemens as $d)
-                        <option value="{{ $d->id }}">{{ $d->nama_departemen }}</option>
-                    @endforeach
-                </select>
+            {{-- Status Filter --}}
+            <select wire:model.live="filter_status" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                <option value="">Semua Status</option>
+                <option value="open">Status Open</option>
+                <option value="closed">Status Closed</option>
+            </select>
 
-                <select wire:model.live="filter_sub_area_id" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
-                    <option value="">Semua Sub Area</option>
-                    @foreach($subAreas as $sa)
-                        <option value="{{ $sa->id }}">{{ $sa->nama_sub_area }}</option>
-                    @endforeach
-                </select>
+            {{-- Dampak Filter --}}
+            <select wire:model.live="filter_dampak_temuan" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
+                <option value="">Semua Dampak</option>
+                <option value="negatif">Negatif (Butuh Perbaikan)</option>
+                <option value="positif">Positif (Perilaku Baik)</option>
+            </select>
 
-                <select wire:model.live="filter_status" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
-                    <option value="">Semua Status</option>
-                    <option value="open">Status Open</option>
-                    <option value="closed">Status Closed</option>
-                </select>
-
-                <select wire:model.live="filter_dampak_temuan" class="binput" style="width:auto;padding:6px 12px;font-size:12.5px;">
-                    <option value="">Semua Dampak</option>
-                    <option value="negatif">Negatif (Butuh Perbaikan)</option>
-                    <option value="positif">Positif (Perilaku Baik)</option>
-                </select>
-
-                <div style="flex:1;min-width:200px;position:relative;">
-                    <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
-                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari pelapor, NIK, atau detail..." class="binput" style="padding-left:36px;padding-top:6px;padding-bottom:6px;font-size:12.5px;" />
-                </div>
+            {{-- Search Bar --}}
+            <div style="flex:1;min-width:200px;position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--btxt2);font-size:18px;">search</span>
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari pelapor, NIK, atau detail..." class="binput" style="padding-left:36px;padding-top:6px;padding-bottom:6px;font-size:12.5px;" />
             </div>
         </div>
-    </div>
 
-    {{-- Tabel Semua Temuan --}}
-    <div class="bcard fu2" style="overflow:hidden;">
+        {{-- Tabel Semua Temuan --}}
         <div style="overflow-x:auto;">
             <table class="btbl" style="min-width:760px;">
                 <thead>
@@ -183,7 +209,7 @@
         </div>
 
         @if($temuans->hasPages())
-            <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
+            <div style="padding:16px 20px 0 20px;margin-top:16px;border-top:1px solid var(--bbor);">
                 {{ $temuans->links() }}
             </div>
         @endif

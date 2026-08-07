@@ -129,9 +129,16 @@
 
                 @if($filter_type === 'bulan')
                     <select wire:model.live="bulan" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}">{{ \Carbon\Carbon::createFromDate(null, $m, 1)->translatedFormat('F') }}</option>
-                        @endfor
+                        @php
+                            $bulanNames = [
+                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                            ];
+                        @endphp
+                        @foreach($bulanNames as $mKey => $mName)
+                            <option value="{{ $mKey }}">{{ $mName }}</option>
+                        @endforeach
                     </select>
 
                     <select wire:model.live="tahun" class="binput" style="width:auto;padding:7px 12px;font-size:13px;">

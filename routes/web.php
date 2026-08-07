@@ -35,6 +35,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         $system = session('login_system', 'sivera');
         $user   = request()->user();
+        if ($user && $user->role === 'superadmin') {
+            return $system === 'bosq'
+                ? redirect()->route('bosq.qa.dashboard')
+                : redirect()->route('qa.master.akun');
+        }
         if ($system === 'bosq') {
             return $user->role === 'qa'
                 ? redirect()->route('bosq.qa.dashboard')

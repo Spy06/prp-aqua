@@ -81,42 +81,44 @@
             <table class="btbl">
                 <thead>
                     <tr>
-                        <th style="width:80px;text-align:left;">ID</th>
-                        <th style="width:30%;text-align:left;">Nama Elemen QFS</th>
-                        <th style="text-align:left;">Deskripsi</th>
-                        <th style="width:110px;text-align:center;">Dipakai</th>
-                        <th style="width:120px;text-align:center;">Aksi</th>
+                        <th style="width:80px;padding:16px 20px;text-align:left;">ID</th>
+                        <th style="width:30%;padding:16px 20px;text-align:left;">Nama Elemen QFS</th>
+                        <th style="padding:16px 20px;text-align:left;">Deskripsi</th>
+                        <th style="width:110px;padding:16px 20px;text-align:center;">Dipakai</th>
+                        <th style="width:160px;padding:16px 20px;text-align:center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($elemens as $el)
-                    <tr>
-                        <td>
-                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:3px 8px;border-radius:6px;">#{{ $el->id }}</span>
+                    <tr style="border-bottom:1px solid var(--bbor);transition:background 0.15s;">
+                        <td style="padding:16px 20px;vertical-align:middle;">
+                            <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--bp);background:var(--bp-light);padding:4px 10px;border-radius:6px;display:inline-block;">#{{ $el->id }}</span>
                         </td>
-                        <td style="font-weight:600;color:var(--btxt);">{{ $el->nama_elemen }}</td>
-                        <td style="color:var(--btxt2);max-width:360px;">{{ $el->deskripsi ?? '-' }}</td>
-                        <td style="text-align:center;">
-                            <span class="bbadge bbadge-progress">{{ $el->temuans_count }}</span>
+                        <td style="padding:16px 20px;vertical-align:middle;font-weight:600;color:var(--btxt);font-size:13.5px;">{{ $el->nama_elemen }}</td>
+                        <td style="padding:16px 20px;vertical-align:middle;color:var(--btxt2);max-width:360px;font-size:13px;">{{ $el->deskripsi ?? '-' }}</td>
+                        <td style="padding:16px 20px;vertical-align:middle;text-align:center;">
+                            <span class="bbadge bbadge-progress" style="padding:5px 12px;border-radius:12px;font-size:11.5px;">{{ $el->temuans_count }}</span>
                         </td>
-                        <td style="text-align:center;">
-                            <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                        <td style="padding:16px 20px;vertical-align:middle;text-align:center;">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
                                 <button wire:click="openEdit({{ $el->id }})" title="Edit"
-                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
-                                    <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:7px 14px!important;border-radius:8px;font-size:12.5px!important;font-weight:600;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                                    Edit
                                 </button>
                                 <button wire:click="hapus({{ $el->id }})"
                                         wire:confirm="Hapus elemen QFS '{{ $el->nama_elemen }}'?"
-                                        class="bbtn bbtn-danger bbtn-sm" style="padding:5px 8px!important;">
-                                    <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                                        class="bbtn bbtn-danger bbtn-sm" style="padding:7px 14px!important;border-radius:8px;font-size:12.5px!important;font-weight:600;">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+                                    Hapus
                                 </button>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
-                            <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">category</span>
+                        <td colspan="5" style="text-align:center;padding:40px;color:var(--btxt2);">
+                            <span class="material-symbols-outlined" style="font-size:40px;display:block;margin-bottom:10px;opacity:.3;">category</span>
                             Belum ada data Elemen QFS
                         </td>
                     </tr>
@@ -125,7 +127,7 @@
             </table>
         </div>
         @if($elemens->hasPages())
-        <div style="padding:12px 16px;border-top:1px solid var(--bbor);">
+        <div style="padding:16px 20px;border-top:1px solid var(--bbor);">
             {{ $elemens->links('vendor.pagination.tailwind') }}
         </div>
         @endif

@@ -26,7 +26,7 @@ class LoginResponse implements LoginResponseContract
 
             $genericPaths = ['/', '/login', '/dashboard', '/home', '/beranda'];
 
-            if ($user && $user->role !== 'qa') {
+            if ($user && !in_array($user->role, ['qa', 'superadmin'], true)) {
                 // Karyawan tidak boleh ke rute khusus QA atau Export
                 if (str_starts_with($path, '/qa') || str_starts_with($path, '/export')) {
                     session()->forget('url.intended');
@@ -35,8 +35,8 @@ class LoginResponse implements LoginResponseContract
                 if (in_array($normalizedPath, $genericPaths, true)) {
                     session()->forget('url.intended');
                 }
-            } elseif ($user && $user->role === 'qa') {
-                // QA dari rute umum → hapus intended, redirect ke dashboard sistem
+            } elseif ($user && in_array($user->role, ['qa', 'superadmin'], true)) {
+                // QA & Super Admin dari rute umum → hapus intended, redirect ke dashboard sistem
                 if (in_array($normalizedPath, $genericPaths, true)) {
                     session()->forget('url.intended');
                 }
@@ -51,7 +51,9 @@ class LoginResponse implements LoginResponseContract
 
         // Tentukan target redirect berdasarkan sistem + role
         if ($user && $user->role === 'superadmin') {
-            $target = route('qa.master.akun', absolute: false);
+            $target = $system === 'bosq'
+                ? route('bosq.qa.dashboard', absolute: false)
+                : route('qa.master.akun', absolute: false);
         } elseif ($system === 'bosq') {
             if ($user && $user->role === 'qa') {
                 $target = route('bosq.qa.dashboard', absolute: false);

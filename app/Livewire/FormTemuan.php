@@ -114,8 +114,8 @@ class FormTemuan extends Component
         $this->validate();
 
         $pic = User::find($this->pic_id);
-        if (!$pic || $pic->role !== 'karyawan') {
-            $this->addError('pic_id', 'PIC yang dipilih harus karyawan, bukan QA.');
+        if (!$pic) {
+            $this->addError('pic_id', 'PIC yang dipilih tidak ditemukan.');
             return;
         }
 

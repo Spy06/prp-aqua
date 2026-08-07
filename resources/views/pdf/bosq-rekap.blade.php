@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rekap Kepatuhan BQA BOS'Q — {{ $monthName }}</title>
+    <title>Rekap Target BQA BOS'Q — {{ $monthName }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 9px; color: #1e293b; background: #fff; padding: 18px; }

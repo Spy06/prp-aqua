@@ -8,14 +8,13 @@
             </p>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <a href="{{ route('bosq.qa.export.rekap.csv', ['date' => $bulan_tahun . '-01']) }}"
-               class="bbtn"
-               style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+            <a href="{{ route('bosq.qa.export.rekap.csv', ['date' => $bulan_tahun . '-01']) }}" class="bbtn"
+                style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
                 <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">table_chart</span> Excel
             </a>
             <a href="{{ route('bosq.qa.export.rekap.pdf', ['date' => $bulan_tahun . '-01']) }}" target="_blank"
-               class="bbtn"
-               style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
+                class="bbtn"
+                style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
                 <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">picture_as_pdf</span> PDF
             </a>
         </div>
@@ -160,7 +159,7 @@
                             @php $p1 = $ds['scores']['w1']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                           {{ $p1 == 100 ? 'background:#334155;color:#ffffff;' : ($p1 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p1 == 100 ? 'background:#334155;color:#ffffff;' : ($p1 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
                                 {{ $p1 }}%
                             </td>
 
@@ -168,7 +167,7 @@
                             @php $p2 = $ds['scores']['w2']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                           {{ $p2 == 100 ? 'background:#334155;color:#ffffff;' : ($p2 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p2 == 100 ? 'background:#334155;color:#ffffff;' : ($p2 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
                                 {{ $p2 }}%
                             </td>
 
@@ -176,7 +175,7 @@
                             @php $p3 = $ds['scores']['w3']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                           {{ $p3 == 100 ? 'background:#334155;color:#ffffff;' : ($p3 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p3 == 100 ? 'background:#334155;color:#ffffff;' : ($p3 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
                                 {{ $p3 }}%
                             </td>
 
@@ -184,7 +183,7 @@
                             @php $p4 = $ds['scores']['w4']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                           {{ $p4 == 100 ? 'background:#334155;color:#ffffff;' : ($p4 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p4 == 100 ? 'background:#334155;color:#ffffff;' : ($p4 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
                                 {{ $p4 }}%
                             </td>
                         </tr>
@@ -273,7 +272,7 @@
                                 @php $w1 = $m['scores']['w1']; @endphp
                                 <td
                                     style="padding:7px;text-align:center;border:1px solid #cbd5e1;font-weight:700;
-                                                   {{ $w1['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w1['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
+                                                           {{ $w1['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w1['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
                                     {{ $w1['persen'] }}
                                 </td>
 
@@ -281,7 +280,7 @@
                                 @php $w2 = $m['scores']['w2']; @endphp
                                 <td
                                     style="padding:7px;text-align:center;border:1px solid #cbd5e1;font-weight:700;
-                                                   {{ $w2['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w2['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
+                                                           {{ $w2['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w2['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
                                     {{ $w2['persen'] }}
                                 </td>
 
@@ -289,7 +288,7 @@
                                 @php $w3 = $m['scores']['w3']; @endphp
                                 <td
                                     style="padding:7px;text-align:center;border:1px solid #cbd5e1;font-weight:700;
-                                                   {{ $w3['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w3['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
+                                                           {{ $w3['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w3['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
                                     {{ $w3['persen'] }}
                                 </td>
 
@@ -297,7 +296,7 @@
                                 @php $w4 = $m['scores']['w4']; @endphp
                                 <td
                                     style="padding:7px;text-align:center;border:1px solid #cbd5e1;font-weight:700;
-                                                   {{ $w4['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w4['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
+                                                           {{ $w4['persen'] == 100 ? 'background:#dcfce7;color:#15803d;' : ($w4['persen'] >= 50 ? 'background:#fef08a;color:#854d0e;' : 'background:#f1f5f9;color:#64748b;') }}">
                                     {{ $w4['persen'] }}
                                 </td>
                             </tr>

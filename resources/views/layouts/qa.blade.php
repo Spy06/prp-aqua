@@ -432,6 +432,51 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .fil { font-variation-settings: 'FILL' 1; }
         .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ── Status Badges ── */
+        .sbadge {
+            display: inline-flex; align-items: center;
+            padding: 4px 11px; border-radius: 20px; font-size: 11px;
+            font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+            border: 1px solid transparent; white-space: nowrap;
+        }
+        .sbadge-open { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+        .sbadge-progress { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+        .sbadge-pending { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
+        .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+
+        /* ── Urgency Banners ── */
+        .urgency-overdue { background: #ffebee; border-bottom: 1px solid #ffcdd2; color: #c62828; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
+        .urgency-soon { background: #fff3e0; border-bottom: 1px solid #ffe0b2; color: #e65100; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
+        .urgency-pending { background: #f3e5f5; border-bottom: 1px solid #e1bee7; color: #6a1b9a; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
+
+        /* ── Temuan Cards (list view) ── */
+        .tcard {
+            background: var(--bcard); border: 1px solid var(--bbor);
+            border-radius: 14px; overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            transition: all 0.25s; text-decoration: none; color: inherit;
+        }
+        .tcard:hover {
+            box-shadow: 0 8px 28px rgba(33,150,243,0.12);
+            transform: translateY(-2px); border-color: var(--bp);
+        }
+        .tcard-body { padding: 16px; flex: 1; }
+        .tcard-footer {
+            padding: 10px 16px; border-top: 1px solid var(--bbor);
+            background: var(--bsur); display: flex;
+            justify-content: space-between; align-items: center;
+            font-size: 12px; color: var(--btxt2); gap: 8px;
+        }
+        .tcard-dept { font-size: 15px; font-weight: 700; color: var(--btxt); margin: 0 0 6px; }
+        .tcard-sub { font-size: 12.5px; color: var(--bp); font-weight: 600; display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+        .tcard-desc { font-size: 13px; color: var(--btxt2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.55; }
+
+        /* ── Tcard Grid ── */
+        .tcard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        @media (max-width: 1024px) { .tcard-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .tcard-grid { grid-template-columns: 1fr; gap: 12px; } }
     </style>
     @livewireStyles
 </head>
@@ -494,63 +539,59 @@
         <div class="qs-content">
             @if(auth()->user()->isSuperAdmin())
                 <span class="qs-group-label">Super Admin Panel</span>
-                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
                     <span>Manajemen Akun User</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.karyawan') ? 'fil' : '' }}">badge</span>
                     <span>Master PIC</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.departemen') ? 'fil' : '' }}">domain</span>
                     <span>Master Departemen</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.klausul') ? 'fil' : '' }}">rule</span>
                     <span>Klausul PRP</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
-                    <span>Manajemen Akun User</span>
-                </a>
 
                 <span class="qs-group-label" style="margin-top:16px;">Master Data BOS'Q</span>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.line') ? 'active' : '' }}" href="{{ route('bosq.qa.master.line') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.line') ? 'fil' : '' }}">precision_manufacturing</span>
                     <span>Master Line</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.subarea') ? 'active' : '' }}" href="{{ route('bosq.qa.master.subarea') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.subarea') ? 'fil' : '' }}">location_on</span>
                     <span>Master Sub Area</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.elemen') ? 'active' : '' }}" href="{{ route('bosq.qa.master.elemen') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.elemen') ? 'fil' : '' }}">category</span>
                     <span>Master Elemen QFS</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.master.karyawan') ? 'active' : '' }}" href="{{ route('bosq.qa.master.karyawan') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.master.karyawan') ? 'fil' : '' }}">groups</span>
                     <span>Divisi Manajemen</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
                     <span>Grafik Temuan BOS'Q</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
                     <span>Daftar Observasi BOS'Q</span>
                 </a>
 
                 <span class="qs-group-label" style="margin-top:16px;">Monitoring & Analytics</span>
-                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                     <span>Grafik Temuan</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
                     <span>Daftar Temuan</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
+                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}">
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
                     <span>Rekap Periode</span>
                 </a>

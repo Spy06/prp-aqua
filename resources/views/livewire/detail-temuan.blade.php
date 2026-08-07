@@ -9,7 +9,7 @@
 
     {{-- Card: Info Temuan --}}
     <div class="bcard fu1" style="margin-bottom:20px;">
-        <div class="bcard-header" style="justify-content:space-between;">
+        <div class="bcard-header">
             <div style="display:flex;align-items:center;gap:12px;">
                 <div class="bcard-hicon" style="background:#e3f2fd;">
                     <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">description</span>
@@ -128,10 +128,12 @@
     @if($tl)
     <div class="bcard fu2" style="margin-bottom:20px;">
         <div class="bcard-header">
-            <div class="bcard-hicon" style="background:#e8f5e9;">
-                <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">task_alt</span>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="bcard-hicon" style="background:#e8f5e9;">
+                    <span class="material-symbols-outlined fil" style="color:#2e7d32;font-size:20px;">task_alt</span>
+                </div>
+                <div style="font-size:15px;font-weight:700;color:var(--btxt);">Tindak Lanjut</div>
             </div>
-            <div style="font-size:15px;font-weight:700;color:var(--btxt);">Tindak Lanjut</div>
         </div>
         <div class="bcard-body">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
@@ -176,7 +178,7 @@
                                     $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp']);
                                 @endphp
                                 @if($isImage)
-                                    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);background:var(--bsur);display:flex;flex-direction:column;"
+                                    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--bbor);background:var(--bsur);display:flex;flex-direction:column;position:relative;"
                                          class="img-hover-container">
                                         <div style="height:140px;overflow:hidden;position:relative;cursor:pointer;"
                                              @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $path) }}'; lightboxTitle = 'Foto Bukti Tindak Lanjut #{{ $index + 1 }} (Temuan #{{ $temuan->id }})'"
@@ -238,12 +240,14 @@
     @if($showTindakLanjutForm)
     <div class="bcard fu3" style="margin-bottom:20px;">
         <div class="bcard-header">
-            <div class="bcard-hicon" style="background:#e3f2fd;">
-                <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">edit_document</span>
-            </div>
-            <div>
-                <div style="font-size:15px;font-weight:700;color:var(--btxt);">Form Tindak Lanjut PIC</div>
-                <div style="font-size:12px;color:var(--btxt2);">Isi detail tindakan perbaikan dan update status</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="bcard-hicon" style="background:#e3f2fd;">
+                    <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">edit_document</span>
+                </div>
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:var(--btxt);">Form Tindak Lanjut PIC</div>
+                    <div style="font-size:12px;color:var(--btxt2);">Isi detail tindakan perbaikan dan update status</div>
+                </div>
             </div>
         </div>
         <div class="bcard-body">
@@ -315,12 +319,12 @@
         
         /* Image Hover Overlay Styles */
         .img-hover-container {
-            position: relative;
-            overflow: hidden;
+            position: relative !important;
+            overflow: hidden !important;
         }
         .img-hover-overlay {
-            position: absolute;
-            inset: 0;
+            position: absolute !important;
+            inset: 0 !important;
             background: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(2px);
             -webkit-backdrop-filter: blur(2px);

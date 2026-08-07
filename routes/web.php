@@ -55,15 +55,15 @@ Route::middleware(['auth'])->group(function () {
 
     // ── SIVERA Routes ──
     Route::middleware(['system_guard:sivera'])->group(function () {
-        // Role Karyawan & QA (Halaman Beranda & Lapor Temuan SIVERA)
+        // Role Karyawan & QA — Beranda, Dashboard Analytics & Daftar Temuan SIVERA
         Route::middleware(['role:karyawan,qa'])->group(function () {
             Route::view('/beranda', 'pages.beranda')->name('beranda');
-        });
-
-        // Role QA — Dashboard, Rekap, Master Data SIVERA
-        Route::middleware(['role:qa'])->group(function () {
             Route::view('/qa/dashboard', 'dashboard')->name('qa.dashboard');
             Route::view('/qa/daftar-temuan', 'pages.qa.daftar-temuan')->name('qa.daftar-temuan');
+        });
+
+        // Role QA Only — Rekap Periode & Master Data SIVERA
+        Route::middleware(['role:qa'])->group(function () {
             Route::view('/qa/rekap', 'pages.qa.rekap')->name('qa.rekap');
             Route::view('/qa/master/karyawan', 'pages.qa.master-karyawan')->name('qa.master.karyawan');
             Route::view('/qa/master/departemen', 'pages.qa.master-departemen')->name('qa.master.departemen');

@@ -445,6 +445,77 @@
         .sbadge-pending { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
         .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
 
+        /* ── BCard Header & Body ── */
+        .bcard-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--bbor);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bcard);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .bcard-hicon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .bcard-body {
+            padding: 20px;
+        }
+
+        /* ── Info Fields ── */
+        .info-row { margin-bottom: 16px; }
+        .inf-label {
+            font-size: 10.5px; font-weight: 700; color: var(--btxt2);
+            text-transform: uppercase; letter-spacing: 0.9px; margin-bottom: 4px;
+        }
+        .inf-value {
+            font-size: 14px; font-weight: 600; color: var(--btxt);
+        }
+        .inf-text {
+            font-size: 13.5px; color: var(--btxt); line-height: 1.65;
+            white-space: pre-wrap; background: var(--bsur);
+            padding: 12px 14px; border-radius: 10px; border: 1px solid var(--bbor);
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--btxt2); margin-bottom: 20px; flex-wrap: wrap; }
+        .breadcrumb a { color: var(--btxt2); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--bp); }
+        .breadcrumb .sep { opacity: 0.5; }
+
+        /* ── Image Hover Container ── */
+        .img-hover-container {
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        .img-hover-overlay {
+            position: absolute !important;
+            inset: 0 !important;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .img-hover-container:hover .img-hover-overlay {
+            opacity: 1;
+        }
+        .img-hover-container:hover img {
+            transform: scale(1.03);
+        }
+
         /* ── Urgency Banners ── */
         .urgency-overdue { background: #ffebee; border-bottom: 1px solid #ffcdd2; color: #c62828; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
         .urgency-soon { background: #fff3e0; border-bottom: 1px solid #ffe0b2; color: #e65100; padding: 8px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
@@ -600,49 +671,80 @@
                     <span>Beralih ke BOS'Q</span>
                 </a>
             @else
-                <span class="qs-group-label">Dashboard QA</span>
-                <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
-                    <span>Grafik Temuan</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                    <span>Daftar Temuan</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
-                    <span>Rekap Periode</span>
-                </a>
+                @php
+                    $isPicUser = auth()->check() && auth()->user()->role === 'karyawan' && (
+                        \App\Models\Temuan::where('pic_id', auth()->id())->exists() ||
+                        \App\Models\Karyawan::where('nik', auth()->user()->nik)->where('status_aktif', true)->exists()
+                    );
+                @endphp
 
-                <span class="qs-group-label" style="margin-top:16px;">Mode Pelapor</span>
-                <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
-                    <span>Lapor Temuan Saya</span>
-                </a>
+                @if(auth()->user()->role === 'qa')
+                    <span class="qs-group-label">Dashboard QA</span>
+                    <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
+                        <span>Grafik Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
+                        <span>Rekap Periode</span>
+                    </a>
 
-                <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
-                <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
-                    <span>Manajemen Akun User</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic">badge</span>
-                    <span>Master PIC</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic">domain</span>
-                    <span>Master Departemen</span>
-                </a>
-                <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic">rule</span>
-                    <span>Klausul PRP</span>
-                </a>
+                    <span class="qs-group-label" style="margin-top:16px;">Mode Pelapor</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                        <span>Lapor Temuan Saya</span>
+                    </a>
 
-                <span class="qs-group-label" style="margin-top:16px;">Sistem & Dual Portal</span>
-                <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
-                    <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
-                    <span>Beralih ke BOS'Q</span>
-                </a>
+                    <span class="qs-group-label" style="margin-top:16px;">Master Data</span>
+                    <a class="qs-item {{ request()->routeIs('qa.master.akun') ? 'active' : '' }}" href="{{ route('qa.master.akun') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.master.akun') ? 'fil' : '' }}">manage_accounts</span>
+                        <span>Manajemen Akun User</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.karyawan') ? 'active' : '' }}" href="{{ route('qa.master.karyawan') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic">badge</span>
+                        <span>Master PIC</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.departemen') ? 'active' : '' }}" href="{{ route('qa.master.departemen') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic">domain</span>
+                        <span>Master Departemen</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.master.klausul') ? 'active' : '' }}" href="{{ route('qa.master.klausul') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic">rule</span>
+                        <span>Klausul PRP</span>
+                    </a>
+
+                    <span class="qs-group-label" style="margin-top:16px;">Sistem & Dual Portal</span>
+                    <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" style="background:var(--bsur);border:1px solid var(--bbor);font-weight:600;color:#1565c0;">
+                        <span class="material-symbols-outlined ic" style="color:#1565c0;">swap_horiz</span>
+                        <span>Beralih ke BOS'Q</span>
+                    </a>
+                @elseif($isPicUser)
+                    <span class="qs-group-label">Monitoring & Analytics</span>
+                    <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
+                        <span>Grafik Temuan</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Temuan</span>
+                    </a>
+
+                    <span class="qs-group-label" style="margin-top:16px;">Pelapor & PIC</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                        <span>Lapor & Tindak Lanjut</span>
+                    </a>
+                @else
+                    <span class="qs-group-label">Pelapor</span>
+                    <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
+                        <span>Lapor Temuan Saya</span>
+                    </a>
+                @endif
             @endif
         </div>
 
@@ -653,7 +755,20 @@
                 <div class="qs-av" style="{{ auth()->user()->isSuperAdmin() ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="overflow:hidden;flex:1;">
                     <div class="qs-uname truncate" style="color:var(--btxt);font-size:13px;font-weight:600;">{{ auth()->user()->name }}</div>
-                    <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">{{ auth()->user()->isSuperAdmin() ? 'Super Admin' : 'QA Admin' }}</div>
+                    @php
+                        $displayRole = 'Karyawan';
+                        if (auth()->user()->isSuperAdmin()) {
+                            $displayRole = 'Super Admin';
+                        } elseif (auth()->user()->role === 'qa') {
+                            $displayRole = 'QA Admin';
+                        } else {
+                            $isPicUser = \App\Models\Temuan::where('pic_id', auth()->id())->exists() ||
+                                         \App\Models\Karyawan::where('nik', auth()->user()->nik)->where('status_aktif', true)->exists();
+                            $dept = auth()->user()->karyawan?->departemen?->nama_departemen;
+                            $displayRole = $isPicUser ? ('PIC' . ($dept ? ' (' . $dept . ')' : '')) : 'Karyawan';
+                        }
+                    @endphp
+                    <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">{{ $displayRole }}</div>
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="qs-action" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">

@@ -1,11 +1,13 @@
 <div class="bcard" style="border-left:4px solid #f59e0b;margin-top:20px;">
     <div class="bcard-header">
-        <div class="bcard-hicon" style="background:#fff8e1;">
-            <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">shield_check</span>
-        </div>
-        <div>
-            <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi QA</div>
-            <div style="font-size:12px;color:var(--btxt2);">Tinjau tindak lanjut PIC dan berikan keputusan</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="bcard-hicon" style="background:#fff8e1;">
+                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">shield_check</span>
+            </div>
+            <div>
+                <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi QA</div>
+                <div style="font-size:12px;color:var(--btxt2);">Tinjau tindak lanjut PIC dan berikan keputusan</div>
+            </div>
         </div>
     </div>
 

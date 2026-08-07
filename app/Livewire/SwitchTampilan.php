@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Karyawan;
 use App\Models\Temuan;
 use Livewire\Component;
 
@@ -21,13 +22,22 @@ class SwitchTampilan extends Component
 
     public function render()
     {
+        $user = auth()->user();
+
         // Hitung badge PIC: temuan dengan status open atau in_progress yang perlu tindak lanjut
-        $picBadge = Temuan::where('pic_id', auth()->id())
+        $picBadge = Temuan::where('pic_id', $user->id)
             ->whereIn('status', ['open', 'in_progress'])
             ->count();
 
+        // Tentukan apakah user terdaftar sebagai PIC (di Master PIC Karyawan atau pernah ditunjuk sebagai PIC temuan)
+        $isPicUser = $user->role === 'karyawan' && (
+            Temuan::where('pic_id', $user->id)->exists() ||
+            Karyawan::where('nik', $user->nik)->where('status_aktif', true)->exists()
+        );
+
         return view('livewire.switch-tampilan', [
-            'picBadge' => $picBadge,
+            'picBadge'  => $picBadge,
+            'isPicUser' => $isPicUser,
         ]);
     }
 }

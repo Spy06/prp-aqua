@@ -713,6 +713,12 @@
                         <span class="material-symbols-outlined ic">rule</span>
                         <span>Klausul PRP</span>
                     </a>
+
+                    <span class="qs-group-label" style="margin-top:16px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
+                    <a class="qs-item" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic" style="color:#7c3aed;">swap_horiz</span>
+                        <span>Beralih ke System BOS'Q</span>
+                    </a>
                 @elseif($isPicUser)
                     <span class="qs-group-label">Monitoring & Analytics</span>
                     <a class="qs-item {{ request()->routeIs('qa.dashboard') ? 'active' : '' }}" href="{{ route('qa.dashboard') }}" wire:navigate>
@@ -729,11 +735,23 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
                         <span>Lapor & Tindak Lanjut</span>
                     </a>
+
+                    <span class="qs-group-label" style="margin-top:16px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
+                    <a class="qs-item" href="{{ route('bosq.beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic" style="color:#7c3aed;">swap_horiz</span>
+                        <span>Beralih ke System BOS'Q</span>
+                    </a>
                 @else
                     <span class="qs-group-label">Pelapor</span>
                     <a class="qs-item {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('beranda') ? 'fil' : '' }}">add_a_photo</span>
                         <span>Lapor Temuan Saya</span>
+                    </a>
+
+                    <span class="qs-group-label" style="margin-top:16px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
+                    <a class="qs-item" href="{{ route('bosq.beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic" style="color:#7c3aed;">swap_horiz</span>
+                        <span>Beralih ke System BOS'Q</span>
                     </a>
                 @endif
             @endif

@@ -442,12 +442,24 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">add_circle</span>
                         <span>Catat Observasi</span>
                     </a>
+
+                    <span class="qs-section-label" style="margin-top:12px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
+                    <a class="qs-item" href="{{ route('qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic" style="color:#7c3aed;">swap_horiz</span>
+                        <span>Beralih ke System SIVERA</span>
+                    </a>
                 @else
                     {{-- Karyawan Menu --}}
                     <span class="qs-section-label">Menu Utama</span>
                     <a class="qs-item {{ request()->routeIs('bosq.beranda') ? 'active' : '' }}" href="{{ route('bosq.beranda') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">home</span>
                         <span>Beranda BOS'Q</span>
+                    </a>
+
+                    <span class="qs-section-label" style="margin-top:12px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
+                    <a class="qs-item" href="{{ route('beranda') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic" style="color:#7c3aed;">swap_horiz</span>
+                        <span>Beralih ke System SIVERA</span>
                     </a>
                 @endif
             @endauth

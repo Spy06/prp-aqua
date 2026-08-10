@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         // Export routes SIVERA — hanya QA
         Route::middleware(['role:qa'])->group(function () {
             Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
+            Route::get('/export/pdf/daftar', [\App\Http\Controllers\ExportController::class, 'pdfDaftar'])->name('export.pdf.daftar');
             Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
             Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
         });

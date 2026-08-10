@@ -1,8 +1,32 @@
 <div class="fu">
-    <div class="bph">
+    <div class="bph fu1">
         <div>
             <h2 class="bph-title">Daftar Semua Temuan</h2>
             <p class="bph-sub">Monitor seluruh temuan yang tercatat dalam sistem (Periode: <strong>{{ $filterLabel }}</strong>)</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="{{ route('export.excel', array_merge([
+                'tipe' => $filter_type,
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'awal' => $tgl_mulai,
+                'akhir' => $tgl_selesai,
+                'departemen_id' => $filterDepartemen,
+                'status' => $filterStatus,
+            ], !empty(array_filter($filterSubAreaNames)) ? ['sub_area_names' => array_values(array_filter($filterSubAreaNames))] : [])) }}" class="bbtn" style="background:#10b981;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">table_chart</span> Excel
+            </a>
+            <a href="{{ route('export.pdf.daftar', array_merge([
+                'tipe' => $filter_type,
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'awal' => $tgl_mulai,
+                'akhir' => $tgl_selesai,
+                'departemen_id' => $filterDepartemen,
+                'status' => $filterStatus,
+            ], !empty(array_filter($filterSubAreaNames)) ? ['sub_area_names' => array_values(array_filter($filterSubAreaNames))] : [])) }}" target="_blank" class="bbtn" style="background:#d83b01;color:#ffffff;border:none;border-radius:20px;padding:7px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;box-shadow:0 2px 6px rgba(216,59,1,0.25);">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#fff;">picture_as_pdf</span> PDF
+            </a>
         </div>
     </div>
 

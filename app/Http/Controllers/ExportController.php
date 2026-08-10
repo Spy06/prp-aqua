@@ -64,6 +64,14 @@ class ExportController extends Controller
             $query->where('departemen_id', $request->input('departemen_id'));
         }
 
+        if ($request->filled('sub_area_names')) {
+            $subAreaNames = (array) $request->input('sub_area_names');
+            $subAreaNames = array_filter($subAreaNames);
+            if (!empty($subAreaNames)) {
+                $query->whereIn('sub_area', $subAreaNames);
+            }
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
@@ -77,7 +85,7 @@ class ExportController extends Controller
 
     /**
      * GET /export/excel
-     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir, departemen_id, status
+     * Query params: tipe=bulan|tahun|custom, bulan, tahun, awal, akhir, departemen_id, status, sub_area_names
      */
     public function excel(Request $request)
     {
@@ -105,7 +113,7 @@ class ExportController extends Controller
             ];
         })->values();
 
-        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd_His') . '.xls';
+        $filename = 'SIVERA_Daftar_Temuan_' . str_replace(' ', '_', $label) . '.xls';
 
         return response()->view('excel.rekap', [
             'temuans'       => $temuans,
@@ -118,6 +126,30 @@ class ExportController extends Controller
         ])
         ->header('Content-Type', 'application/vnd.ms-excel; charset=UTF-8')
         ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    }
+
+    /**
+     * GET /export/pdf/daftar
+     * Export PDF Daftar Semua Temuan SIVERA (Text Details Only, Tanpa Gambar)
+     */
+    public function pdfDaftar(Request $request)
+    {
+        $this->requireQa();
+
+        ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
+        $temuans = $this->getTemuans($awal, $akhir, $request);
+
+        $pdf = Pdf::loadView('pdf.daftar-temuan', [
+            'filterLabel' => $label,
+            'temuans'     => $temuans,
+            'total'       => $temuans->count(),
+            'open'        => $temuans->where('status', 'open')->count(),
+            'inProgress'  => $temuans->where('status', 'in_progress')->count(),
+            'pendingQa'   => $temuans->where('status', 'closed_pending_qa')->count(),
+            'closedAcc'   => $temuans->where('status', 'closed_acc')->count(),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('SIVERA_Daftar_Temuan_' . str_replace(' ', '_', $label) . '.pdf');
     }
 
     // =====================================================================

@@ -81,7 +81,7 @@ class BosqExportController extends Controller
     }
 
     /**
-     * Export CSV Observasi BOS'Q (Excel Compatible)
+     * Export Excel Observasi BOS'Q (Formatted HTML Spreadsheet)
      */
     public function excel(Request $request)
     {
@@ -90,56 +90,41 @@ class BosqExportController extends Controller
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
         $temuans = $this->getTemuans($awal, $akhir, $request);
 
-        $bom = "\xEF\xBB\xBF";
-        $header = [
-            'ID Observasi', 'Tanggal Observasi', 'Departemen', 'Sub Area', 'Detail Sub Area',
-            'Observer / Pelapor (NIK)', 'Observer (Nama)', 'Auditee (NIK)', 'Auditee (Nama)',
-            'Elemen QFS', 'Temuan BQA', 'Tingkat Risiko', 'Dampak Observasi',
-            'Status', 'Action (Jika Negatif)', 'Due Date Action', 'Tanggal ACC QA', 'Catatan QA'
+        $total     = $temuans->count();
+        $perDampak = [
+            'positif' => $temuans->where('dampak_temuan', 'positif')->count(),
+            'negatif' => $temuans->where('dampak_temuan', 'negatif')->count(),
         ];
-
-        $rows = [];
-        foreach ($temuans as $t) {
-            $tl = $t->tindakLanjut;
-            $isClosed = in_array($t->status, ['closed', 'closed_acc']);
-            $rows[] = [
-                $t->id,
-                $t->tanggal_temuan->format('Y-m-d'),
-                $t->departemen->nama_departemen ?? '-',
-                $t->subArea->nama_sub_area ?? '-',
-                $t->detail_sub_area ?? '-',
-                $t->pelapor->nik ?? '-',
-                $t->pelapor->name ?? '-',
-                $t->auditee->nik ?? '-',
-                $t->auditee->name ?? '-',
-                $t->elemenQfs->nama_elemen ?? '-',
-                $t->temuan_bqa,
-                str_replace('_', ' ', strtoupper($t->tingkat_resiko)),
-                strtoupper($t->dampak_temuan),
-                $isClosed ? 'CLOSED' : 'OPEN',
-                $tl?->action ?? '-',
-                $tl?->due_date ? Carbon::parse($tl->due_date)->format('Y-m-d') : '-',
-                $tl?->tanggal_acc ? Carbon::parse($tl->tanggal_acc)->format('Y-m-d H:i') : '-',
-                $tl?->catatan_qa ?? '-',
+        $perStatus = [
+            'open'   => $temuans->whereIn('status', ['open', 'in_progress', 'closed_pending_qa'])->count(),
+            'closed' => $temuans->whereIn('status', ['closed', 'closed_acc'])->count(),
+        ];
+        $perDepartemen = $temuans->groupBy('departemen_id')->map(function ($group) {
+            $dept = $group->first()->departemen;
+            return [
+                'nama'    => $dept->nama_departemen ?? 'Tidak Diketahui',
+                'total'   => $group->count(),
+                'positif' => $group->where('dampak_temuan', 'positif')->count(),
+                'negatif' => $group->where('dampak_temuan', 'negatif')->count(),
+                'open'    => $group->whereIn('status', ['open', 'in_progress', 'closed_pending_qa'])->count(),
+                'closed'  => $group->whereIn('status', ['closed', 'closed_acc'])->count(),
             ];
-        }
+        })->values();
 
-        $callback = function () use ($bom, $header, $rows) {
-            $file = fopen('php://output', 'w');
-            fwrite($file, $bom);
-            fputcsv($file, $header);
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
+        $filename = 'BOSQ_Observasi_' . str_replace(' ', '_', $label) . '.xls';
 
-        $filename = 'BOSQ_Observasi_' . str_replace(' ', '_', $label) . '.csv';
-
-        return response()->stream($callback, 200, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-        ]);
+        return response()->view('excel.bosq-daftar', [
+            'temuans'       => $temuans,
+            'total'         => $total,
+            'perDampak'     => $perDampak,
+            'perStatus'     => $perStatus,
+            'perDepartemen' => $perDepartemen,
+            'periodeLabel'  => $label,
+            'awal'          => $awal,
+            'akhir'         => $akhir,
+        ])
+        ->header('Content-Type', 'application/vnd.ms-excel; charset=UTF-8')
+        ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     /**

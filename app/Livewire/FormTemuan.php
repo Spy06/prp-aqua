@@ -36,24 +36,18 @@ class FormTemuan extends Component
         'sub_area' => 'required|string|max:255',
         'klausul_id' => 'required|exists:klausul_prp,id',
         'detail_sub_area' => 'required_if:sub_area,Others|nullable|string|max:255',
-        'foto_temuan' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB
+        'foto_temuan' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB (opsional)
         'deskripsi' => 'required|string',
         'saran' => 'nullable|string',
         'pic_id' => 'required|exists:users,id',
     ];
 
     protected $messages = [
-        'foto_temuan.required' => 'Foto temuan wajib diupload.',
         'foto_temuan.image' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
         'foto_temuan.mimes' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
         'foto_temuan.max' => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
         'foto_temuan.uploaded' => 'Gagal mengupload foto. Pastikan ukuran file maksimal 3MB dan formatnya sesuai (JPG, PNG, WebP).',
     ];
-
-    public function updatedFotoTemuan()
-    {
-        $this->validateOnly('foto_temuan');
-    }
 
     public function mount()
     {
@@ -121,8 +115,8 @@ class FormTemuan extends Component
 
         $user = auth()->user();
 
-        // 1. Simpan foto
-        $fotoPath = $this->foto_temuan->store('temuan', 'public');
+        // 1. Simpan foto jika diupload
+        $fotoPath = $this->foto_temuan ? $this->foto_temuan->store('temuan', 'public') : null;
 
         DB::beginTransaction();
         try {
@@ -161,29 +155,7 @@ class FormTemuan extends Component
                 }
             }
 
-            // 5. Dispatch WA Job ke PIC
-            $pic = User::find($this->pic_id);
-            if ($pic && $pic->no_whatsapp) {
-                $message = "Halo {$pic->name}, Anda ditunjuk sebagai PIC untuk temuan PRP baru. "
-                    . "Segera tindak lanjuti di sini: " . route('temuan.detail', ['temuan' => $temuan->id]);
-
-                SendWhatsApp::dispatch($pic->no_whatsapp, $message);
-            }
-
-            // 6. Kirim notifikasi WA ke QA untuk setiap temuan baru
-            $qaUsers = User::where('role', 'qa')->get();
-            $pelaporDept = auth()->user()->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
-            foreach ($qaUsers as $qa) {
-                if ($qa->no_whatsapp) {
-                    $messageQA = "Halo QA ({$qa->name}), ada laporan temuan PRP baru (#{$temuan->id}) diajukan oleh " . auth()->user()->name . " (Departemen Pelapor: {$pelaporDept}).\n"
-                        . "Sub Area: {$temuan->sub_area}\n"
-                        . (!empty($this->saran) ? "Saran: \"{$this->saran}\"\n" : "")
-                        . "Detail temuan dapat dilihat di: " . route('temuan.detail', ['temuan' => $temuan->id]);
-                    SendWhatsApp::dispatch($qa->no_whatsapp, $messageQA);
-                }
-            }
-
-            // Bersihkan form
+            // 5. Bersihkan form
             $this->reset(['sub_area', 'detail_sub_area', 'klausul_id', 'foto_temuan', 'deskripsi', 'saran', 'pic_id', 'picSearch']);
             $this->tanggal_temuan = Carbon::now()->format('Y-m-d');
 

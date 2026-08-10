@@ -2,99 +2,169 @@
 
 namespace App\Services;
 
+use App\Mail\TemuanNotificationMail;
 use App\Models\BosqTemuan;
 use App\Models\Temuan;
-use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class EmailNotificationService
 {
     /**
-     * Kirim email notifikasi untuk temuan SIVERA.
+     * Jeda minimum (dalam detik) sebelum notifikasi yang SAMA dapat dikirim ulang
+     * ke alamat yang SAMA untuk temuan yang SAMA.
+     * Default: 2 jam. Mencegah spam dan pemblokiran akun Gmail.
      */
-    public function sendSiveraNotification(Temuan $temuan, string $type, ?string $recipientEmail = null): bool
+    private const COOLDOWN_SECONDS = 7200; // 2 jam
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // SIVERA
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Kirim email notifikasi untuk temuan SIVERA.
+     * Dilengkapi rate-limiting per (email, type, temuan_id) dengan cooldown 2 jam.
+     */
+    public function sendSiveraNotification(Temuan $temuan, string $type = 'baru', ?string $recipientEmail = null): bool
     {
         try {
-            // Pastikan relasi pelapor, pic, departemen, klausul ter-load penuh
             $temuan->loadMissing(['pic', 'pelapor', 'departemen', 'klausul']);
 
             $email = $recipientEmail;
-
-            // Default penerima jika tidak dispesifikasikan secara eksplisit
             if (!$email) {
                 $email = match($type) {
-                    'baru'        => $temuan->pic?->email,
+                    'baru'         => $temuan->pic?->email,
                     'tindaklanjut' => $temuan->pelapor?->email,
-                    'closed'      => $temuan->pic?->email ?? $temuan->pelapor?->email,
-                    default       => $temuan->pic?->email,
+                    'bukti'        => null,
+                    'closed'       => $temuan->pic?->email ?? $temuan->pelapor?->email,
+                    default        => $temuan->pic?->email,
                 };
             }
 
             if (empty($email)) {
-                Log::warning("SIVERA Email Notification Skipped: Tidak ada alamat email untuk temuan #{$temuan->id} [Tipe: {$type}]");
+                Log::info("SIVERA Email skip: email kosong — temuan #{$temuan->id} type={$type}");
                 return false;
             }
 
-            Mail::send('emails.sivera-temuan', [
-                'temuan' => $temuan,
-                'type'   => $type,
-            ], function ($message) use ($email, $temuan, $type) {
-                $subject = match($type) {
-                    'baru'        => "[SIVERA] Temuan Audit Baru Ditugaskan kepada Anda (#{$temuan->id})",
-                    'tindaklanjut' => "[SIVERA] Rencana Aksi Perbaikan Diperbarui (#{$temuan->id})",
-                    'bukti'       => "[SIVERA] Bukti Perbaikan Diunggah (#{$temuan->id})",
-                    'closed'      => "[SIVERA] Temuan Audit Dinyatakan CLOSED/ACC (#{$temuan->id})",
-                    default       => "[SIVERA] Update Temuan Audit (#{$temuan->id})",
-                };
+            // ── Rate Limiting ──────────────────────────────────────────────
+            if ($this->isRateLimited('sivera', $type, $temuan->id, $email)) {
+                return false;
+            }
 
-                $message->to($email)
-                        ->subject($subject);
-            });
+            // Tentukan nama penerima untuk personalisasi subject
+            $recipientName = match($type) {
+                'baru'  => $temuan->pic?->name,
+                default => $temuan->pelapor?->name,
+            };
+            // Jika email disuplai manual (QA), cari nama dari semua user
+            if ($recipientEmail) {
+                $recipientName = \App\Models\User::where('email', $recipientEmail)->value('name') ?? null;
+            }
 
-            Log::info("SIVERA Email SUKSES terkirim ke {$email} untuk temuan #{$temuan->id} [Tipe: {$type}]");
+            Mail::to($email)->send(new TemuanNotificationMail($temuan, 'sivera', $type, $recipientName));
+
+            $this->markSent('sivera', $type, $temuan->id, $email);
+            Log::info("SIVERA Email [{$type}] → {$email} (temuan #{$temuan->id}) ✓");
             return true;
+
         } catch (\Throwable $e) {
-            Log::error("Gagal mengirim SIVERA Email ke {$recipientEmail} untuk temuan #{$temuan->id}: " . $e->getMessage());
+            Log::error("Gagal kirim SIVERA Email temuan #{$temuan->id} [{$type}]: " . $e->getMessage());
             return false;
         }
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // BOS'Q
+    // ──────────────────────────────────────────────────────────────────────────
+
     /**
      * Kirim email notifikasi untuk observasi BOS'Q.
+     * Dilengkapi rate-limiting per (email, type, temuan_id) dengan cooldown 2 jam.
      */
-    public function sendBosqNotification(BosqTemuan $bosqTemuan, string $type, ?string $recipientEmail = null): bool
+    public function sendBosqNotification(BosqTemuan $bosqTemuan, string $type = 'baru', ?string $recipientEmail = null): bool
     {
         try {
             $bosqTemuan->loadMissing(['auditee', 'pelapor', 'departemen', 'subArea']);
 
-            $email = $recipientEmail ?? $bosqTemuan->auditee?->email ?? $bosqTemuan->pelapor?->email;
+            $email = $recipientEmail;
+            if (!$email) {
+                $email = match($type) {
+                    'baru'        => $bosqTemuan->auditee?->email,
+                    'subarea_pic' => $recipientEmail,
+                    'tindaklanjut'=> $bosqTemuan->pelapor?->email,
+                    'bukti'       => null,
+                    'closed'      => $bosqTemuan->auditee?->email ?? $bosqTemuan->pelapor?->email,
+                    default       => $bosqTemuan->auditee?->email,
+                };
+            }
 
             if (empty($email)) {
-                Log::warning("BOS'Q Email Notification Skipped: Tidak ada alamat email untuk observasi #{$bosqTemuan->id}");
+                Log::info("BOS'Q Email skip: email kosong — observasi #{$bosqTemuan->id} type={$type}");
                 return false;
             }
 
-            Mail::send('emails.bosq-temuan', [
-                'temuan' => $bosqTemuan,
-                'type'   => $type,
-            ], function ($message) use ($email, $bosqTemuan, $type) {
-                $subject = match($type) {
-                    'baru'        => "[BOS'Q] Observasi Perilaku Baru (#{$bosqTemuan->id})",
-                    'subarea_pic' => "[BOS'Q] Laporan Perilaku Baru di Sub Area Anda (#{$bosqTemuan->id})",
-                    'closed'      => "[BOS'Q] Observasi Perilaku Status CLOSED (#{$bosqTemuan->id})",
-                    default       => "[BOS'Q] Update Observasi Perilaku (#{$bosqTemuan->id})",
-                };
+            // ── Rate Limiting ──────────────────────────────────────────────
+            if ($this->isRateLimited('bosq', $type, $bosqTemuan->id, $email)) {
+                return false;
+            }
 
-                $message->to($email)
-                        ->subject($subject);
-            });
+            $recipientName = $bosqTemuan->auditee?->name
+                ?? \App\Models\User::where('email', $email)->value('name')
+                ?? null;
 
-            Log::info("BOS'Q Email SUKSES terkirim ke {$email} untuk observasi #{$bosqTemuan->id} [Tipe: {$type}]");
+            Mail::to($email)->send(new TemuanNotificationMail($bosqTemuan, 'bosq', $type, $recipientName));
+
+            $this->markSent('bosq', $type, $bosqTemuan->id, $email);
+            Log::info("BOS'Q Email [{$type}] → {$email} (observasi #{$bosqTemuan->id}) ✓");
             return true;
+
         } catch (\Throwable $e) {
-            Log::error("Gagal mengirim BOS'Q Email ke {$recipientEmail} untuk observasi #{$bosqTemuan->id}: " . $e->getMessage());
+            Log::error("Gagal kirim BOS'Q Email observasi #{$bosqTemuan->id} [{$type}]: " . $e->getMessage());
             return false;
         }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Rate Limiting Helpers
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Cek apakah notifikasi ini masih dalam masa cooldown (belum boleh dikirim ulang).
+     */
+    private function isRateLimited(string $system, string $type, int $entityId, string $email): bool
+    {
+        $key    = $this->rateLimitKey($system, $type, $entityId, $email);
+        $locked = Cache::has($key);
+
+        if ($locked) {
+            $remaining = Cache::get($key . '_ttl', '?');
+            Log::info("Email rate-limited [{$system}.{$type}] → {$email} (#{$entityId}) — cooldown aktif.");
+        }
+
+        return $locked;
+    }
+
+    /**
+     * Tandai bahwa notifikasi ini baru saja dikirim (mulai cooldown).
+     */
+    private function markSent(string $system, string $type, int $entityId, string $email): void
+    {
+        $key = $this->rateLimitKey($system, $type, $entityId, $email);
+        Cache::put($key, true, self::COOLDOWN_SECONDS);
+    }
+
+    /**
+     * Buat cache key yang unik per (system, type, entity, email).
+     */
+    private function rateLimitKey(string $system, string $type, int $entityId, string $email): string
+    {
+        return sprintf(
+            'email_rl:%s:%s:%d:%s',
+            $system,
+            $type,
+            $entityId,
+            md5(strtolower(trim($email)))
+        );
     }
 }

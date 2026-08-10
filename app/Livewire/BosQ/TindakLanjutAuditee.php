@@ -244,9 +244,10 @@ class TindakLanjutAuditee extends Component
                . "👤 *Auditee*: " . ($temuan->auditee->name ?? '-') . "\n\n"
                . "Mohon lakukan verifikasi di:\n{$link}";
 
+        $emailService = app(\App\Services\EmailNotificationService::class);
         foreach ($qaUsers as $qa) {
-            if ($qa->no_whatsapp) {
-                SendWhatsApp::dispatch($qa->no_whatsapp, $pesan);
+            if ($qa->email) {
+                $emailService->sendBosqNotification($temuan, 'subarea_pic', $qa->email);
             }
         }
     }

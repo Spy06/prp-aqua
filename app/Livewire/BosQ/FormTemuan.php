@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
+
 class FormTemuan extends Component
 {
     public string $tanggal_temuan  = '';
@@ -199,9 +200,6 @@ class FormTemuan extends Component
                 $emailService->sendBosqNotification($temuan, 'baru');
 
                 foreach ($qaUsers as $qa) {
-                    if ($qa->no_whatsapp) {
-                        SendWhatsApp::dispatch($qa->no_whatsapp, $msg);
-                    }
                     if ($qa->email) {
                         $emailService->sendBosqNotification($temuan, 'baru', $qa->email);
                     }

@@ -50,23 +50,6 @@ class VerifikasiQA extends Component
 
         $this->temuan->update(['status' => 'closed']);
 
-        // Kirim WA notifikasi ke Pelapor & Auditee
-        $link = route('bosq.temuan.detail', $this->temuan->id);
-        $msg  = "*[BOS'Q] Observasi #{$this->temuan->id} — Verifikasi QA (Closed)*\n\n"
-              . "Observasi telah diverifikasi dan disetujui oleh tim QA.\n"
-              . ($this->catatan_qa ? "Catatan QA: {$this->catatan_qa}\n\n" : "")
-              . "Lihat detail di:\n{$link}";
-
-        $pelapor = User::find($this->temuan->pelapor_id);
-        $auditee = User::find($this->temuan->auditee_id);
-
-        if ($pelapor && $pelapor->no_whatsapp) {
-            SendWhatsApp::dispatch($pelapor->no_whatsapp, $msg);
-        }
-        if ($auditee && $auditee->no_whatsapp && $auditee->id !== $pelapor?->id) {
-            SendWhatsApp::dispatch($auditee->no_whatsapp, $msg);
-        }
-
         // Kirim Email Notifikasi BOS'Q (Closed ACC)
         $emailService = app(\App\Services\EmailNotificationService::class);
         $emailService->sendBosqNotification($this->temuan, 'closed');

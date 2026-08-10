@@ -269,9 +269,6 @@ class TindakLanjutPIC extends Component
             . "Mohon masuk ke aplikasi SIVERA untuk melakukan verifikasi dan verifikasi akhir.";
 
         foreach ($qaUsers as $qa) {
-            if (!empty($qa->no_whatsapp)) {
-                SendWhatsApp::dispatch($qa->no_whatsapp, $pesan);
-            }
             if (!empty($qa->email)) {
                 $emailService->sendSiveraNotification($temuan, 'bukti', $qa->email);
             }

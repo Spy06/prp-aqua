@@ -91,37 +91,55 @@
 
                     {{-- Upload Foto --}}
                     <div>
-                        <label class="blabel">Upload Foto Temuan <span style="color:var(--error);">*</span></label>
+                        <label class="blabel">Upload Foto Temuan <span style="font-size:11px;font-weight:400;color:var(--btxt2);">(Opsional)</span></label>
                         <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:160px;gap:12px;text-align:center;">
-                            <input type="file" id="foto-gallery" wire:model="foto_temuan" accept="image/*" style="display:none;" />
-                            <input type="file" id="foto-camera" wire:model="foto_temuan" accept="image/*" capture="environment" style="display:none;" />
+                            {{-- Input tanpa wire:model — upload dikendalikan JS kompresi --}}
+                            <input
+                                type="file"
+                                id="foto-input-tunggal"
+                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                style="display:none;"
+                                onchange="siveraFotoHandler(this)"
+                            />
+
+                            {{-- Preview area: dikontrol via JS, fallback ke Livewire state --}}
+                            <div id="sivera-foto-preview" style="display:none;flex-direction:column;align-items:center;width:100%;">
+                                <img id="sivera-foto-img" src="" style="max-width:180px;max-height:130px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
+                                <span id="sivera-foto-name" style="display:block;font-size:11px;color:var(--btxt2);margin-top:6px;text-align:center;word-break:break-all;max-width:220px;"></span>
+                            </div>
 
                             @if ($foto_temuan)
-                                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;">
+                                <div id="sivera-foto-server" style="display:flex;flex-direction:column;align-items:center;width:100%;">
                                     <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-width:180px;max-height:130px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
                                     <span style="display:block;font-size:11px;color:var(--btxt2);margin-top:6px;text-align:center;word-break:break-all;max-width:220px;">{{ $foto_temuan->getClientOriginalName() }}</span>
                                 </div>
                             @else
-                                <span class="material-symbols-outlined" style="font-size:38px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
-                                <div style="font-size:13px;font-weight:600;color:var(--btxt);">Pilih Sumber Foto</div>
+                                <div id="sivera-foto-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                    <span class="material-symbols-outlined" style="font-size:38px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
+                                    <div style="font-size:13px;font-weight:600;color:var(--btxt);">Pilih Sumber Foto</div>
+                                </div>
                             @endif
 
                             <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-                                <label for="foto-camera" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;transition:opacity .2s;">
+                                <button type="button"
+                                    onclick="var el=document.getElementById('foto-input-tunggal');el.setAttribute('capture','environment');el.value='';el.click();"
+                                    style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;border:none;">
                                     <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
                                     Ambil Foto
-                                </label>
-                                <label for="foto-gallery" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);transition:opacity .2s;">
+                                </button>
+                                <button type="button"
+                                    onclick="var el=document.getElementById('foto-input-tunggal');el.removeAttribute('capture');el.value='';el.click();"
+                                    style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);">
                                     <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
                                     Dari Galeri
-                                </label>
+                                </button>
                             </div>
-                            <p style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Maksimal 3MB &bull; Format: JPG, PNG, WebP</p>
+                            <p id="sivera-foto-hint" style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Otomatis dikompres jika &gt; 3MB &bull; JPG, PNG, WebP</p>
                         </div>
                         @error('foto_temuan') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
-                        <div wire:loading wire:target="foto_temuan" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
+                        <div id="sivera-upload-progress" style="display:none;font-size:12px;color:var(--bp);margin-top:6px;align-items:center;gap:6px;">
                             <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
-                            Mengunggah foto...
+                            <span id="sivera-upload-label">Memproses foto...</span>
                         </div>
                     </div>
                 </div>
@@ -223,4 +241,123 @@
             form > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
         }
     </style>
+
+    <script>
+    /**
+     * SIVERA — Handler upload foto dengan kompresi otomatis.
+     * - File ≤ 3MB : langsung upload tanpa kompresi
+     * - File > 3MB : kompres via Canvas hingga ≤ 2MB lalu upload
+     */
+    function siveraFotoHandler(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const MAX_BYTES = 3 * 1024 * 1024;   // 3 MB — batas user
+        const TARGET_BYTES = 2 * 1024 * 1024; // 2 MB — batas aman PHP
+
+        _siveraShowProgress('Memproses foto...');
+
+        // Tampilkan preview lokal segera (UX responsif)
+        _siveraLocalPreview(file);
+
+        if (file.size <= MAX_BYTES) {
+            // File sudah kecil — upload langsung
+            _siveraDoUpload(file);
+        } else {
+            // File besar — kompres dulu
+            _siveraCompress(file, TARGET_BYTES, function(compressed) {
+                _siveraDoUpload(compressed);
+            });
+        }
+    }
+
+    function _siveraLocalPreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('sivera-foto-preview');
+            var img     = document.getElementById('sivera-foto-img');
+            var name    = document.getElementById('sivera-foto-name');
+            var ph      = document.getElementById('sivera-foto-placeholder');
+            if (preview && img) {
+                img.src  = e.target.result;
+                if (name) name.textContent = file.name;
+                preview.style.display = 'flex';
+            }
+            if (ph) ph.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function _siveraCompress(file, targetBytes, callback) {
+        _siveraShowProgress('Mengompres foto besar...');
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+                var MAX_DIM = 1920;
+                var scale   = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+                var canvas  = document.createElement('canvas');
+                canvas.width  = Math.round(img.width  * scale);
+                canvas.height = Math.round(img.height * scale);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                var quality = 0.85;
+                var tryNext = function() {
+                    canvas.toBlob(function(blob) {
+                        if (!blob) { callback(file); return; }
+                        if (blob.size <= targetBytes || quality < 0.3) {
+                            var out = new File(
+                                [blob],
+                                file.name.replace(/\.[^.]+$/, '_compressed.jpg'),
+                                { type: 'image/jpeg', lastModified: Date.now() }
+                            );
+                            callback(out);
+                        } else {
+                            quality -= 0.1;
+                            tryNext();
+                        }
+                    }, 'image/jpeg', quality);
+                };
+                tryNext();
+            };
+            img.onerror = function() { callback(file); };
+            img.src = e.target.result;
+        };
+        reader.onerror = function() { callback(file); };
+        reader.readAsDataURL(file);
+    }
+
+    function _siveraDoUpload(file) {
+        _siveraShowProgress('Mengunggah foto...');
+        // Gunakan ID komponen form-temuan yang diinjeksi dari PHP, bukan querySelector
+        var componentId = '{{ $this->getId() }}';
+        var component   = Livewire.find(componentId);
+        if (!component) { _siveraHideProgress(); return; }
+
+        component.upload(
+            'foto_temuan',
+            file,
+            function() { _siveraHideProgress(); }, // sukses
+            function(err) {                          // gagal
+                _siveraHideProgress();
+                console.error('[SIVERA] Upload gagal:', err);
+            },
+            function(e) {                            // progress
+                var pct = e.detail ? Math.round(e.detail.progress) : '...';
+                _siveraShowProgress('Mengunggah foto ' + pct + '%...');
+            }
+        );
+    }
+
+    function _siveraShowProgress(msg) {
+        var el = document.getElementById('sivera-upload-progress');
+        var lb = document.getElementById('sivera-upload-label');
+        if (el) el.style.display = 'flex';
+        if (lb) lb.textContent = msg || 'Memproses...';
+    }
+
+    function _siveraHideProgress() {
+        var el = document.getElementById('sivera-upload-progress');
+        if (el) el.style.display = 'none';
+    }
+    </script>
 </div>

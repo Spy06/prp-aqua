@@ -5,9 +5,11 @@ namespace App\Livewire\BosQ;
 use App\Models\BosqSubArea;
 use App\Models\Departemen;
 use App\Models\User;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Title('PIC Sub Area — BOS\'Q')]
 class MasterLine extends Component
 {
     use WithPagination;

@@ -3,9 +3,11 @@
 namespace App\Livewire\BosQ;
 
 use App\Models\BosqElemenQfs;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Title('Elemen QFS — BOS\'Q')]
 class MasterElemenQfs extends Component
 {
     use WithPagination;

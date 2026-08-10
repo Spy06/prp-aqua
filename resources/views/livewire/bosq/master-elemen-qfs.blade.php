@@ -16,7 +16,7 @@
     {{-- Page Header --}}
     <div class="bph">
         <div>
-            <h2 class="bph-title">Master Elemen QFS</h2>
+            <h2 class="bph-title">Elemen QFS</h2>
             <p class="bph-sub">Kelola elemen Quality & Food Safety (QFS) untuk standar observasi BOS'Q</p>
         </div>
         <button wire:click="openCreate" id="btn-tambah-elemen" class="bbtn bbtn-primary">

@@ -3,7 +3,7 @@
     {{-- Page Header --}}
     <div class="bph">
         <div>
-            <h2 class="bph-title">Master Line & PIC Observasi</h2>
+            <h2 class="bph-title">PIC Sub Area</h2>
             <p class="bph-sub">Kelola penunjukan PIC penanggung jawab per Sub Area & Departemen dalam sistem BOS'Q</p>
         </div>
     </div>

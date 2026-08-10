@@ -64,11 +64,6 @@
                 </select>
                 @error('departemen_id') <p class="berr-msg">{{ $message }}</p> @enderror
             </div>
-            <div style="display:flex;align-items:center;gap:10px;padding-top:10px;grid-column:1/-1;">
-                <input type="checkbox" id="form-aktif" wire:model="status_aktif"
-                       style="width:16px;height:16px;accent-color:var(--bp);" />
-                <label for="form-aktif" style="font-size:13.5px;font-weight:500;color:var(--btxt);cursor:pointer;">Status Karyawan Aktif (Dapat Login & Menggunakan Sistem)</label>
-            </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
             <button wire:click="resetForm" class="bbtn bbtn-secondary">Batal</button>
@@ -116,7 +111,6 @@
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
                         <th>Email (Opsional)</th>
-                        <th style="text-align:center;">Status</th>
                         <th style="text-align:center;">Aksi</th>
                     </tr>
                 </thead>
@@ -144,23 +138,10 @@
                             @endif
                         </td>
                         <td style="text-align:center;">
-                            @if($k->status_aktif)
-                                <span class="bbadge bbadge-closed">Aktif</span>
-                            @else
-                                <span class="bbadge bbadge-open">Non-aktif</span>
-                            @endif
-                        </td>
-                        <td style="text-align:center;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
                                 <button wire:click="openEdit('{{ $k->nik }}')" title="Edit Karyawan"
                                         class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
                                     <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
-                                </button>
-                                <button wire:click="toggleStatus('{{ $k->nik }}')"
-                                        wire:confirm="Ubah status aktif karyawan '{{ $k->nama }}'?"
-                                        title="Toggle Status Karyawan"
-                                        class="bbtn bbtn-sm {{ $k->status_aktif ? 'bbadge-open' : 'bbadge-closed' }}" style="padding:5px 8px!important; cursor:pointer;">
-                                    <span class="material-symbols-outlined" style="font-size:15px;">{{ $k->status_aktif ? 'person_off' : 'person' }}</span>
                                 </button>
                                 <button wire:click="hapus('{{ $k->nik }}')"
                                         wire:confirm="Yakin ingin menghapus data karyawan '{{ $k->nama }}' (NIK: {{ $k->nik }})?"
@@ -173,7 +154,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" style="text-align:center;padding:32px;color:var(--btxt2);">
+                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
                             <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">badge</span>
                             Belum ada data karyawan terdaftar di sistem
                         </td>

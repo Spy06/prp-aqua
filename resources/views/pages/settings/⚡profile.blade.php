@@ -115,9 +115,13 @@ new #[Title('Pengaturan Profil')] class extends Component {
 
             @php
                 $system = session('login_system', 'sivera');
-                $homeRoute = $system === 'bosq'
-                    ? (Auth::user()?->role === 'qa' ? route('bosq.qa.dashboard') : route('bosq.beranda'))
-                    : (Auth::user()?->role === 'qa' ? route('qa.dashboard') : route('beranda'));
+                if (Auth::user()?->isSuperAdmin()) {
+                    $homeRoute = route('qa.master.akun');
+                } else {
+                    $homeRoute = $system === 'bosq'
+                        ? (Auth::user()?->role === 'qa' ? route('bosq.qa.dashboard') : route('bosq.beranda'))
+                        : (Auth::user()?->role === 'qa' ? route('qa.dashboard') : route('beranda'));
+                }
             @endphp
             <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
                 <button type="submit" wire:loading.attr="disabled" class="bbtn bbtn-primary bbtn-sm" data-test="update-profile-button">

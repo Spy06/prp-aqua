@@ -141,6 +141,15 @@
                 <input type="text" id="edit-password" wire:model="edit_password" class="binput" placeholder="Masukkan password user..." />
                 <span style="font-size:11px;color:var(--btxt2);margin-top:3px;display:block;">Default awal terisi NIK saat ini. Super Admin dapat langsung menghapus & menggantinya secara bebas.</span>
                 @error('edit_password') <p class="berr-msg">{{ $message }}</p> @enderror
+
+                <div style="margin-top:8px;">
+                    <button type="button" wire:click="resetFormPasswordToNik"
+                            wire:confirm="Yakin ingin mereset password akun '{{ $edit_nama }}' kembali ke NIK default ({{ $edit_nik }})?"
+                            class="bbtn bbtn-secondary bbtn-sm" style="color:#d97706;border-color:#fde68a;background:#fffbeb;font-size:12px;padding:6px 12px!important;">
+                        <span class="material-symbols-outlined" style="font-size:15px;color:#d97706;">lock_reset</span>
+                        Reset Password ke NIK Default
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -186,6 +195,7 @@
                         <th>User / Karyawan</th>
                         <th>Departemen</th>
                         <th style="text-align:center;">Role Access</th>
+                        <th style="text-align:center;">Status Akun</th>
                         <th style="text-align:center;">Aksi</th>
                     </tr>
                 </thead>
@@ -228,16 +238,26 @@
                             @endif
                         </td>
                         <td style="text-align:center;">
+                            @php
+                                $isAktif = $u->karyawan?->status_aktif ?? true;
+                            @endphp
+                            @if($isAktif)
+                                <span class="bbadge bbadge-closed">AKTIF</span>
+                            @else
+                                <span class="bbadge bbadge-open">NON-AKTIF</span>
+                            @endif
+                        </td>
+                        <td style="text-align:center;">
                             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
                                 <button wire:click="openEdit({{ $u->id }})" title="Edit Akun, Role & Set Password Custom"
                                         class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;">
                                     <span class="material-symbols-outlined" style="font-size:15px;color:var(--bp);">edit</span>
                                 </button>
-                                <button wire:click="resetPasswordDefault({{ $u->id }})"
-                                        wire:confirm="Reset password akun '{{ $u->name }}' kembali ke NIK default ({{ $u->nik }})?"
-                                        title="Reset Password Default ke NIK"
-                                        class="bbtn bbtn-secondary bbtn-sm" style="padding:5px 8px!important;color:#d97706;">
-                                    <span class="material-symbols-outlined" style="font-size:15px;">lock_reset</span>
+                                <button wire:click="toggleStatusAkun({{ $u->id }})"
+                                        wire:confirm="Ubah status aktif login akun '{{ $u->name }}'?"
+                                        title="Aktifkan / Nonaktifkan Akun Login"
+                                        class="bbtn bbtn-sm {{ ($u->karyawan?->status_aktif ?? true) ? 'bbadge-open' : 'bbadge-closed' }}" style="padding:5px 8px!important; cursor:pointer;">
+                                    <span class="material-symbols-outlined" style="font-size:15px;">{{ ($u->karyawan?->status_aktif ?? true) ? 'person_off' : 'person' }}</span>
                                 </button>
                                 <button wire:click="hapusAkun({{ $u->id }})"
                                         wire:confirm="Yakin ingin menghapus akun '{{ $u->name }}' (NIK: {{ $u->nik }})?"
@@ -250,7 +270,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:32px;color:var(--btxt2);">
+                        <td colspan="6" style="text-align:center;padding:32px;color:var(--btxt2);">
                             <span class="material-symbols-outlined" style="font-size:36px;display:block;margin-bottom:8px;opacity:.3;">manage_accounts</span>
                             Tidak ada akun user ditemukan
                         </td>

@@ -459,7 +459,18 @@
                 <div class="qs-av" style="{{ auth()->user()->isSuperAdmin() ? 'background:#7c3aed;' : '' }}">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div style="overflow:hidden;flex:1;min-width:0;">
                     <div style="color:var(--btxt);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</div>
-                    <div style="color:var(--btxt2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->isSuperAdmin() ? 'Super Admin' : 'QA Admin' }}</div>
+                    @php
+                        $displayRole = 'Karyawan';
+                        if (auth()->user()->isSuperAdmin()) {
+                            $displayRole = 'Super Admin';
+                        } elseif (auth()->user()->role === 'qa') {
+                            $displayRole = 'QA Admin';
+                        } else {
+                            $dept = auth()->user()->karyawan?->departemen?->nama_departemen;
+                            $displayRole = $dept ?: 'Karyawan';
+                        }
+                    @endphp
+                    <div style="color:var(--btxt2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $displayRole }}</div>
                 </div>
             </div>
             <a href="{{ route('profile.edit') }}" class="qs-logout" style="margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">

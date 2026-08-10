@@ -57,7 +57,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['system_guard:sivera'])->group(function () {
         // Role Karyawan & QA — Beranda, Dashboard Analytics & Daftar Temuan SIVERA
         Route::middleware(['role:karyawan,qa'])->group(function () {
-            Route::view('/beranda', 'pages.beranda')->name('beranda');
+            Route::get('/beranda', function () {
+                if (auth()->user()->isSuperAdmin()) {
+                    return redirect()->route('qa.master.akun');
+                }
+                return view('pages.beranda');
+            })->name('beranda');
 
             Route::get('/qa/dashboard', function () {
                 if (auth()->user()->role === 'karyawan' && !auth()->user()->isPicUser()) {

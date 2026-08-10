@@ -20,7 +20,6 @@ class MasterDataKaryawan extends Component
     public string  $nama          = '';
     public string  $email         = '';
     public string  $departemen_id  = '';
-    public bool    $status_aktif   = true;
 
     // State UI & Filters
     public bool    $showForm         = false;
@@ -51,7 +50,6 @@ class MasterDataKaryawan extends Component
             'nama'          => 'required|string|max:255',
             'email'         => 'nullable|email|max:255',
             'departemen_id' => 'required|exists:departemen,id',
-            'status_aktif'  => 'boolean',
         ];
     }
 
@@ -78,7 +76,6 @@ class MasterDataKaryawan extends Component
         $this->nama          = '';
         $this->email         = '';
         $this->departemen_id = '';
-        $this->status_aktif  = true;
         $this->editingNik    = null;
         $this->showForm      = false;
         $this->resetValidation();
@@ -103,7 +100,6 @@ class MasterDataKaryawan extends Component
         $this->nama          = $k->nama;
         $this->email         = $k->user?->email ?? '';
         $this->departemen_id = (string) $k->departemen_id;
-        $this->status_aktif  = $k->status_aktif;
         $this->showForm      = true;
     }
 
@@ -136,7 +132,6 @@ class MasterDataKaryawan extends Component
                         'nik'           => $newNik,
                         'nama'          => $this->nama,
                         'departemen_id' => $this->departemen_id,
-                        'status_aktif'  => $this->status_aktif,
                     ]);
 
                     if ($user) {
@@ -150,7 +145,6 @@ class MasterDataKaryawan extends Component
                     $karyawan->update([
                         'nama'          => $this->nama,
                         'departemen_id' => $this->departemen_id,
-                        'status_aktif'  => $this->status_aktif,
                     ]);
 
                     if ($user) {
@@ -168,7 +162,7 @@ class MasterDataKaryawan extends Component
                 'nik'                         => $newNik,
                 'nama'                        => $this->nama,
                 'departemen_id'               => $this->departemen_id,
-                'status_aktif'                => $this->status_aktif,
+                'status_aktif'                => true,
                 'is_pic'                      => false,
                 'is_anggota_divisi_manajemen' => false,
             ]);
@@ -178,19 +172,6 @@ class MasterDataKaryawan extends Component
 
         $this->resetForm();
         $this->resetPage();
-    }
-
-    public function toggleStatus(string $nik): void
-    {
-        $k = Karyawan::with('user')->findOrFail($nik);
-        
-        if ($this->checkSuperAdminProtection($k)) {
-            return;
-        }
-
-        $k->update(['status_aktif' => !$k->status_aktif]);
-        $statusStr = $k->status_aktif ? 'diaktifkan kembali' : 'dinonaktifkan';
-        session()->flash('success', "Status karyawan {$k->nama} berhasil {$statusStr}.");
     }
 
     public function hapus(string $nik): void

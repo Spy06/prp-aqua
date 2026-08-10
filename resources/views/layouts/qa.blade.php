@@ -755,8 +755,11 @@
                         } else {
                             $isPicUser = auth()->user()->isPicUser();
                             $dept = auth()->user()->karyawan?->departemen?->nama_departemen;
-                            $deptLabel = $dept ? " ({$dept})" : '';
-                            $displayRole = $isPicUser ? "PIC{$deptLabel}" : "Karyawan{$deptLabel}";
+                            if ($isPicUser) {
+                                $displayRole = 'PIC' . ($dept ? " ({$dept})" : '');
+                            } else {
+                                $displayRole = $dept ?: 'Karyawan';
+                            }
                         }
                     @endphp
                     <div class="qs-urole" style="color:var(--btxt2);font-size:11px;">{{ $displayRole }}</div>

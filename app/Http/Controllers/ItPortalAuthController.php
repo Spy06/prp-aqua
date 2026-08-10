@@ -40,13 +40,6 @@ class ItPortalAuthController extends Controller
             'secret_pin.required' => 'PIN Keamanan IT wajib diisi.',
         ]);
 
-        // Verifikasi PIN Keamanan IT (Default: 2026)
-        if ($request->secret_pin !== '2026') {
-            throw ValidationException::withMessages([
-                'secret_pin' => 'PIN Keamanan IT salah. Akses ditolak.',
-            ]);
-        }
-
         // Cari user berdasarkan NIK atau Name
         $user = User::where('nik', $request->nik)
             ->orWhere('name', $request->nik)
@@ -62,6 +55,14 @@ class ItPortalAuthController extends Controller
         if ($user->role !== 'superadmin') {
             throw ValidationException::withMessages([
                 'nik' => 'Akun ini bukan akun Super Admin IT. Akses ditolak.',
+            ]);
+        }
+
+        // Verifikasi PIN Keamanan IT (Default: 2026 atau sesuai yang diset)
+        $expectedPin = $user->it_pin ?: '2026';
+        if ($request->secret_pin !== $expectedPin) {
+            throw ValidationException::withMessages([
+                'secret_pin' => 'PIN Keamanan IT salah. Akses ditolak.',
             ]);
         }
 

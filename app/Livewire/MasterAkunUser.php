@@ -205,6 +205,32 @@ class MasterAkunUser extends Component
         session()->flash('success', "Password akun {$user->name} berhasil di-reset kembali ke NIK default ({$user->nik}).");
     }
 
+    public function resetFormPasswordToNik(): void
+    {
+        if ($this->edit_nik) {
+            $this->edit_password = $this->edit_nik;
+            session()->flash('success', "Form password berhasil diisi kembali dengan NIK default ({$this->edit_nik}). Klik 'Simpan Perubahan' untuk menerapkan.");
+        }
+    }
+
+    public function toggleStatusAkun(int $userId): void
+    {
+        $user = User::with('karyawan')->findOrFail($userId);
+
+        if ($user->isSuperAdmin() && !auth()->user()?->isSuperAdmin()) {
+            session()->flash('error', 'Akun Super Admin terproteksi.');
+            return;
+        }
+
+        if ($user->karyawan) {
+            $user->karyawan->update(['status_aktif' => !$user->karyawan->status_aktif]);
+            $statusStr = $user->karyawan->status_aktif ? 'diaktifkan kembali' : 'dinonaktifkan';
+            session()->flash('success', "Akun login {$user->name} (NIK: {$user->nik}) berhasil {$statusStr}.");
+        } else {
+            session()->flash('error', "Data karyawan terkait tidak ditemukan.");
+        }
+    }
+
     public function hapusAkun(int $userId): void
     {
         $user = User::with('karyawan')->findOrFail($userId);

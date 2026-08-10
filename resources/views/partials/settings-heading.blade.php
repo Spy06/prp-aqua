@@ -1,9 +1,14 @@
 @php
     $system = session('login_system', 'sivera');
-    $homeRoute = $system === 'bosq'
-        ? (Auth::user()?->role === 'qa' ? route('bosq.qa.dashboard') : route('bosq.beranda'))
-        : (Auth::user()?->role === 'qa' ? route('qa.dashboard') : route('beranda'));
-    $homeTitle = $system === 'bosq' ? 'Beranda BOS\'Q' : 'Beranda SIVERA';
+    if (Auth::user()?->isSuperAdmin()) {
+        $homeRoute = route('qa.master.akun');
+        $homeTitle = 'Manajemen Akun User';
+    } else {
+        $homeRoute = $system === 'bosq'
+            ? (Auth::user()?->role === 'qa' ? route('bosq.qa.dashboard') : route('bosq.beranda'))
+            : (Auth::user()?->role === 'qa' ? route('qa.dashboard') : route('beranda'));
+        $homeTitle = $system === 'bosq' ? 'Beranda BOS\'Q' : 'Beranda SIVERA';
+    }
 @endphp
 <div style="max-width:900px;margin:0 auto 16px auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
     <div class="breadcrumb" style="margin:0;">

@@ -75,7 +75,8 @@ class FormTemuan extends Component
 
         if (strlen($query) >= 1) {
             $this->picResults = User::whereHas('karyawan', function ($q) {
-                    $q->where('status_aktif', true);
+                    $q->where('status_aktif', true)
+                      ->where('is_pic', true);
                 })
                 ->where('role', '!=', 'superadmin')
                 ->where('id', '!=', auth()->id())

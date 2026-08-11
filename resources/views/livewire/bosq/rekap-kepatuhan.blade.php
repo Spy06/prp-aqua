@@ -159,7 +159,7 @@
                             @php $p1 = $ds['scores']['w1']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                               {{ $p1 == 100 ? 'background:#334155;color:#ffffff;' : ($p1 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p1 == 100 ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#b91c1c;' }}">
                                 {{ $p1 }}%
                             </td>
 
@@ -167,7 +167,7 @@
                             @php $p2 = $ds['scores']['w2']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                               {{ $p2 == 100 ? 'background:#334155;color:#ffffff;' : ($p2 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p2 == 100 ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#b91c1c;' }}">
                                 {{ $p2 }}%
                             </td>
 
@@ -175,7 +175,7 @@
                             @php $p3 = $ds['scores']['w3']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                               {{ $p3 == 100 ? 'background:#334155;color:#ffffff;' : ($p3 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p3 == 100 ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#b91c1c;' }}">
                                 {{ $p3 }}%
                             </td>
 
@@ -183,7 +183,7 @@
                             @php $p4 = $ds['scores']['w4']['persen']; @endphp
                             <td
                                 style="padding:8px;text-align:center;border:1px solid #cbd5e1;font-weight:800;font-size:13px;
-                                               {{ $p4 == 100 ? 'background:#334155;color:#ffffff;' : ($p4 >= 50 ? 'background:#ffffff;color:#0f172a;' : 'background:#0f172a;color:#ffffff;') }}">
+                                               {{ $p4 == 100 ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#b91c1c;' }}">
                                 {{ $p4 }}%
                             </td>
                         </tr>

@@ -35,9 +35,8 @@
         .member-name { text-align: left; font-weight: bold; color: #1e293b; }
         
         /* Summary table cell colors */
-        .sum-100 { background-color: #334155; color: #ffffff; font-weight: bold; }
-        .sum-partial { background-color: #ffffff; color: #0f172a; font-weight: bold; }
-        .sum-0 { background-color: #0f172a; color: #ffffff; font-weight: bold; }
+        .sum-green { background-color: #dcfce7; color: #15803d; font-weight: bold; }
+        .sum-red { background-color: #fee2e2; color: #b91c1c; font-weight: bold; }
         
         /* Matrix detail cell colors */
         .cell-100 { background-color: #dcfce7; color: #15803d; font-weight: bold; }
@@ -79,16 +78,16 @@
                 <tr>
                     <td class="member-name">{{ $ds['nama'] }}</td>
                     @php $p1 = $ds['scores']['w1']['persen']; @endphp
-                    <td class="{{ $p1 == 100 ? 'sum-100' : ($p1 >= 50 ? 'sum-partial' : 'sum-0') }}">{{ $p1 }}%</td>
+                    <td class="{{ $p1 == 100 ? 'sum-green' : 'sum-red' }}">{{ $p1 }}%</td>
 
                     @php $p2 = $ds['scores']['w2']['persen']; @endphp
-                    <td class="{{ $p2 == 100 ? 'sum-100' : ($p2 >= 50 ? 'sum-partial' : 'sum-0') }}">{{ $p2 }}%</td>
+                    <td class="{{ $p2 == 100 ? 'sum-green' : 'sum-red' }}">{{ $p2 }}%</td>
 
                     @php $p3 = $ds['scores']['w3']['persen']; @endphp
-                    <td class="{{ $p3 == 100 ? 'sum-100' : ($p3 >= 50 ? 'sum-partial' : 'sum-0') }}">{{ $p3 }}%</td>
+                    <td class="{{ $p3 == 100 ? 'sum-green' : 'sum-red' }}">{{ $p3 }}%</td>
 
                     @php $p4 = $ds['scores']['w4']['persen']; @endphp
-                    <td class="{{ $p4 == 100 ? 'sum-100' : ($p4 >= 50 ? 'sum-partial' : 'sum-0') }}">{{ $p4 }}%</td>
+                    <td class="{{ $p4 == 100 ? 'sum-green' : 'sum-red' }}">{{ $p4 }}%</td>
                 </tr>
             @endforeach
         </tbody>

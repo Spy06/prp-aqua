@@ -35,9 +35,9 @@ class EmailNotificationService
             if (!$email) {
                 $email = match($type) {
                     'baru'         => $temuan->pic?->email,
-                    'tindaklanjut' => $temuan->pelapor?->email,
-                    'bukti'        => null,
-                    'closed'       => $temuan->pic?->email ?? $temuan->pelapor?->email,
+                    'tindaklanjut' => $temuan->pic?->email,
+                    'bukti'        => null, // Sent to QA explicitly via recipientEmail
+                    'closed'       => $temuan->pic?->email,
                     default        => $temuan->pic?->email,
                 };
             }
@@ -52,20 +52,19 @@ class EmailNotificationService
                 return false;
             }
 
-            // Tentukan nama penerima untuk personalisasi subject
-            $recipientName = match($type) {
-                'baru'  => $temuan->pic?->name,
-                default => $temuan->pelapor?->name,
-            };
-            // Jika email disuplai manual (QA), cari nama dari semua user
+            // Tentukan nama penerima untuk personalisasi subject & greeting
+            $recipientName = null;
             if ($recipientEmail) {
-                $recipientName = \App\Models\User::where('email', $recipientEmail)->value('name') ?? null;
+                $recipientName = \App\Models\User::where('email', $recipientEmail)->value('name');
+            }
+            if (!$recipientName) {
+                $recipientName = $temuan->pic?->name;
             }
 
             Mail::to($email)->send(new TemuanNotificationMail($temuan, 'sivera', $type, $recipientName));
 
             $this->markSent('sivera', $type, $temuan->id, $email);
-            Log::info("SIVERA Email [{$type}] → {$email} (temuan #{$temuan->id}) ✓");
+            Log::info("SIVERA Email [{$type}] → {$email} (Yth. {$recipientName}, temuan #{$temuan->id}) ✓");
             return true;
 
         } catch (\Throwable $e) {
@@ -90,12 +89,12 @@ class EmailNotificationService
             $email = $recipientEmail;
             if (!$email) {
                 $email = match($type) {
-                    'baru'        => null, // Tidak dikirim ke auditee
+                    'baru'        => null, // Tidak dikirim ke auditee saat baru
                     'subarea_pic' => $recipientEmail,
-                    'tindaklanjut'=> $bosqTemuan->pelapor?->email,
+                    'tindaklanjut'=> $bosqTemuan->auditee?->email,
                     'bukti'       => null,
-                    'closed'      => $bosqTemuan->pelapor?->email,
-                    default       => null,
+                    'closed'      => $bosqTemuan->auditee?->email,
+                    default       => $bosqTemuan->auditee?->email,
                 };
             }
 
@@ -111,6 +110,7 @@ class EmailNotificationService
 
             // Cari nama penerima berdasarkan email yang dituju
             $recipientName = \App\Models\User::where('email', $email)->value('name')
+                ?? $bosqTemuan->auditee?->name
                 ?? 'Tim BOS\'Q';
 
             Mail::to($email)->send(new TemuanNotificationMail($bosqTemuan, 'bosq', $type, $recipientName));

@@ -15,9 +15,9 @@
     <style>
         /* ── BOS'Q Design System — sama color palette SIVERA ── */
         :root {
-            --bp: #1976d2;
+            --bp: #0d47a1;
             --bp-light: #e3f2fd;
-            --bp-dark: #1565c0;
+            --bp-dark: #0b3c8f;
             --bs: #7c4dff;
             --bs-light: #ede7f6;
             --bs-dark: #651fff;
@@ -55,7 +55,7 @@
         .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
 
         /* BOS'Q Logo Box */
-        .logo-box { width: 36px; height: 36px; background: linear-gradient(135deg, #1976d2, #42a5f5); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(25,118,210,0.3); flex-shrink: 0; }
+        .logo-box { width: 36px; height: 36px; background: linear-gradient(135deg, #0d47a1, #2196f3); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(13,71,161,0.3); flex-shrink: 0; }
         .logo-box span { color: #fff; font-size: 18px; }
         .logo-text h1 { font-size: 15px; font-weight: 700; color: var(--bp); letter-spacing: -0.2px; margin: 0; }
         .logo-text p { font-size: 9.5px; color: var(--btxt2); margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
@@ -81,7 +81,7 @@
         .qs-logout:hover { background: var(--error-light); color: var(--error); }
 
         /* ── Layout Wrapper ── */
-        .qmain { min-height: 100vh; padding-top: 80px; margin-left: 260px; max-width: 100vw; overflow-x: hidden !important; }
+        .qmain { min-height: 100vh; padding-top: 80px; margin-left: 260px; max-width: 100vw; overflow-x: hidden !important; display: flex; flex-direction: column; }
         .qcontent { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; overflow-x: hidden !important; }
         .qtop-logo { display: none; }
 
@@ -512,9 +512,12 @@
 
     {{-- ═══ MAIN CONTENT ═══ --}}
     <div class="qmain">
-        <main class="qcontent">
+        <main class="qcontent" style="flex:1;">
             {{ $slot }}
         </main>
+        <footer style="padding:16px 32px;text-align:right;font-size:12px;color:var(--btxt2);border-top:1px solid var(--bbor);margin-top:auto;background:var(--bsur);opacity:0.85;">
+            © 2026 PT Tirta Investama — Plant Cianjur. <a href="https://github.com/FahriID563" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;opacity:0.75;transition:opacity 0.2s;" onmouseover="this.style.opacity='1';this.style.textDecoration='underline'" onmouseout="this.style.opacity='0.75';this.style.textDecoration='none'">Built by @FahriID563</a>. All Rights Reserved.
+        </footer>
     </div>
 
     {{-- ═══ Custom Confirm Dialog ═══ --}}

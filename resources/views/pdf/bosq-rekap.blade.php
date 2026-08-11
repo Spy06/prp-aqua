@@ -20,9 +20,8 @@
         .dept-title-row { background: #cbd5e1; color: #0f172a; font-weight: bold; text-align: left !important; text-transform: uppercase; }
         .member-name { text-align: left !important; font-weight: bold; color: #1e293b; }
 
-        .score-100 { background: #334155; color: #ffffff; font-weight: bold; }
-        .score-partial { background: #ffffff; color: #0f172a; font-weight: bold; }
-        .score-0 { background: #0f172a; color: #ffffff; font-weight: bold; }
+        .score-green { background: #dcfce7; color: #15803d; font-weight: bold; }
+        .score-red { background: #fee2e2; color: #b91c1c; font-weight: bold; }
 
         .score-ind-100 { background: #dcfce7; color: #15803d; font-weight: bold; }
         .score-ind-partial { background: #fef08a; color: #854d0e; font-weight: bold; }
@@ -65,16 +64,16 @@
                 <tr>
                     <td class="member-name">{{ $ds['nama'] }}</td>
                     @php $p1 = $ds['scores']['w1']['persen']; @endphp
-                    <td class="{{ $p1 == 100 ? 'score-100' : ($p1 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p1 }}%</td>
+                    <td class="{{ $p1 == 100 ? 'score-green' : 'score-red' }}">{{ $p1 }}%</td>
 
                     @php $p2 = $ds['scores']['w2']['persen']; @endphp
-                    <td class="{{ $p2 == 100 ? 'score-100' : ($p2 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p2 }}%</td>
+                    <td class="{{ $p2 == 100 ? 'score-green' : 'score-red' }}">{{ $p2 }}%</td>
 
                     @php $p3 = $ds['scores']['w3']['persen']; @endphp
-                    <td class="{{ $p3 == 100 ? 'score-100' : ($p3 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p3 }}%</td>
+                    <td class="{{ $p3 == 100 ? 'score-green' : 'score-red' }}">{{ $p3 }}%</td>
 
                     @php $p4 = $ds['scores']['w4']['persen']; @endphp
-                    <td class="{{ $p4 == 100 ? 'score-100' : ($p4 >= 50 ? 'score-partial' : 'score-0') }}">{{ $p4 }}%</td>
+                    <td class="{{ $p4 == 100 ? 'score-green' : 'score-red' }}">{{ $p4 }}%</td>
                 </tr>
             @endforeach
         </tbody>

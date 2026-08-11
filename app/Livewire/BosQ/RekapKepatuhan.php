@@ -32,7 +32,11 @@ class RekapKepatuhan extends Component
 
     public function mount(): void
     {
-        $this->history_weeks = session()->get('bosq_rekap_history_weeks', []);
+        $cookieVal = request()->cookie('bosq_rekap_history_weeks');
+        $this->history_weeks = $cookieVal ? json_decode($cookieVal, true) : session()->get('bosq_rekap_history_weeks', []);
+        if (!is_array($this->history_weeks)) {
+            $this->history_weeks = [];
+        }
 
         if (empty($this->bulan_tahun)) {
             $this->bulan_tahun = Carbon::now()->format('Y-m');
@@ -49,7 +53,7 @@ class RekapKepatuhan extends Component
 
     public function updated($property): void
     {
-        // Simpan setiap perubahan tanggal langsung ke session agar tahan terhadap F5 Refresh
+        // Simpan setiap perubahan tanggal langsung agar tahan terhadap F5 Refresh
         if (str_starts_with($property, 'week')) {
             $this->saveToHistory();
         }
@@ -57,7 +61,7 @@ class RekapKepatuhan extends Component
 
     public function updatingBulanTahun(): void
     {
-        // Simpan state tanggal kustom bulan yang lama sebelum diganti ke dalam Session
+        // Simpan state tanggal kustom bulan yang lama sebelum diganti
         $this->saveToHistory();
     }
 
@@ -74,6 +78,7 @@ class RekapKepatuhan extends Component
             'w4e' => $this->week4_end,
         ];
         session()->put('bosq_rekap_history_weeks', $this->history_weeks);
+        \Illuminate\Support\Facades\Cookie::queue('bosq_rekap_history_weeks', json_encode($this->history_weeks), 525600); // 1 tahun
     }
 
     public function updatedBulanTahun(): void

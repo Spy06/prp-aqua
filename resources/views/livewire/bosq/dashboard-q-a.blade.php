@@ -280,7 +280,7 @@
         </div>
 
         {{-- Chart 2: Status Doughnut (SHADCN Donut Chart Replica) --}}
-        <div class="bcard fu1" style="padding:24px; display:flex; flex-direction:column; align-items:center;"
+        <div class="bcard fu1" style="padding:24px; display:flex; flex-direction:column; align-items:stretch;"
              data-labels="{{ json_encode(array_keys($chartStatusData)) }}"
              data-values="{{ json_encode(array_values($chartStatusData)) }}"
              x-data="{
@@ -394,83 +394,89 @@
             
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px; width:100%;">Proporsi Status BQA</p>
             
-            <div style="position:relative; width:200px; height:200px; margin-bottom:16px;">
-                <svg width="200" height="200" viewBox="0 0 200 200" class="overflow-visible -rotate-90">
-                    <circle cx="100" cy="100" :r="radius" fill="transparent" stroke="var(--bbor)" :stroke-width="strokeWidth" style="opacity: 0.35;"></circle>
-                    
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(0).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(0).dasharray"
-                            :stroke-dashoffset="getSegmentProps(0).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 0 ? 'drop-shadow(0px 0px 6px ' + colors[0] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 0 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(0).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(0)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(1).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(1).dasharray"
-                            :stroke-dashoffset="getSegmentProps(1).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 1 ? 'drop-shadow(0px 0px 6px ' + colors[1] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 1 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(1).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(1)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-                </svg>
+            <div style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap; width:100%; flex:1;">
                 
-                <div style="position: absolute; top: 68px; left: 0; width: 200px; text-align: center; pointer-events: none; z-index: 10; display: block;">
-                    <div style="transition: transform 0.2s ease-out;"
-                         :style="hoveredIndex !== null ? 'transform: scale(1.04);' : 'transform: scale(1);'">
-                        <p style="font-size: 11px; color: var(--btxt2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 auto; max-width: 150px; text-align: center;" class="truncate" x-text="activeLabel"></p>
-                        <p style="font-size: 32px; font-weight: 700; color: var(--btxt); margin: 2px 0 0; line-height: 1; text-align: center;" x-text="activeValue"></p>
-                        <div x-show="activePercentage !== null" style="margin-top: 4px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--btxt2); text-align: center;" x-text="'[' + activePercentage + '%]'"></span>
+                {{-- Donut SVG Container --}}
+                <div style="position:relative; width:200px; height:200px; flex-shrink:0;">
+                    <svg width="200" height="200" viewBox="0 0 200 200" class="overflow-visible -rotate-90">
+                        <circle cx="100" cy="100" :r="radius" fill="transparent" stroke="var(--bbor)" :stroke-width="strokeWidth" style="opacity: 0.35;"></circle>
+                        
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(0).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(0).dasharray"
+                                :stroke-dashoffset="getSegmentProps(0).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 0 ? 'drop-shadow(0px 0px 6px ' + colors[0] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 0 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(0).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(0)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(1).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(1).dasharray"
+                                :stroke-dashoffset="getSegmentProps(1).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 1 ? 'drop-shadow(0px 0px 6px ' + colors[1] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 1 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(1).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(1)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+                    </svg>
+                    
+                    <div style="position: absolute; top: 68px; left: 0; width: 200px; text-align: center; pointer-events: none; z-index: 10; display: block;">
+                        <div style="transition: transform 0.2s ease-out;"
+                             :style="hoveredIndex !== null ? 'transform: scale(1.04);' : 'transform: scale(1);'">
+                            <p style="font-size: 11px; color: var(--btxt2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 auto; max-width: 150px; text-align: center;" class="truncate" x-text="activeLabel"></p>
+                            <p style="font-size: 32px; font-weight: 700; color: var(--btxt); margin: 2px 0 0; line-height: 1; text-align: center;" x-text="activeValue"></p>
+                            <div x-show="activePercentage !== null" style="margin-top: 4px; text-align: center;">
+                                <span style="font-size: 12px; font-weight: 600; color: var(--btxt2); text-align: center;" x-text="'[' + activePercentage + '%]'"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div style="display:flex; flex-direction:column; gap:4px; width:100%; padding-top:16px; border-top:1px solid var(--bbor);">
-                <template x-for="(label, index) in statusLabels">
-                    <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-150"
-                         :style="{
-                             opacity: hiddenSegments.includes(index) ? '0.4' : '1',
-                             background: hoveredIndex === index ? 'var(--bsur)' : 'transparent'
-                         }"
-                         @click="toggleSegment(index)"
-                         @mouseenter="hoverSegment(index)"
-                         @mouseleave="hoverSegment(null)">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-3 h-3 rounded-full transition-transform duration-150"
-                                  :style="{
-                                      backgroundColor: colors[index],
-                                      transform: hoveredIndex === index ? 'scale(1.25)' : 'scale(1)'
-                                  }"></span>
-                            <span class="text-xs font-semibold" style="color: var(--btxt);" x-text="label"></span>
+                {{-- Custom Interactive Legend --}}
+                <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:180px;">
+                    <template x-for="(label, index) in statusLabels">
+                        <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-150"
+                             :style="{
+                                 opacity: hiddenSegments.includes(index) ? '0.4' : '1',
+                                 background: hoveredIndex === index ? 'var(--bsur)' : 'transparent'
+                             }"
+                             @click="toggleSegment(index)"
+                             @mouseenter="hoverSegment(index)"
+                             @mouseleave="hoverSegment(null)">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-3 h-3 rounded-full transition-transform duration-150"
+                                      :style="{
+                                          backgroundColor: colors[index],
+                                          transform: hoveredIndex === index ? 'scale(1.25)' : 'scale(1)'
+                                      }"></span>
+                                <span class="text-xs font-semibold" style="color: var(--btxt);" x-text="label"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold" style="color: var(--btxt);" x-text="statusData[index]"></span>
+                                <span class="text-[10px] font-medium text-slate-400" x-text="totalValue > 0 ? '(' + ((statusData[index] / totalValue) * 100).toFixed(0) + '%)' : '(0%)'"></span>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold" style="color: var(--btxt);" x-text="statusData[index]"></span>
-                            <span class="text-[10px] font-medium text-slate-400" x-text="totalValue > 0 ? '(' + ((statusData[index] / totalValue) * 100).toFixed(0) + '%)' : '(0%)'"></span>
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
+
             </div>
         </div>
 

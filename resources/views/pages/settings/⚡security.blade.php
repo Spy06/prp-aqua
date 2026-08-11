@@ -24,17 +24,7 @@ new #[Title('Ganti Password')] class extends Component {
             $layout = 'layouts.bosq';
             $title  = __('Ganti Password — BOS\'Q');
         } else {
-            $user = Auth::user();
-            $isPicUser = $user && $user->role === 'karyawan' && (
-                \App\Models\Temuan::where('pic_id', $user->id)->exists() ||
-                \App\Models\Karyawan::where('nik', $user->nik)->where('status_aktif', true)->exists()
-            );
-
-            if ($user && ($user->role === 'qa' || $user->isSuperAdmin() || $isPicUser)) {
-                $layout = 'layouts.qa';
-            } else {
-                $layout = 'layouts.app';
-            }
+            $layout = 'layouts.qa';
             $title  = __('Ganti Password — SIVERA');
         }
         $view->layout($layout, ['title' => $title]);

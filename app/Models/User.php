@@ -59,7 +59,7 @@ class User extends Authenticatable implements PasskeyUser
     /**
      * Cek apakah user ini adalah PIC terdaftar di SIVERA.
      */
-    public function isPicUser(): bool
+    public function isSiveraPicUser(): bool
     {
         if ($this->role === 'qa' || $this->role === 'superadmin') {
             return true;
@@ -67,17 +67,6 @@ class User extends Authenticatable implements PasskeyUser
 
         // PIC dari Master Karyawan / SIVERA
         if ($this->karyawan && $this->karyawan->is_pic && $this->karyawan->status_aktif) {
-            return true;
-        }
-        if (Temuan::where('pic_id', $this->id)->exists()) {
-            return true;
-        }
-
-        // PIC dari BOS'Q
-        if ($this->bosqSubAreas()->exists()) {
-            return true;
-        }
-        if (BosqTemuan::where('auditee_id', $this->id)->exists()) {
             return true;
         }
 
@@ -89,7 +78,21 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function isBosqPicUser(): bool
     {
-        return $this->isPicUser();
+        if ($this->role === 'qa' || $this->role === 'superadmin') {
+            return true;
+        }
+
+        // PIC dari BOS'Q
+        if ($this->bosqSubAreas()->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isPicUser(): bool
+    {
+        return $this->isSiveraPicUser() || $this->isBosqPicUser();
     }
 
     /**

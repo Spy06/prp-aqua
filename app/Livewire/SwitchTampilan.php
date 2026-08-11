@@ -29,11 +29,8 @@ class SwitchTampilan extends Component
             ->whereIn('status', ['open', 'in_progress'])
             ->count();
 
-        // Tentukan apakah user terdaftar sebagai PIC (di Master PIC Karyawan atau pernah ditunjuk sebagai PIC temuan)
-        $isPicUser = $user->role === 'karyawan' && (
-            Temuan::where('pic_id', $user->id)->exists() ||
-            Karyawan::where('nik', $user->nik)->where('status_aktif', true)->exists()
-        );
+        // Tentukan apakah user terdaftar sebagai PIC
+        $isPicUser = $user->isSiveraPicUser();
 
         return view('livewire.switch-tampilan', [
             'picBadge'  => $picBadge,

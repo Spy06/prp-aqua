@@ -288,7 +288,7 @@
         </div>
 
         {{-- Chart: Status Doughnut (SHADCN Donut Chart Replica) --}}
-        <div class="bcard fu1" style="padding:24px; display:flex; flex-direction:column; align-items:center;"
+        <div class="bcard fu1" style="padding:24px; display:flex; flex-direction:column; align-items:stretch;"
              data-labels="{{ $statusLabels }}"
              data-values="{{ $statusData }}"
              x-data="{
@@ -403,126 +403,131 @@
             
             <p style="font-size:12px;font-weight:700;color:var(--btxt2);text-transform:uppercase;letter-spacing:.8px;margin:0 0 16px; width:100%;">Proporsi Status Temuan</p>
             
-            <div style="position:relative; width:200px; height:200px; margin-bottom:16px;">
-                {{-- Native SVG Donut Chart with static circles mapping to Alpine props --}}
-                <svg width="200" height="200" viewBox="0 0 200 200" class="overflow-visible -rotate-90">
-                    <!-- Base background ring -->
-                    <circle cx="100" cy="100" :r="radius" fill="transparent" stroke="var(--bbor)" :stroke-width="strokeWidth" style="opacity: 0.35;"></circle>
-                    
-                    <!-- Circle 0: Open -->
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(0).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(0).dasharray"
-                            :stroke-dashoffset="getSegmentProps(0).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 0 ? 'drop-shadow(0px 0px 6px ' + colors[0] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 0 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(0).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(0)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-
-                    <!-- Circle 1: In Progress -->
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(1).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(1).dasharray"
-                            :stroke-dashoffset="getSegmentProps(1).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 1 ? 'drop-shadow(0px 0px 6px ' + colors[1] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 1 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(1).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(1)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-
-                    <!-- Circle 2: Pending QA -->
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(2).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(2).dasharray"
-                            :stroke-dashoffset="getSegmentProps(2).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 2 ? 'drop-shadow(0px 0px 6px ' + colors[2] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 2 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(2).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(2)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-
-                    <!-- Circle 3: Closed (ACC) -->
-                    <circle cx="100" cy="100" :r="radius"
-                            fill="none" pointer-events="stroke"
-                            :stroke="getSegmentProps(3).color"
-                            :stroke-width="strokeWidth"
-                            :stroke-dasharray="getSegmentProps(3).dasharray"
-                            :stroke-dashoffset="getSegmentProps(3).dashoffset"
-                            stroke-linecap="round"
-                            class="transition-all duration-300 origin-center cursor-pointer"
-                            :style="{
-                                filter: hoveredIndex === 3 ? 'drop-shadow(0px 0px 6px ' + colors[3] + ') brightness(1.1)' : 'none',
-                                transform: hoveredIndex === 3 ? 'scale(1.04)' : 'scale(1)',
-                                transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
-                                display: getSegmentProps(3).visible ? 'inline' : 'none'
-                            }"
-                            @mouseenter="hoverSegment(3)"
-                            @mouseleave="hoverSegment(null)">
-                    </circle>
-                </svg>
+            <div style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap; width:100%; flex:1;">
                 
-                {{-- Dynamic Center Content --}}
-                <div style="position: absolute; top: 68px; left: 0; width: 200px; text-align: center; pointer-events: none; z-index: 10; display: block;">
-                    <div style="transition: transform 0.2s ease-out;"
-                         :style="hoveredIndex !== null ? 'transform: scale(1.04);' : 'transform: scale(1);'">
-                        <p style="font-size: 11px; color: var(--btxt2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 auto; max-width: 150px; text-align: center;" class="truncate" x-text="activeLabel"></p>
-                        <p style="font-size: 32px; font-weight: 700; color: var(--btxt); margin: 2px 0 0; line-height: 1; text-align: center;" x-text="activeValue"></p>
-                        <div x-show="activePercentage !== null" style="margin-top: 4px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 600; color: var(--btxt2); text-align: center;" x-text="'[' + activePercentage + '%]'"></span>
+                {{-- Donut SVG Container --}}
+                <div style="position:relative; width:200px; height:200px; flex-shrink:0;">
+                    {{-- Native SVG Donut Chart with static circles mapping to Alpine props --}}
+                    <svg width="200" height="200" viewBox="0 0 200 200" class="overflow-visible -rotate-90">
+                        <!-- Base background ring -->
+                        <circle cx="100" cy="100" :r="radius" fill="transparent" stroke="var(--bbor)" :stroke-width="strokeWidth" style="opacity: 0.35;"></circle>
+                        
+                        <!-- Circle 0: Open -->
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(0).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(0).dasharray"
+                                :stroke-dashoffset="getSegmentProps(0).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 0 ? 'drop-shadow(0px 0px 6px ' + colors[0] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 0 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(0).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(0)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+
+                        <!-- Circle 1: In Progress -->
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(1).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(1).dasharray"
+                                :stroke-dashoffset="getSegmentProps(1).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 1 ? 'drop-shadow(0px 0px 6px ' + colors[1] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 1 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(1).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(1)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+
+                        <!-- Circle 2: Pending QA -->
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(2).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(2).dasharray"
+                                :stroke-dashoffset="getSegmentProps(2).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 2 ? 'drop-shadow(0px 0px 6px ' + colors[2] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 2 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(2).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(2)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+
+                        <!-- Circle 3: Closed (ACC) -->
+                        <circle cx="100" cy="100" :r="radius"
+                                fill="none" pointer-events="stroke"
+                                :stroke="getSegmentProps(3).color"
+                                :stroke-width="strokeWidth"
+                                :stroke-dasharray="getSegmentProps(3).dasharray"
+                                :stroke-dashoffset="getSegmentProps(3).dashoffset"
+                                stroke-linecap="round"
+                                class="transition-all duration-300 origin-center cursor-pointer"
+                                :style="{
+                                    filter: hoveredIndex === 3 ? 'drop-shadow(0px 0px 6px ' + colors[3] + ') brightness(1.1)' : 'none',
+                                    transform: hoveredIndex === 3 ? 'scale(1.04)' : 'scale(1)',
+                                    transition: 'filter 0.2s ease-out, transform 0.2s ease-out, stroke-dasharray 0.3s ease-out, stroke-dashoffset 0.3s ease-out',
+                                    display: getSegmentProps(3).visible ? 'inline' : 'none'
+                                }"
+                                @mouseenter="hoverSegment(3)"
+                                @mouseleave="hoverSegment(null)">
+                        </circle>
+                    </svg>
+                    
+                    {{-- Dynamic Center Content --}}
+                    <div style="position: absolute; top: 68px; left: 0; width: 200px; text-align: center; pointer-events: none; z-index: 10; display: block;">
+                        <div style="transition: transform 0.2s ease-out;"
+                             :style="hoveredIndex !== null ? 'transform: scale(1.04);' : 'transform: scale(1);'">
+                            <p style="font-size: 11px; color: var(--btxt2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 auto; max-width: 150px; text-align: center;" class="truncate" x-text="activeLabel"></p>
+                            <p style="font-size: 32px; font-weight: 700; color: var(--btxt); margin: 2px 0 0; line-height: 1; text-align: center;" x-text="activeValue"></p>
+                            <div x-show="activePercentage !== null" style="margin-top: 4px; text-align: center;">
+                                <span style="font-size: 12px; font-weight: 600; color: var(--btxt2); text-align: center;" x-text="'[' + activePercentage + '%]'"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Custom Interactive Legend --}}
-            <div style="display:flex; flex-direction:column; gap:4px; width:100%; padding-top:16px; border-top:1px solid var(--bbor);">
-                <template x-for="(label, index) in statusLabels">
-                    <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-150"
-                         style="background: transparent;"
-                         :style="[
-                             hoveredIndex === index ? { background: 'var(--bs-light)' } : {},
-                             hiddenSegments.includes(index) ? { opacity: 0.4 } : {}
-                         ]"
-                         @mouseenter="hoverSegment(index)"
-                         @mouseleave="hoverSegment(null)"
-                         @click="toggleSegment(index)">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span style="width:8px; height:8px; border-radius:50%; display:inline-block;" 
-                                  :style="{'background-color': colors[index]}"></span>
-                            <span style="font-size:12.5px; font-weight:600; color:var(--btxt);"
+                {{-- Custom Interactive Legend --}}
+                <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:180px;">
+                    <template x-for="(label, index) in statusLabels">
+                        <div class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-150"
+                             style="background: transparent;"
+                             :style="[
+                                 hoveredIndex === index ? { background: 'var(--bs-light)' } : {},
+                                 hiddenSegments.includes(index) ? { opacity: 0.4 } : {}
+                             ]"
+                             @mouseenter="hoverSegment(index)"
+                             @mouseleave="hoverSegment(null)"
+                             @click="toggleSegment(index)">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="width:8px; height:8px; border-radius:50%; display:inline-block;" 
+                                      :style="{'background-color': colors[index]}"></span>
+                                <span style="font-size:12.5px; font-weight:600; color:var(--btxt);"
+                                      :style="hiddenSegments.includes(index) ? { 'text-decoration': 'line-through' } : {}"
+                                      x-text="label"></span>
+                            </div>
+                            <span style="font-size:12.5px; font-weight:700; color:var(--btxt2);"
                                   :style="hiddenSegments.includes(index) ? { 'text-decoration': 'line-through' } : {}"
-                                  x-text="label"></span>
+                                  x-text="statusData[index]"></span>
                         </div>
-                        <span style="font-size:12.5px; font-weight:700; color:var(--btxt2);"
-                              :style="hiddenSegments.includes(index) ? { 'text-decoration': 'line-through' } : {}"
-                              x-text="statusData[index]"></span>
-                    </div>
-                </template>
+                    </template>
+                </div>
+
             </div>
         </div>
 

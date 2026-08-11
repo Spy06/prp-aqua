@@ -65,14 +65,14 @@ Route::middleware(['auth'])->group(function () {
             })->name('beranda');
 
             Route::get('/qa/dashboard', function () {
-                if (auth()->user()->role === 'karyawan' && !auth()->user()->isPicUser()) {
+                if (auth()->user()->role === 'karyawan' && !auth()->user()->isSiveraPicUser()) {
                     return redirect()->route('beranda');
                 }
                 return view('dashboard');
             })->name('qa.dashboard');
 
             Route::get('/qa/daftar-temuan', function () {
-                if (auth()->user()->role === 'karyawan' && !auth()->user()->isPicUser()) {
+                if (auth()->user()->role === 'karyawan' && !auth()->user()->isSiveraPicUser()) {
                     return redirect()->route('beranda');
                 }
                 return view('pages.qa.daftar-temuan');

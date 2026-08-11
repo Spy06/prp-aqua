@@ -54,8 +54,8 @@ class TindakLanjutPIC extends Component
     protected function authorizePic(): bool
     {
         $temuan = Temuan::findOrFail($this->temuanId);
-        if (auth()->id() !== $temuan->pic_id || auth()->user()->role === 'qa') {
-            session()->flash('status_error', 'Akses ditolak: hanya PIC karyawan yang dapat mengubah status temuan ini.');
+        if (auth()->id() !== $temuan->pic_id) {
+            session()->flash('status_error', 'Akses ditolak: hanya PIC yang dapat mengubah status temuan ini.');
             return false;
         }
         return true;
@@ -254,7 +254,6 @@ class TindakLanjutPIC extends Component
         if (!$temuan) return;
 
         $emailService = app(\App\Services\EmailNotificationService::class);
-        $emailService->sendSiveraNotification($temuan, 'bukti');
 
         $qaUsers = User::where('role', 'qa')->get();
         $deptNama = $temuan->departemen->nama_departemen ?? '-';

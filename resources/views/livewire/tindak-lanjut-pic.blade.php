@@ -1,4 +1,4 @@
-<div x-data="{ picLightboxOpen: false, picLightboxSrc: '', picLightboxTitle: '' }">
+<div x-data="{ picLightboxOpen: false, picLightboxSrc: '', picLightboxTitle: '', showConfirmPendingQa: false }">
     {{-- Flash Notifications --}}
     @if (session()->has('status_success'))
         <div class="balert balert-success fu" style="margin-bottom:16px;">
@@ -172,8 +172,8 @@
             @if(count($buktiPaths) < 3)
                 <div>
                     <div style="border:2px dashed var(--bbor);border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:120px;gap:10px;">
-                        <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" multiple accept="image/*,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" />
-                        <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" accept="image/*" capture="environment" style="display:none;" />
+                        <input type="file" id="foto-bukti-gallery" wire:model="foto_bukti" onchange="handleFotoFileSelect(event)" multiple accept="image/*,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" />
+                        <input type="file" id="foto-bukti-camera" wire:model="foto_bukti" onchange="handleFotoFileSelect(event)" accept="image/*" capture="environment" style="display:none;" />
 
                         <span class="material-symbols-outlined" style="font-size:32px;color:var(--btxt2);">cloud_upload</span>
                         <p style="font-size:12.5px;color:var(--btxt2);margin:0;text-align:center;">Tambah file bukti (Tersisa {{ 3 - count($buktiPaths) }} file lagi)</p>
@@ -234,7 +234,7 @@
             @endif
 
             @if($currentStatus === 'in_progress')
-                <button type="button" wire:click="ubahStatus('closed_pending_qa')"
+                <button type="button" @click="showConfirmPendingQa = true"
                     class="bbtn bbtn-success bbtn-sm"
                     {{ empty($buktiPaths) ? 'disabled' : '' }}>
                     <span class="material-symbols-outlined" style="font-size:16px;">task_alt</span>
@@ -250,6 +250,56 @@
         </div>
     </div>
     @endif
+
+    {{-- Modal Dialog Konfirmasi Pengajuan Selesai --}}
+    <template x-teleport="body">
+        <div x-show="showConfirmPendingQa"
+             x-cloak
+             style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+
+            <div @click.outside="showConfirmPendingQa = false"
+                 style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:fit-content;background:var(--bcard, #ffffff);border:1.5px solid var(--bbor, #e2e8f0);border-radius:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);max-width:440px;width:calc(100% - 40px);padding:28px 24px;text-align:center;"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95">
+
+                <div style="width:60px;height:60px;border-radius:50%;background:#e8f5e9;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 4px 12px rgba(46,125,50,0.15);">
+                    <span class="material-symbols-outlined fil" style="font-size:32px;color:#2e7d32;">task_alt</span>
+                </div>
+
+                <h3 style="font-size:18px;font-weight:700;color:var(--btxt, #1e293b);margin:0 0 8px 0;">Konfirmasi Pengajuan Selesai</h3>
+                <p style="font-size:13.5px;color:var(--btxt2, #64748b);line-height:1.6;margin:0 0 24px 0;">
+                    Apakah Anda yakin tindakan perbaikan dan bukti yang dilampirkan sudah lengkap dan ingin diajukan ke QA untuk verifikasi?
+                </p>
+
+                <div style="display:flex;gap:10px;justify-content:center;">
+                    <button type="button"
+                            @click="showConfirmPendingQa = false"
+                            class="bbtn bbtn-secondary"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                        Batal
+                    </button>
+                    <button type="button"
+                            @click="showConfirmPendingQa = false; $wire.ubahStatus('closed_pending_qa');"
+                            class="bbtn bbtn-success"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">check</span>
+                        Ya, Ajukan Selesai
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 
     {{-- Lightbox Modal untuk PIC --}}
     <template x-teleport="body">
@@ -300,4 +350,94 @@
         .pic-img-hover-container:hover .pic-img-hover-overlay { opacity: 1; }
         .pic-img-hover-container:hover img { transform: scale(1.04); }
     </style>
+
+    <script>
+    /**
+     * SIVERA — Auto-compress gambar jika > 3MB sebelum diupload ke Livewire.
+     * Mendukung multi-file upload di form PIC.
+     */
+    async function handleFotoFileSelect(event) {
+        const input = event.target;
+        if (!input.files || input.files.length === 0) return;
+        
+        const MAX_BYTES = 3 * 1024 * 1024; // 3 MB
+        let needsCompression = false;
+        
+        // Cek apakah ada file gambar yang > 3MB
+        for (let i = 0; i < input.files.length; i++) {
+            let file = input.files[i];
+            if (file.type.startsWith('image/') && file.size > MAX_BYTES) {
+                needsCompression = true;
+                break;
+            }
+        }
+
+        // Jika semua file <= 3MB atau bukan gambar, biarkan Livewire memproses langsung
+        if (!needsCompression) {
+            return;
+        }
+
+        // Hentikan propagasi agar Livewire tidak mendeteksi file yang belum dikompres
+        event.stopImmediatePropagation();
+        
+        const dt = new DataTransfer();
+
+        for (let i = 0; i < input.files.length; i++) {
+            let file = input.files[i];
+            
+            // Kompres hanya jika gambar dan > 3MB
+            if (file.type.startsWith('image/') && file.size > MAX_BYTES) {
+                try {
+                    let compressedBlob = await compressImage(file);
+                    let compressedFile = new File(
+                        [compressedBlob],
+                        file.name.replace(/\.[^.]+$/, '.jpg'),
+                        { type: 'image/jpeg', lastModified: Date.now() }
+                    );
+                    dt.items.add(compressedFile);
+                } catch (e) {
+                    console.error('Kompresi gagal untuk file:', file.name, e);
+                    dt.items.add(file); // Kembalikan file asli jika error
+                }
+            } else {
+                dt.items.add(file);
+            }
+        }
+
+        input.files = dt.files;
+        
+        // Trigger Event ke Livewire dengan file baru
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function compressImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX_DIM = 1920;
+                    const scale = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob(function(blob) {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            reject(new Error("Canvas compression failed"));
+                        }
+                    }, 'image/jpeg', 0.82);
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+    </script>
 </div>

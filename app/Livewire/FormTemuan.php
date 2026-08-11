@@ -36,13 +36,14 @@ class FormTemuan extends Component
         'sub_area' => 'required|string|max:255',
         'klausul_id' => 'required|exists:klausul_prp,id',
         'detail_sub_area' => 'required_if:sub_area,Others|nullable|string|max:255',
-        'foto_temuan' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB (opsional)
+        'foto_temuan' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072', // max 3MB
         'deskripsi' => 'required|string',
         'saran' => 'nullable|string',
         'pic_id' => 'required|exists:users,id',
     ];
 
     protected $messages = [
+        'foto_temuan.required' => 'Foto temuan wajib diunggah sebagai bukti temuan.',
         'foto_temuan.image' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
         'foto_temuan.mimes' => 'Format file tidak sesuai. Upload gambar berformat JPG, PNG, atau WebP.',
         'foto_temuan.max' => 'Ukuran foto terlalu besar. Maksimal ukuran file adalah 3MB.',
@@ -77,6 +78,7 @@ class FormTemuan extends Component
                     $q->where('status_aktif', true);
                 })
                 ->where('role', '!=', 'superadmin')
+                ->where('id', '!=', auth()->id())
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'like', '%' . $query . '%')
                         ->orWhere('nik', 'like', '%' . $query . '%');
@@ -114,6 +116,11 @@ class FormTemuan extends Component
         }
 
         $user = auth()->user();
+
+        if ($this->pic_id == $user->id) {
+            $this->addError('pic_id', 'Anda tidak dapat menunjuk diri sendiri sebagai PIC.');
+            return;
+        }
 
         // 1. Simpan foto jika diupload
         $fotoPath = $this->foto_temuan ? $this->foto_temuan->store('temuan', 'public') : null;

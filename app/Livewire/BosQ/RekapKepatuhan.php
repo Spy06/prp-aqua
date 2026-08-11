@@ -7,10 +7,15 @@ use App\Models\Departemen;
 use App\Models\Karyawan;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
+use Livewire\Attributes\Url;
 
 class RekapKepatuhan extends Component
 {
+    #[Url]
     public string $bulan_tahun = '';
+    
+    // Simpan memori tanggal kustom per bulan
+    public array $history_weeks = [];
     
     // Tanggal kustom untuk Week 1 s/d Week 4
     public string $week1_start = '';
@@ -27,13 +32,71 @@ class RekapKepatuhan extends Component
 
     public function mount(): void
     {
-        $this->bulan_tahun = Carbon::now()->format('Y-m');
-        $this->generateDefaultWeeks();
+        $this->history_weeks = session()->get('bosq_rekap_history_weeks', []);
+
+        if (empty($this->bulan_tahun)) {
+            $this->bulan_tahun = Carbon::now()->format('Y-m');
+        }
+        
+        if (empty($this->week1_start)) {
+            if (isset($this->history_weeks[$this->bulan_tahun])) {
+                $this->restoreFromHistory($this->bulan_tahun);
+            } else {
+                $this->generateDefaultWeeks();
+            }
+        }
+    }
+
+    public function updated($property): void
+    {
+        // Simpan setiap perubahan tanggal langsung ke session agar tahan terhadap F5 Refresh
+        if (str_starts_with($property, 'week')) {
+            $this->saveToHistory();
+        }
+    }
+
+    public function updatingBulanTahun(): void
+    {
+        // Simpan state tanggal kustom bulan yang lama sebelum diganti ke dalam Session
+        $this->saveToHistory();
+    }
+
+    private function saveToHistory(): void
+    {
+        $this->history_weeks[$this->bulan_tahun] = [
+            'w1s' => $this->week1_start,
+            'w1e' => $this->week1_end,
+            'w2s' => $this->week2_start,
+            'w2e' => $this->week2_end,
+            'w3s' => $this->week3_start,
+            'w3e' => $this->week3_end,
+            'w4s' => $this->week4_start,
+            'w4e' => $this->week4_end,
+        ];
+        session()->put('bosq_rekap_history_weeks', $this->history_weeks);
     }
 
     public function updatedBulanTahun(): void
     {
-        $this->generateDefaultWeeks();
+        // Kembalikan state tanggal kustom jika bulan tersebut pernah dibuka sebelumnya
+        if (isset($this->history_weeks[$this->bulan_tahun])) {
+            $this->restoreFromHistory($this->bulan_tahun);
+        } else {
+            $this->generateDefaultWeeks();
+        }
+    }
+
+    private function restoreFromHistory(string $bulan): void
+    {
+        $h = $this->history_weeks[$bulan];
+        $this->week1_start = $h['w1s'];
+        $this->week1_end   = $h['w1e'];
+        $this->week2_start = $h['w2s'];
+        $this->week2_end   = $h['w2e'];
+        $this->week3_start = $h['w3s'];
+        $this->week3_end   = $h['w3e'];
+        $this->week4_start = $h['w4s'];
+        $this->week4_end   = $h['w4e'];
     }
 
     /**

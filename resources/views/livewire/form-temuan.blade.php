@@ -1,4 +1,4 @@
-<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px; overflow: visible !important;">
+<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px; overflow: visible !important;" x-data="{ showConfirmModal: false }">
     {{-- Card Header --}}
     <div class="bcard-header" style="justify-content:space-between; border-bottom: 1px solid var(--bbor); padding: 20px 24px;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -29,7 +29,7 @@
             </div>
         @endif
 
-        <form wire:submit.prevent="submit" style="display:flex;flex-direction:column;gap:20px;">
+        <form @submit.prevent="showConfirmModal = true" style="display:flex;flex-direction:column;gap:20px;">
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
 
@@ -91,55 +91,54 @@
 
                     {{-- Upload Foto --}}
                     <div>
-                        <label class="blabel">Upload Foto Temuan <span style="font-size:11px;font-weight:400;color:var(--btxt2);">(Opsional)</span></label>
+                        <label class="blabel">Upload Foto Temuan <span style="color:var(--error);">*</span></label>
                         <div style="border:2px dashed var(--bbor);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bsur);min-height:160px;gap:12px;text-align:center;">
-                            {{-- Input tanpa wire:model — upload dikendalikan JS kompresi --}}
                             <input
                                 type="file"
                                 id="foto-input-tunggal"
+                                wire:model="foto_temuan"
                                 accept="image/jpeg,image/jpg,image/png,image/webp"
                                 style="display:none;"
-                                onchange="siveraFotoHandler(this)"
+                                onchange="handleFotoFileSelect(event)"
                             />
 
-                            {{-- Preview area: dikontrol via JS, fallback ke Livewire state --}}
-                            <div id="sivera-foto-preview" style="display:none;flex-direction:column;align-items:center;width:100%;">
-                                <img id="sivera-foto-img" src="" style="max-width:180px;max-height:130px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
-                                <span id="sivera-foto-name" style="display:block;font-size:11px;color:var(--btxt2);margin-top:6px;text-align:center;word-break:break-all;max-width:220px;"></span>
-                            </div>
-
                             @if ($foto_temuan)
-                                <div id="sivera-foto-server" style="display:flex;flex-direction:column;align-items:center;width:100%;">
-                                    <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-width:180px;max-height:130px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
-                                    <span style="display:block;font-size:11px;color:var(--btxt2);margin-top:6px;text-align:center;word-break:break-all;max-width:220px;">{{ $foto_temuan->getClientOriginalName() }}</span>
+                                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;">
+                                    <div style="position:relative;display:inline-block;">
+                                        <img src="{{ $foto_temuan->temporaryUrl() }}" style="max-width:200px;max-height:140px;border-radius:10px;object-fit:contain;margin:0 auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--bbor);" />
+                                        <button type="button" wire:click="$set('foto_temuan', null)" style="position:absolute;top:-8px;right:-8px;background:var(--error, #ef4444);color:#fff;border:none;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);" title="Hapus foto">
+                                            <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+                                        </button>
+                                    </div>
+                                    <span style="display:block;font-size:11.5px;font-weight:600;color:var(--bp);margin-top:6px;text-align:center;word-break:break-all;max-width:240px;">
+                                        ✓ {{ $foto_temuan->getClientOriginalName() }}
+                                    </span>
                                 </div>
                             @else
-                                <div id="sivera-foto-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-                                    <span class="material-symbols-outlined" style="font-size:38px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
-                                    <div style="font-size:13px;font-weight:600;color:var(--btxt);">Pilih Sumber Foto</div>
-                                </div>
+                                <span class="material-symbols-outlined" style="font-size:38px;color:var(--btxt2);opacity:0.6;">cloud_upload</span>
+                                <div style="font-size:13px;font-weight:600;color:var(--btxt);">Pilih Sumber Foto</div>
                             @endif
 
                             <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
                                 <button type="button"
-                                    onclick="var el=document.getElementById('foto-input-tunggal');el.setAttribute('capture','environment');el.value='';el.click();"
+                                    onclick="var el=document.getElementById('foto-input-tunggal');el.setAttribute('capture','environment');el.click();"
                                     style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bp);color:#fff;font-size:12px;font-weight:600;border-radius:8px;border:none;">
                                     <span class="material-symbols-outlined" style="font-size:16px;">photo_camera</span>
                                     Ambil Foto
                                 </button>
                                 <button type="button"
-                                    onclick="var el=document.getElementById('foto-input-tunggal');el.removeAttribute('capture');el.value='';el.click();"
+                                    onclick="var el=document.getElementById('foto-input-tunggal');el.removeAttribute('capture');el.click();"
                                     style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bsur);color:var(--btxt);font-size:12px;font-weight:600;border-radius:8px;border:1.5px solid var(--bbor);">
                                     <span class="material-symbols-outlined" style="font-size:16px;">photo_library</span>
                                     Dari Galeri
                                 </button>
                             </div>
-                            <p id="sivera-foto-hint" style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Otomatis dikompres jika &gt; 3MB &bull; JPG, PNG, WebP</p>
+                            <p style="font-size:11.5px;color:var(--btxt2);margin:4px 0 0 0;text-align:center;">Otomatis dikompres jika &gt; 3MB &bull; JPG, PNG, WebP</p>
                         </div>
                         @error('foto_temuan') <span class="berr" style="display:block;margin-top:6px;">{{ $message }}</span> @enderror
-                        <div id="sivera-upload-progress" style="display:none;font-size:12px;color:var(--bp);margin-top:6px;align-items:center;gap:6px;">
+                        <div wire:loading wire:target="foto_temuan" style="font-size:12px;color:var(--bp);margin-top:6px;display:flex;align-items:center;gap:6px;">
                             <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">sync</span>
-                            <span id="sivera-upload-label">Memproses foto...</span>
+                            <span>Mengunggah foto...</span>
                         </div>
                     </div>
                 </div>
@@ -220,15 +219,70 @@
                     <span class="material-symbols-outlined" style="font-size:18px;">close</span>
                     Batal
                 </a>
-                <button type="submit" wire:loading.attr="disabled" class="bbtn bbtn-primary">
-                    <span wire:loading.remove wire:target="submit" class="material-symbols-outlined" style="font-size:18px;">send</span>
-                    <span wire:loading wire:target="submit" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
-                    <span wire:loading.remove wire:target="submit">Kirim Laporan</span>
+                <button type="button"
+                    @click="showConfirmModal = true"
+                    wire:loading.attr="disabled"
+                    wire:target="submit,foto_temuan"
+                    class="bbtn bbtn-primary">
+                    <span wire:loading.remove wire:target="submit,foto_temuan" class="material-symbols-outlined" style="font-size:18px;">send</span>
+                    <span wire:loading wire:target="submit,foto_temuan" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
+                    <span wire:loading.remove wire:target="submit,foto_temuan">Kirim Laporan</span>
                     <span wire:loading wire:target="submit">Menyimpan...</span>
+                    <span wire:loading wire:target="foto_temuan">Mengunggah Foto...</span>
                 </button>
             </div>
         </form>
     </div>
+
+    {{-- Modal Dialog Konfirmasi Kirim Laporan --}}
+    <template x-teleport="body">
+        <div x-show="showConfirmModal"
+             x-cloak
+             style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+
+            <div @click.outside="showConfirmModal = false"
+                 style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:fit-content;background:var(--bcard, #ffffff);border:1.5px solid var(--bbor, #e2e8f0);border-radius:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);max-width:440px;width:calc(100% - 40px);padding:28px 24px;text-align:center;"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95">
+
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--bp-light, #e3f2fd);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 4px 12px rgba(21,101,192,0.15);">
+                    <span class="material-symbols-outlined fil" style="font-size:32px;color:var(--bp, #1565c0);">help</span>
+                </div>
+
+                <h3 style="font-size:18px;font-weight:700;color:var(--btxt, #1e293b);margin:0 0 8px 0;">Konfirmasi Kirim Laporan</h3>
+                <p style="font-size:13.5px;color:var(--btxt2, #64748b);line-height:1.6;margin:0 0 24px 0;">
+                    Apakah Anda sudah yakin data laporan dan foto temuan ketidaksesuaian PRP ini sudah sesuai dan siap dikirim?
+                </p>
+
+                <div style="display:flex;gap:10px;justify-content:center;">
+                    <button type="button"
+                            @click="showConfirmModal = false"
+                            class="bbtn bbtn-secondary"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                        Periksa Kembali
+                    </button>
+                    <button type="button"
+                            @click="showConfirmModal = false; $wire.submit();"
+                            class="bbtn bbtn-primary"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                        Ya, Kirim Laporan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 
     <style>
         .pic-dropdown-scroll::-webkit-scrollbar { width: 6px; }
@@ -244,120 +298,53 @@
 
     <script>
     /**
-     * SIVERA — Handler upload foto dengan kompresi otomatis.
-     * - File ≤ 3MB : langsung upload tanpa kompresi
-     * - File > 3MB : kompres via Canvas hingga ≤ 2MB lalu upload
+     * SIVERA — Auto-compress gambar jika > 3MB sebelum diupload ke Livewire.
      */
-    function siveraFotoHandler(input) {
+    function handleFotoFileSelect(event) {
+        const input = event.target;
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
-        const MAX_BYTES = 3 * 1024 * 1024;   // 3 MB — batas user
-        const TARGET_BYTES = 2 * 1024 * 1024; // 2 MB — batas aman PHP
-
-        _siveraShowProgress('Memproses foto...');
-
-        // Tampilkan preview lokal segera (UX responsif)
-        _siveraLocalPreview(file);
+        const MAX_BYTES = 3 * 1024 * 1024; // 3 MB
 
         if (file.size <= MAX_BYTES) {
-            // File sudah kecil — upload langsung
-            _siveraDoUpload(file);
-        } else {
-            // File besar — kompres dulu
-            _siveraCompress(file, TARGET_BYTES, function(compressed) {
-                _siveraDoUpload(compressed);
-            });
+            return; // File <= 3MB langsung diproses oleh Livewire wire:model
         }
-    }
 
-    function _siveraLocalPreview(file) {
+        // File > 3MB: hentikan propagasi awal dan kompres via Canvas
+        event.stopImmediatePropagation();
+
         const reader = new FileReader();
         reader.onload = function(e) {
-            var preview = document.getElementById('sivera-foto-preview');
-            var img     = document.getElementById('sivera-foto-img');
-            var name    = document.getElementById('sivera-foto-name');
-            var ph      = document.getElementById('sivera-foto-placeholder');
-            if (preview && img) {
-                img.src  = e.target.result;
-                if (name) name.textContent = file.name;
-                preview.style.display = 'flex';
-            }
-            if (ph) ph.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function _siveraCompress(file, targetBytes, callback) {
-        _siveraShowProgress('Mengompres foto besar...');
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var img = new Image();
+            const img = new Image();
             img.onload = function() {
-                var MAX_DIM = 1920;
-                var scale   = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
-                var canvas  = document.createElement('canvas');
-                canvas.width  = Math.round(img.width  * scale);
+                const MAX_DIM = 1920;
+                const scale = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(img.width * scale);
                 canvas.height = Math.round(img.height * scale);
-                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                var quality = 0.85;
-                var tryNext = function() {
-                    canvas.toBlob(function(blob) {
-                        if (!blob) { callback(file); return; }
-                        if (blob.size <= targetBytes || quality < 0.3) {
-                            var out = new File(
-                                [blob],
-                                file.name.replace(/\.[^.]+$/, '_compressed.jpg'),
-                                { type: 'image/jpeg', lastModified: Date.now() }
-                            );
-                            callback(out);
-                        } else {
-                            quality -= 0.1;
-                            tryNext();
-                        }
-                    }, 'image/jpeg', quality);
-                };
-                tryNext();
+                canvas.toBlob(function(blob) {
+                    if (blob) {
+                        const compressedFile = new File(
+                            [blob],
+                            file.name.replace(/\.[^.]+$/, '.jpg'),
+                            { type: 'image/jpeg', lastModified: Date.now() }
+                        );
+
+                        const dt = new DataTransfer();
+                        dt.items.add(compressedFile);
+                        input.files = dt.files;
+
+                        // Trigger event change Livewire dengan file yang telah dikompres
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }, 'image/jpeg', 0.82);
             };
-            img.onerror = function() { callback(file); };
             img.src = e.target.result;
         };
-        reader.onerror = function() { callback(file); };
         reader.readAsDataURL(file);
-    }
-
-    function _siveraDoUpload(file) {
-        _siveraShowProgress('Mengunggah foto...');
-        // Gunakan ID komponen form-temuan yang diinjeksi dari PHP, bukan querySelector
-        var componentId = '{{ $this->getId() }}';
-        var component   = Livewire.find(componentId);
-        if (!component) { _siveraHideProgress(); return; }
-
-        component.upload(
-            'foto_temuan',
-            file,
-            function() { _siveraHideProgress(); }, // sukses
-            function(err) {                          // gagal
-                _siveraHideProgress();
-                console.error('[SIVERA] Upload gagal:', err);
-            },
-            function(e) {                            // progress
-                var pct = e.detail ? Math.round(e.detail.progress) : '...';
-                _siveraShowProgress('Mengunggah foto ' + pct + '%...');
-            }
-        );
-    }
-
-    function _siveraShowProgress(msg) {
-        var el = document.getElementById('sivera-upload-progress');
-        var lb = document.getElementById('sivera-upload-label');
-        if (el) el.style.display = 'flex';
-        if (lb) lb.textContent = msg || 'Memproses...';
-    }
-
-    function _siveraHideProgress() {
-        var el = document.getElementById('sivera-upload-progress');
-        if (el) el.style.display = 'none';
     }
     </script>
 </div>

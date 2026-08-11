@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT System Administration — Secret Portal</title>
+    <title>Dashboard Super Administrator</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,12 +209,7 @@
             <div class="it-logo">
                 <span class="material-symbols-outlined">admin_panel_settings</span>
             </div>
-            <h1 class="it-title">IT Control Portal</h1>
-            <p class="it-sub">Akses Terisolasi Khusus Administrator IT</p>
-            <div class="it-badge">
-                <span class="material-symbols-outlined" style="font-size:14px;">lock</span>
-                Restricted IT Access
-            </div>
+            <h1 class="it-title">Dashboard Super Administrator</h1>
         </div>
 
         @if(session('success'))
@@ -234,32 +229,31 @@
         <form method="POST" action="{{ route('it.login.submit') }}">
             @csrf
 
-            {{-- NIK / Username --}}
+            {{-- Username --}}
             <div class="it-field">
-                <label for="nik" class="it-label">NIK / Username IT</label>
+                <label for="nik" class="it-label">Username</label>
                 <div class="it-input-wrap">
                     <span class="material-symbols-outlined">badge</span>
-                    <input type="text" id="nik" name="nik" value="{{ old('nik') }}" class="it-input" placeholder="Masukkan NIK IT (misal: 0000000)" required autofocus />
+                    <input type="text" id="nik" name="nik" value="{{ old('nik') }}" class="it-input" required autofocus />
                 </div>
             </div>
 
             {{-- Password --}}
             <div class="it-field">
-                <label for="password" class="it-label">Password Super Admin</label>
+                <label for="password" class="it-label">Password</label>
                 <div class="it-input-wrap">
                     <span class="material-symbols-outlined">key</span>
-                    <input type="password" id="password" name="password" class="it-input" placeholder="••••••••" required />
+                    <input type="password" id="password" name="password" class="it-input" required />
                 </div>
             </div>
 
-            {{-- Secret IT PIN Code --}}
+            {{-- PIN Keamanan --}}
             <div class="it-field">
-                <label for="secret_pin" class="it-label">PIN Keamanan IT</label>
+                <label for="secret_pin" class="it-label">PIN Keamanan</label>
                 <div class="it-input-wrap">
                     <span class="material-symbols-outlined">security</span>
-                    <input type="password" id="secret_pin" name="secret_pin" class="it-input" placeholder="Masukkan PIN IT (Default: 2026)" required />
+                    <input type="password" id="secret_pin" name="secret_pin" class="it-input" required />
                 </div>
-                <p style="font-size:11px;color:#64748b;margin-top:5px;">Master PIN keamanan internal tim IT</p>
             </div>
 
             <button type="submit" class="it-btn">

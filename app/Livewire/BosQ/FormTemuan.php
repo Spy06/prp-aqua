@@ -214,8 +214,7 @@ class FormTemuan extends Component
             $this->tanggal_temuan  = Carbon::now()->format('Y-m-d');
             $this->due_date_action = Carbon::now()->addDays(7)->format('Y-m-d');
 
-            session()->flash('success', "Observasi BOS'Q berhasil dilaporkan!" .
-                ($isNegatif ? ' Laporan telah diteruskan ke tim QA untuk verifikasi.' : ' Status langsung Closed (Positif).'));
+            session()->flash('success', "Observasi BOS'Q berhasil dilaporkan");
 
             $this->dispatch('temuanAdded');
 

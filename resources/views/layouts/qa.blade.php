@@ -656,9 +656,15 @@
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                     <span>Grafik Temuan</span>
                 </a>
-                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                    <span>Daftar Temuan</span>
+                @php $pendingQaCount = \App\Models\Temuan::where('status', 'closed_pending_qa')->count(); @endphp
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate style="justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Temuan</span>
+                    </div>
+                    @if($pendingQaCount > 0)
+                        <span style="background:var(--error, #ef4444);color:white;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1;">{{ $pendingQaCount }}</span>
+                    @endif
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
@@ -685,9 +691,15 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                         <span>Grafik Temuan</span>
                     </a>
-                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                        <span>Daftar Temuan</span>
+                    @php $pendingQaCount = \App\Models\Temuan::where('status', 'closed_pending_qa')->count(); @endphp
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                            <span>Daftar Temuan</span>
+                        </div>
+                        @if($pendingQaCount > 0)
+                            <span style="background:var(--error, #ef4444);color:white;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1;">{{ $pendingQaCount }}</span>
+                        @endif
                     </a>
                     <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                         <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
@@ -725,9 +737,15 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                         <span>Grafik Temuan</span>
                     </a>
-                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                        <span>Daftar Temuan</span>
+                    @php $pendingQaCount = \App\Models\Temuan::where('status', 'closed_pending_qa')->count(); @endphp
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                            <span>Daftar Temuan</span>
+                        </div>
+                        @if($pendingQaCount > 0)
+                            <span style="background:var(--error, #ef4444);color:white;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1;">{{ $pendingQaCount }}</span>
+                        @endif
                     </a>
 
                     <span class="qs-group-label" style="margin-top:16px;">Pelapor & PIC</span>

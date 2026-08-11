@@ -1,4 +1,4 @@
-<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px; overflow: visible !important;">
+<div class="bcard fu" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 16px; overflow: visible !important;" x-data="{ showConfirmModal: false }">
     {{-- Card Header --}}
     <div class="bcard-header" style="justify-content:space-between; border-bottom: 1px solid var(--bbor); padding: 20px 24px;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -29,9 +29,10 @@
             </div>
         @endif
 
-        <form wire:submit.prevent="submit" style="display:flex;flex-direction:column;gap:24px;">
+        <form @submit.prevent="showConfirmModal = true" style="display:flex;flex-direction:column;gap:24px;">
 
             <div class="form-grid-2col">
+
 
                 {{-- ── KOLOM KIRI: Lokasi, Deskripsi Observasi & Auditee ── --}}
                 <div style="display:flex;flex-direction:column;gap:18px;">
@@ -364,12 +365,64 @@
                     <span class="material-symbols-outlined" style="font-size:18px;">close</span>
                     Batal
                 </button>
-                <button type="submit" class="bbtn bbtn-primary" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="submit" class="material-symbols-outlined" style="font-size:18px;">send</span>
-                    <span wire:loading wire:target="submit" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
-                    Kirim Observasi BOS'Q
+                <button type="button" @click="showConfirmModal = true" class="bbtn bbtn-primary" wire:loading.attr="disabled" wire:target="submit,foto_temuan">
+                    <span wire:loading.remove wire:target="submit,foto_temuan" class="material-symbols-outlined" style="font-size:18px;">send</span>
+                    <span wire:loading wire:target="submit,foto_temuan" class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">sync</span>
+                    <span wire:loading.remove wire:target="submit,foto_temuan">Kirim Observasi BOS'Q</span>
+                    <span wire:loading wire:target="submit">Menyimpan...</span>
+                    <span wire:loading wire:target="foto_temuan">Mengunggah...</span>
                 </button>
             </div>
         </form>
     </div>
+
+    {{-- Modal Dialog Konfirmasi Kirim Observasi --}}
+    <template x-teleport="body">
+        <div x-show="showConfirmModal"
+             x-cloak
+             style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+
+            <div @click.outside="showConfirmModal = false"
+                 style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:fit-content;background:var(--bcard, #ffffff);border:1.5px solid var(--bbor, #e2e8f0);border-radius:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);max-width:440px;width:calc(100% - 40px);padding:28px 24px;text-align:center;"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95">
+
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--bp-light, #e3f2fd);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 4px 12px rgba(21,101,192,0.15);">
+                    <span class="material-symbols-outlined fil" style="font-size:32px;color:var(--bp, #1565c0);">help</span>
+                </div>
+
+                <h3 style="font-size:18px;font-weight:700;color:var(--btxt, #1e293b);margin:0 0 8px 0;">Konfirmasi Kirim Observasi</h3>
+                <p style="font-size:13.5px;color:var(--btxt2, #64748b);line-height:1.6;margin:0 0 24px 0;">
+                    Apakah Anda sudah yakin data laporan dan observasi BOS'Q ini sudah sesuai dan siap dikirim?
+                </p>
+
+                <div style="display:flex;gap:10px;justify-content:center;">
+                    <button type="button"
+                            @click="showConfirmModal = false"
+                            class="bbtn bbtn-secondary"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                        Periksa Kembali
+                    </button>
+                    <button type="button"
+                            @click="showConfirmModal = false; $wire.submit();"
+                            class="bbtn bbtn-primary"
+                            style="flex:1;justify-content:center;padding:10px 16px;border-radius:10px;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                        Ya, Kirim Observasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>

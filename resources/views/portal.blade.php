@@ -50,9 +50,7 @@
     <header class="relative z-10 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md px-6 py-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-extrabold text-lg shadow-md">
-                    A
-                </div>
+                <img src="{{ asset('images/aqua-logo.png') }}" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/id/3/36/AQUA_Logo_2013.png';" alt="AQUA Logo" class="h-10 w-auto object-contain drop-shadow-md">
                 <div>
                     <h1 class="font-hanken font-extrabold text-slate-900 dark:text-white text-base sm:text-lg leading-tight tracking-tight">
                         PT TIRTA INVESTAMA

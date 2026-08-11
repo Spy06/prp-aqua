@@ -12,12 +12,21 @@ use Illuminate\Support\Carbon;
 class BosqExportController extends Controller
 {
     /**
-     * Guard: Hanya role QA yang dapat mengunduh export.
+     * Guard: Hanya role QA & PIC BOS'Q yang dapat mengunduh export Dashboard/Daftar.
      */
     protected function requireQa(): void
     {
-        if (auth()->user()?->role !== 'qa') {
-            abort(403, 'Hanya QA yang dapat mengakses fitur export BOS\'Q.');
+        $user = auth()->user();
+        if (!$user) {
+            abort(403, 'Unauthorized.');
+        }
+
+        if ($user->role === 'superadmin') {
+            abort(403, 'Super Admin tidak dapat mengakses data ini.');
+        }
+
+        if ($user->role !== 'qa' && !$user->isBosqPicUser()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk fitur export BOS\'Q.');
         }
     }
 
@@ -111,7 +120,7 @@ class BosqExportController extends Controller
             ];
         })->values();
 
-        $filename = 'BOSQ_Observasi_' . str_replace(' ', '_', $label) . '.xls';
+        $filename = 'BOSQ_Observasi_' . str_replace([' ', '/', '\\'], '_', $label) . '.xls';
 
         return response()->view('excel.bosq-daftar', [
             'temuans'       => $temuans,
@@ -147,7 +156,7 @@ class BosqExportController extends Controller
             'positif'     => $temuans->where('dampak_temuan', 'positif')->count(),
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->stream('BOSQ_Dashboard_' . str_replace(' ', '_', $label) . '.pdf');
+        return $pdf->stream('BOSQ_Dashboard_' . str_replace([' ', '/', '\\'], '_', $label) . '.pdf');
     }
 
     /**

@@ -27,8 +27,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'nik', 'role', 'no_whatsapp', 'password', 'it_pin'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Fillable(['name', 'email', 'nik', 'role', 'no_whatsapp', 'password', 'it_pin', 'encrypted_password'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'encrypted_password'])]
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
@@ -42,8 +42,9 @@ class User extends Authenticatable implements PasskeyUser
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'email_verified_at'  => 'datetime',
+            'password'           => 'hashed',
+            'encrypted_password' => 'encrypted',
         ];
     }
 
@@ -64,11 +65,31 @@ class User extends Authenticatable implements PasskeyUser
             return true;
         }
 
+        // PIC dari Master Karyawan / SIVERA
         if ($this->karyawan && $this->karyawan->is_pic && $this->karyawan->status_aktif) {
             return true;
         }
+        if (Temuan::where('pic_id', $this->id)->exists()) {
+            return true;
+        }
 
-        return Temuan::where('pic_id', $this->id)->exists();
+        // PIC dari BOS'Q
+        if ($this->bosqSubAreas()->exists()) {
+            return true;
+        }
+        if (BosqTemuan::where('auditee_id', $this->id)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Cek apakah user ini adalah PIC terdaftar di BOS'Q.
+     */
+    public function isBosqPicUser(): bool
+    {
+        return $this->isPicUser();
     }
 
     /**

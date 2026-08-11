@@ -197,7 +197,7 @@ class FormTemuan extends Component
                       . "Buka dan verifikasi di:\n{$link}";
 
                 $qaUsers = User::where('role', 'qa')->get();
-                $emailService->sendBosqNotification($temuan, 'baru');
+                // $emailService->sendBosqNotification($temuan, 'baru'); // Dihapus untuk mencegah double email ke auditee/PIC
 
                 foreach ($qaUsers as $qa) {
                     if ($qa->email) {

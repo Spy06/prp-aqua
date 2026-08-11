@@ -569,8 +569,7 @@
                     <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
-                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
+                    <h1 style="color:#7c3aed; font-size: {{ auth()->user()->isSuperAdmin() ? '14px' : '17px' }}; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">{{ auth()->user()->isSuperAdmin() ? "Admin Sivera & BosQ" : "SIVERA" }}</h1>
                 </div>
             </div>
         </div>
@@ -581,7 +580,7 @@
             {{-- Static User Profile Display --}}
             @auth
             <div class="qtop-profile-pill" style="background:#f3e8ff; border:1px solid rgba(124,58,237,0.2); color:#6b21a8;">
-                <div class="qtop-av" style="background:#7c3aed; color:#fff; font-weight:700;">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="qs-av" style="background:#7c3aed; color:#fff; font-weight:700;">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <span class="name" style="font-size:13px; font-weight:600; color:#6b21a8;">{{ auth()->user()->name }}</span>
             </div>
             @endauth
@@ -597,8 +596,7 @@
                     <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
-                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
+                    <h1 style="color:#7c3aed; font-size: {{ auth()->user()->isSuperAdmin() ? '14px' : '17px' }}; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">{{ auth()->user()->isSuperAdmin() ? "Admin Sivera & BosQ" : "SIVERA" }}</h1>
                 </div>
             </div>
             <button id="mobile-menu-close" class="qs-close-btn" aria-label="Close Menu">
@@ -656,15 +654,9 @@
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                     <span>Grafik Temuan</span>
                 </a>
-                @php $pendingQaCount = \App\Models\Temuan::where('status', 'closed_pending_qa')->count(); @endphp
-                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate style="justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                        <span>Daftar Temuan</span>
-                    </div>
-                    @if($pendingQaCount > 0)
-                        <span style="background:var(--error, #ef4444);color:white;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1;">{{ $pendingQaCount }}</span>
-                    @endif
+                <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                    <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                    <span>Daftar Temuan</span>
                 </a>
                 <a class="qs-item {{ request()->routeIs('qa.rekap') ? 'active' : '' }}" href="{{ route('qa.rekap') }}" wire:navigate>
                     <span class="material-symbols-outlined ic {{ request()->routeIs('qa.rekap') ? 'fil' : '' }}">calendar_month</span>
@@ -737,15 +729,9 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('qa.dashboard') ? 'fil' : '' }}">bar_chart</span>
                         <span>Grafik Temuan</span>
                     </a>
-                    @php $pendingQaCount = \App\Models\Temuan::where('status', 'closed_pending_qa')->count(); @endphp
-                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate style="justify-content:space-between;">
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
-                            <span>Daftar Temuan</span>
-                        </div>
-                        @if($pendingQaCount > 0)
-                            <span style="background:var(--error, #ef4444);color:white;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;line-height:1;">{{ $pendingQaCount }}</span>
-                        @endif
+                    <a class="qs-item {{ request()->routeIs('qa.daftar-temuan') ? 'active' : '' }}" href="{{ route('qa.daftar-temuan') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('qa.daftar-temuan') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Temuan</span>
                     </a>
 
                     <span class="qs-group-label" style="margin-top:16px;">Pelapor & PIC</span>

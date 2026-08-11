@@ -24,7 +24,17 @@ new #[Title('Ganti Password')] class extends Component {
             $layout = 'layouts.bosq';
             $title  = __('Ganti Password — BOS\'Q');
         } else {
-            $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
+            $user = Auth::user();
+            $isPicUser = $user && $user->role === 'karyawan' && (
+                \App\Models\Temuan::where('pic_id', $user->id)->exists() ||
+                \App\Models\Karyawan::where('nik', $user->nik)->where('status_aktif', true)->exists()
+            );
+
+            if ($user && ($user->role === 'qa' || $user->isSuperAdmin() || $isPicUser)) {
+                $layout = 'layouts.qa';
+            } else {
+                $layout = 'layouts.app';
+            }
             $title  = __('Ganti Password — SIVERA');
         }
         $view->layout($layout, ['title' => $title]);
@@ -98,7 +108,8 @@ new #[Title('Ganti Password')] class extends Component {
             return;
         }
 
-        $user->update(['it_pin' => $this->new_pin]);
+        $user->it_pin = $this->new_pin;
+        $user->save();
 
         $this->reset('current_pin', 'new_pin', 'new_pin_confirmation');
 

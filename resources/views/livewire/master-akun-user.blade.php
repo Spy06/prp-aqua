@@ -137,9 +137,9 @@
 
             {{-- Edit Password --}}
             <div>
-                <label for="edit-password" class="blabel">Password Akun User <span style="color:var(--be);">*</span></label>
-                <input type="text" id="edit-password" wire:model="edit_password" class="binput" placeholder="Masukkan password user..." />
-                <span style="font-size:11px;color:var(--btxt2);margin-top:3px;display:block;">Default awal terisi NIK saat ini. Super Admin dapat langsung menghapus & menggantinya secara bebas.</span>
+                <label for="edit-password" class="blabel">Password Akun User</label>
+                <input type="text" id="edit-password" wire:model="edit_password" class="binput" placeholder="Masukkan password user (opsional)..." />
+                <span style="font-size:11px;color:var(--btxt2);margin-top:3px;display:block;">Kosongkan jika tidak ingin mengubah password akun ini.</span>
                 @error('edit_password') <p class="berr-msg">{{ $message }}</p> @enderror
 
                 <div style="margin-top:8px;">

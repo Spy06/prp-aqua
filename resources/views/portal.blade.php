@@ -93,20 +93,17 @@
                     <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
                     
                     <div>
-                        <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center mb-6">
                             <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
                                 <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">verified_user</span>
                             </div>
-                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                                SIVERA v2.0
-                            </span>
                         </div>
 
                         <h3 class="font-hanken text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                             SIVERA
                         </h3>
                         <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
-                            Sistem Verifikasi PRP Plant
+                            Sistem Verifikasi PRP Plant Cianjur
                         </p>
                         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
                             Sistem verifikasi, pelaporan temuan Prerequisite Program (PRP), pemantauan tindak lanjut PIC, rekapitulasi data, dan verifikasi tim QA Plant Cianjur.
@@ -130,17 +127,14 @@
                     <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
                     
                     <div>
-                        <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center mb-6">
                             <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
                                 <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">visibility</span>
                             </div>
-                            <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
-                                BOS'Q v1.0
-                            </span>
                         </div>
 
                         <h3 class="font-hanken text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            BOS'Q
+                            BOS'QU
                         </h3>
                         <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
                             Behavior Observation System Quality
@@ -152,7 +146,6 @@
                         <div class="flex flex-wrap gap-2 mb-8">
                             <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">👁️ Lapor Observasi</span>
                             <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">✅ Tindak Lanjut</span>
-                            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">🛡️ Verifikasi QA</span>
                         </div>
                     </div>
 

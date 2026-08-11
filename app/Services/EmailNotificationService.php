@@ -90,12 +90,12 @@ class EmailNotificationService
             $email = $recipientEmail;
             if (!$email) {
                 $email = match($type) {
-                    'baru'        => $bosqTemuan->auditee?->email,
+                    'baru'        => null, // Tidak dikirim ke auditee
                     'subarea_pic' => $recipientEmail,
                     'tindaklanjut'=> $bosqTemuan->pelapor?->email,
                     'bukti'       => null,
-                    'closed'      => $bosqTemuan->auditee?->email ?? $bosqTemuan->pelapor?->email,
-                    default       => $bosqTemuan->auditee?->email,
+                    'closed'      => $bosqTemuan->pelapor?->email,
+                    default       => null,
                 };
             }
 
@@ -109,9 +109,9 @@ class EmailNotificationService
                 return false;
             }
 
-            $recipientName = $bosqTemuan->auditee?->name
-                ?? \App\Models\User::where('email', $email)->value('name')
-                ?? null;
+            // Cari nama penerima berdasarkan email yang dituju
+            $recipientName = \App\Models\User::where('email', $email)->value('name')
+                ?? 'Tim BOS\'Q';
 
             Mail::to($email)->send(new TemuanNotificationMail($bosqTemuan, 'bosq', $type, $recipientName));
 

@@ -104,7 +104,6 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['role:qa'])->group(function () {
             Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
             Route::get('/export/pdf/daftar', [\App\Http\Controllers\ExportController::class, 'pdfDaftar'])->name('export.pdf.daftar');
-            Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])->name('export.pdf.temuan');
             Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
         });
 
@@ -112,6 +111,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/temuan/{temuan}', function (\App\Models\Temuan $temuan) {
             return view('pages.temuan-detail', ['temuan' => $temuan]);
         })->name('temuan.detail')->middleware('can:view,temuan');
+
+        // Export PDF Satu Temuan (PIC, Pelapor, QA)
+        Route::get('/export/pdf/temuan/{temuan}', [\App\Http\Controllers\ExportController::class, 'pdfTemuan'])
+            ->name('export.pdf.temuan')
+            ->middleware('can:view,temuan');
     });
 
     // ── BOS'Q Routes ──
@@ -120,18 +124,25 @@ Route::middleware(['auth'])->group(function () {
             Route::view('/beranda', 'pages.bosq.beranda')->name('beranda');
         });
 
-        Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
+        // PIC & QA: Dashboard & Daftar Observasi & Export BOS'Q
+        Route::middleware(['role:qa,bosq_pic'])->prefix('qa')->name('qa.')->group(function () {
             Route::get('/dashboard', \App\Livewire\BosQ\DashboardQA::class)->name('dashboard');
             Route::get('/daftar-observasi', \App\Livewire\BosQ\DaftarObservasiQA::class)->name('daftar-observasi');
+            
+            // Export routes untuk Dashboard/Daftar
+            Route::get('/export/csv', [\App\Http\Controllers\BosqExportController::class, 'excel'])->name('export.csv');
+            Route::get('/export/pdf/dashboard', [\App\Http\Controllers\BosqExportController::class, 'pdfDashboard'])->name('export.pdf.dashboard');
+        });
+
+        // Hanya QA: Rekap, Master Data, dan Export BOS'Q
+        Route::middleware(['role:qa'])->prefix('qa')->name('qa.')->group(function () {
             Route::get('/rekap', \App\Livewire\BosQ\RekapKepatuhan::class)->name('rekap');
             Route::get('/master/line', \App\Livewire\BosQ\MasterLine::class)->name('master.line');
             Route::get('/master/subarea', \App\Livewire\BosQ\MasterSubArea::class)->name('master.subarea');
             Route::get('/master/elemen', \App\Livewire\BosQ\MasterElemenQfs::class)->name('master.elemen');
             Route::get('/master/karyawan', \App\Livewire\BosQ\MasterKaryawan::class)->name('master.karyawan');
 
-            // Export routes BOS'Q
-            Route::get('/export/csv', [\App\Http\Controllers\BosqExportController::class, 'excel'])->name('export.csv');
-            Route::get('/export/pdf/dashboard', [\App\Http\Controllers\BosqExportController::class, 'pdfDashboard'])->name('export.pdf.dashboard');
+            // Export routes Rekap BOS'Q
             Route::get('/export/rekap/csv', [\App\Http\Controllers\BosqExportController::class, 'rekapExcel'])->name('export.rekap.csv');
             Route::get('/export/rekap/pdf', [\App\Http\Controllers\BosqExportController::class, 'pdfRekap'])->name('export.rekap.pdf');
         });

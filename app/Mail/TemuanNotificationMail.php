@@ -43,7 +43,7 @@ class TemuanNotificationMail extends Mailable implements ShouldQueue
             'tindaklanjut' => 'Rencana Aksi Telah Diperbarui',
             'bukti'        => 'Bukti Perbaikan Dikirim – Mohon Verifikasi',
             'closed'       => 'Temuan #' . $this->temuan->id . ' Telah Ditutup',
-            'subarea_pic'  => 'Anda Ditunjuk sebagai PIC Sub-Area',
+            'subarea_pic'  => 'Peringatan Observasi Baru di Sub Area Anda',
             default        => 'Pembaruan Status Temuan',
         };
 

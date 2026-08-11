@@ -267,8 +267,7 @@
                     <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
-                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
+                    <h1 style="color:#7c3aed; font-size: {{ auth()->user()->isSuperAdmin() ? '14px' : '17px' }}; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">{{ auth()->user()->isSuperAdmin() ? "Admin Sivera & BosQ" : "SIVERA" }}</h1>
                 </div>
             </div>
             @else
@@ -314,8 +313,7 @@
                     <span class="material-symbols-outlined" style="color:#fff;">verified_user</span>
                 </div>
                 <div class="logo-text">
-                    <h1 style="color:#7c3aed; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; margin: 0;">SIVERA</h1>
-                    <p style="color:#697586; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; margin: 0;">VERSION 1.0.0</p>
+                    <h1 style="color:#7c3aed; font-size: {{ auth()->user()->isSuperAdmin() ? '14px' : '17px' }}; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">{{ auth()->user()->isSuperAdmin() ? "Admin Sivera & BosQ" : "SIVERA" }}</h1>
                 </div>
             </div>
             @else
@@ -455,6 +453,18 @@
                         <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.beranda') ? 'fil' : '' }}">home</span>
                         <span>Beranda BOS'Q</span>
                     </a>
+
+                    @if(auth()->user()->isBosqPicUser())
+                    <span class="qs-section-label" style="margin-top:12px;">Monitoring & Laporan</span>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.dashboard') ? 'active' : '' }}" href="{{ route('bosq.qa.dashboard') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.dashboard') ? 'fil' : '' }}">dashboard</span>
+                        <span>Grafik Temuan BOS'Q</span>
+                    </a>
+                    <a class="qs-item {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'active' : '' }}" href="{{ route('bosq.qa.daftar-observasi') }}" wire:navigate>
+                        <span class="material-symbols-outlined ic {{ request()->routeIs('bosq.qa.daftar-observasi') ? 'fil' : '' }}">list_alt</span>
+                        <span>Daftar Observasi BOS'Q</span>
+                    </a>
+                    @endif
 
                     <span class="qs-section-label" style="margin-top:12px;color:#7c3aed;font-weight:700;">BERALIH SISTEM</span>
                     <a class="qs-item" href="{{ route('beranda') }}" wire:navigate>

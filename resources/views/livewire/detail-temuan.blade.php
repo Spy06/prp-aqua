@@ -1,10 +1,16 @@
 <div style="max-width:900px;margin:0 auto;" id="detail-temuan-container" x-data="{ lightboxOpen: false, lightboxSrc: '', lightboxTitle: '' }">
 
-    {{-- Breadcrumb --}}
-    <div class="breadcrumb fu">
-        <a href="{{ route('beranda') }}">Beranda</a>
-        <span class="material-symbols-outlined sep" style="font-size:16px;">chevron_right</span>
-        <span style="color:var(--btxt);font-weight:600;">Temuan #{{ $temuan->id }}</span>
+    {{-- Breadcrumb & Actions --}}
+    <div class="fu" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <div class="breadcrumb" style="margin-bottom:0;">
+            <a href="{{ route('beranda') }}">Beranda</a>
+            <span class="material-symbols-outlined sep" style="font-size:16px;">chevron_right</span>
+            <span style="color:var(--btxt);font-weight:600;">Temuan #{{ $temuan->id }}</span>
+        </div>
+        <a href="{{ route('export.pdf.temuan', $temuan->id) }}" class="bbtn bbtn-primary bbtn-sm" style="display:flex; align-items:center; gap:6px; background:var(--bp); color:#fff; padding:6px 14px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:600; box-shadow:0 4px 12px rgba(25,118,210,0.25);">
+            <span class="material-symbols-outlined" style="font-size:18px;">picture_as_pdf</span>
+            Unduh Laporan PDF
+        </a>
     </div>
 
     {{-- Card: Info Temuan --}}

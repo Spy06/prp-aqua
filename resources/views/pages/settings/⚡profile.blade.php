@@ -30,7 +30,17 @@ new #[Title('Pengaturan Profil')] class extends Component {
             $layout = 'layouts.bosq';
             $title  = __('Pengaturan Profil — BOS\'Q');
         } else {
-            $layout = Auth::user()?->role === 'qa' ? 'layouts.qa' : 'layouts.app';
+            $user = Auth::user();
+            $isPicUser = $user && $user->role === 'karyawan' && (
+                \App\Models\Temuan::where('pic_id', $user->id)->exists() ||
+                \App\Models\Karyawan::where('nik', $user->nik)->where('status_aktif', true)->exists()
+            );
+
+            if ($user && ($user->role === 'qa' || $user->isSuperAdmin() || $isPicUser)) {
+                $layout = 'layouts.qa';
+            } else {
+                $layout = 'layouts.app';
+            }
             $title  = __('Pengaturan Profil — SIVERA');
         }
         $view->layout($layout, ['title' => $title]);

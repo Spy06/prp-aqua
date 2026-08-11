@@ -113,7 +113,7 @@ class ExportController extends Controller
             ];
         })->values();
 
-        $filename = 'SIVERA_Daftar_Temuan_' . str_replace(' ', '_', $label) . '.xls';
+        $filename = 'SIVERA_Daftar_Temuan_' . str_replace([' ', '/', '\\'], '_', $label) . '.xls';
 
         return response()->view('excel.rekap', [
             'temuans'       => $temuans,
@@ -149,7 +149,7 @@ class ExportController extends Controller
             'closedAcc'   => $temuans->where('status', 'closed_acc')->count(),
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->stream('SIVERA_Daftar_Temuan_' . str_replace(' ', '_', $label) . '.pdf');
+        return $pdf->stream('SIVERA_Daftar_Temuan_' . str_replace([' ', '/', '\\'], '_', $label) . '.pdf');
     }
 
     // =====================================================================
@@ -161,7 +161,6 @@ class ExportController extends Controller
      */
     public function pdfTemuan(Temuan $temuan)
     {
-        $this->requireQa();
 
         $temuan->loadMissing(['departemen', 'pelapor', 'pic', 'klausul', 'tindakLanjut']);
 
@@ -260,7 +259,7 @@ class ExportController extends Controller
             'akhir'         => $akhir,
         ])->setPaper('a4', 'landscape');
 
-        $filename = 'rekap-temuan-prp-' . str_replace(' ', '-', strtolower($label)) . '-' . now()->format('Ymd') . '.pdf';
+        $filename = 'rekap-temuan-prp-' . str_replace([' ', '/', '\\'], '-', strtolower($label)) . '-' . now()->format('Ymd') . '.pdf';
 
         return $pdf->download($filename);
     }

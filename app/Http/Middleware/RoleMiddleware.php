@@ -26,9 +26,16 @@ class RoleMiddleware
             return $next($request);
         }
 
-        if (! in_array($user->role, $roles, true)) {
-            abort(403, 'Unauthorized action.');
+        foreach ($roles as $r) {
+            if ($r === 'bosq_pic' && $user->isBosqPicUser()) {
+                return $next($request);
+            }
+            if ($user->role === $r) {
+                return $next($request);
+            }
         }
+
+        abort(403, 'Unauthorized action.');
 
         return $next($request);
     }

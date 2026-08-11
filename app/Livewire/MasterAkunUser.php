@@ -96,7 +96,7 @@ class MasterAkunUser extends Component
         $this->edit_email         = $user->email ?? '';
         $this->edit_departemen_id = $user->karyawan?->departemen_id;
         $this->edit_role          = ($user->role === 'superadmin') ? 'qa' : $user->role;
-        $this->edit_password      = $user->nik ?? '';
+        $this->edit_password      = $user->encrypted_password ?? '';
 
         $this->showFormCreate = false;
         $this->showFormEdit = true;
@@ -128,8 +128,9 @@ class MasterAkunUser extends Component
             'nik'      => $this->nik_baru,
             'name'     => $karyawan->nama,
             'email'    => $karyawan->user?->email ?: null,
-            'role'     => $this->role_baru,
-            'password' => Hash::make($this->nik_baru),
+            'role'               => $this->role_baru,
+            'password'           => Hash::make($this->nik_baru),
+            'encrypted_password' => $this->nik_baru,
         ]);
 
         session()->flash('success', "Akun untuk {$karyawan->nama} (NIK: {$this->nik_baru}) berhasil dibuat dengan password default NIK.");
@@ -165,8 +166,9 @@ class MasterAkunUser extends Component
         $user->email = $this->edit_email ?: null;
         $user->role  = $this->edit_role;
 
-        if (!empty($this->edit_password)) {
+        if (!empty($this->edit_password) && $this->edit_password !== ($user->encrypted_password ?? '')) {
             $user->password = Hash::make($this->edit_password);
+            $user->encrypted_password = $this->edit_password;
         }
 
         $user->save();
@@ -201,7 +203,10 @@ class MasterAkunUser extends Component
             return;
         }
 
-        $user->update(['password' => Hash::make($user->nik)]);
+        $user->update([
+            'password' => Hash::make($user->nik),
+            'encrypted_password' => $user->nik
+        ]);
         session()->flash('success', "Password akun {$user->name} berhasil di-reset kembali ke NIK default ({$user->nik}).");
     }
 

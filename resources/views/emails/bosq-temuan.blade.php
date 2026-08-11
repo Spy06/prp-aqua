@@ -39,7 +39,7 @@
             <div class="status-badge {{ $statusClass }}">{{ $statusText }}</div>
 
             <p style="font-size: 15px; line-height: 1.5; margin-top: 0;">
-                Halo <strong>{{ $temuan->auditee?->name ?? 'User' }}</strong>,
+                Halo <strong>{{ $recipientName ?? 'User' }}</strong>,
                 <br>
                 Berikut adalah pemberitahuan data observasi perilaku BOS'Q terbaru:
             </p>
@@ -74,6 +74,10 @@
                 <tr>
                     <td class="label">Pelapor</td>
                     <td class="value">{{ $temuan->pelapor?->name ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Auditee</td>
+                    <td class="value">{{ $temuan->auditee?->name ?? '-' }}</td>
                 </tr>
             </table>
 

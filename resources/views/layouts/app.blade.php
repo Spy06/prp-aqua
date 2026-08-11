@@ -109,6 +109,7 @@
             width: 26px; height: 26px; background: var(--bp); color: #fff;
             font-weight: 700; font-size: 11px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
         .qtop-profile-pill .name { font-size: 13px; font-weight: 600; }
 

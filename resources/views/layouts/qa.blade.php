@@ -14,6 +14,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{{ $title ?? 'QA — SIVERA' }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/aqua-logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

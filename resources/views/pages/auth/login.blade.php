@@ -23,7 +23,7 @@
         };
     @endphp
     <title>{{ $systemConfig['title'] }} - Login</title>
-
+    <link rel="icon" type="image/png" href="{{ asset('images/aqua-logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Material Symbols -->

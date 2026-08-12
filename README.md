@@ -1,4 +1,4 @@
-﻿# SIVERA & BOSQ — Sistem Verifikasi & Pelaporan Temuan Auditee
+# SIVERA & BOSQ — Sistem Verifikasi & Pelaporan Temuan Auditee
 
 > **Sistem Informasi Audit Internal & Observasi Perilaku Berbasis Web — PT Tirta Investama (Plant Cianjur)**
 
@@ -38,7 +38,6 @@ SIVERA (*Sistem Verifikasi & Pelaporan Temuan Auditee*) dan BOS'Q (*Behavior Obs
 - **Manajemen Akun User** — Super Admin dapat membuat, mengedit role, reset password, dan mengatur masa aktif akun
 - **Notifikasi Email Otomatis** — Notifikasi ke PIC, Pelapor, dan QA saat ada perubahan status temuan
 - **Rate-Limiting Email** — Sistem cooldown 2 jam mencegah spam notifikasi ke email yang sama
-- **Notifikasi WhatsApp** — Integrasi Twilio API untuk notifikasi WA otomatis pada setiap perubahan status
 - **Passkey / WebAuthn** — Dukungan login tanpa password menggunakan passkey untuk perangkat yang mendukung
 - **Manajemen Sesi** — Auto logout jika akun melewati masa berlaku (`expires_at`)
 
@@ -59,7 +58,6 @@ SIVERA (*Sistem Verifikasi & Pelaporan Temuan Auditee*) dan BOS'Q (*Behavior Obs
 | **PDF Generator** | barryvdh/laravel-dompdf ^3.1 |
 | **CSV Export** | league/csv ^9.28 |
 | **Email Gateway** | SMTP (Gmail) / Resend Laravel SDK |
-| **WhatsApp Gateway** | Twilio SDK ^8.11 |
 | **Enkripsi** | Laravel Application Encryption (Eloquent encrypted cast) |
 | **Date Handling** | CarbonImmutable (strict via Date::use()) |
 | **Passkey / WebAuthn** | @laravel/passkeys |
@@ -80,7 +78,6 @@ Pastikan semua software berikut sudah terinstall di server atau komputer pengemb
 | **Node.js** | 18+ (LTS) | Untuk build aset frontend |
 | **npm** | 9+ | Bawaan Node.js |
 | **MySQL** | 8.0+ / MariaDB 10.6+ | Database utama |
-| **Twilio Account** | — | Untuk notifikasi WhatsApp (opsional) |
 | **Gmail SMTP / Resend** | — | Untuk notifikasi Email |
 | **Supervisor** | — | Wajib di server produksi untuk menjalankan Queue Worker |
 
@@ -122,9 +119,6 @@ php artisan key:generate
 | `MAIL_ENCRYPTION` | Enkripsi koneksi SMTP | `smtps` |
 | `MAIL_FROM_ADDRESS` | Alamat email pengirim | `sistem@perusahaan.com` |
 | `MAIL_FROM_NAME` | Nama pengirim email | "SIVERA System" |
-| `TWILIO_SID` | Account SID Twilio (opsional, WA) | `ACxxxxxxxxxxxxxxxx` |
-| `TWILIO_AUTH_TOKEN` | Auth Token Twilio | `xxxxxxxxxxxxxxxxxx` |
-| `TWILIO_WHATSAPP_FROM` | Nomor WhatsApp Twilio | `+14155238886` |
 | `IT_ADMIN_PIN` | PIN rahasia portal IT Super Admin | `xxxxxx` |
 | `TEMUAN_RETENTION_YEARS` | Retensi data temuan (tahun) sebelum di-prune | `2` |
 | `PASSKEYS_USER_HANDLE_SECRET` | Secret untuk Passkey/WebAuthn | `your_secret_string` |
@@ -260,12 +254,6 @@ project-aqua/
 - **Alur Kerja:** Setiap perubahan status temuan → `EmailNotificationService::sendSiveraNotification()` / `sendBosqNotification()` dipanggil → Dicek rate-limit (cooldown 2 jam via Cache) → Jika lolos, email dikirim via SMTP/Resend
 - **Penerima:** `baru` ke PIC & QA, `tindaklanjut` ke QA, `bukti` ke QA, `closed` ke PIC & Pelapor
 
-### 4. Modul Notifikasi WhatsApp (Twilio)
-
-- **File Terkait:** `app/Jobs/SendWhatsApp.php`
-- **Alur Kerja:** Perubahan status temuan → Job `SendWhatsApp` di-dispatch ke queue → Queue worker mengirim pesan ke nomor WhatsApp via Twilio API
-- **Fault Tolerance:** Jika pengiriman gagal, aplikasi mencatat ke log dan melanjutkan eksekusi tanpa menghentikan proses utama
-
 ### 5. Modul Queue Worker (Async)
 
 - **Konfigurasi:** `QUEUE_CONNECTION=database` di `.env` — antrean disimpan di tabel `jobs` MySQL
@@ -397,12 +385,10 @@ php artisan test --parallel
 
 ### Maintainer
 
-<!-- TODO: isi manual - tambahkan nama developer/tim dan alamat email atau link GitHub -->
-
-| Peran | Nama | Kontak |
+| Peran | Nama | GitHub |
 |---|---|---|
-| Project Lead / Developer | — | — |
-| QA / Tester | — | — |
+| Developer | Mhd Fahri Irfandi Dewantara | [FahriID563](https://github.com/FahriID563) |
+| Developer | Farhan Hakim | [Spy06](https://github.com/Spy06) |
 
 ### Ucapan Terima Kasih
 
@@ -424,3 +410,9 @@ Proyek ini dibangun di atas fondasi library & tools open-source berikut:
 ---
 
 *README ini dihasilkan berdasarkan penelusuran menyeluruh terhadap source code proyek per 12 Agustus 2026.*
+
+
+
+
+
+

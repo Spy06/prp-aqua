@@ -2,7 +2,6 @@
 
 namespace App\Livewire\BosQ;
 
-use App\Jobs\SendWhatsApp;
 use App\Models\BosqElemenQfs;
 use App\Models\BosqSubArea;
 use App\Models\BosqTemuan;
@@ -182,22 +181,9 @@ class FormTemuan extends Component
                 }
             }
 
-            // Dispatch WA & Email untuk temuan negatif -> dikirim ke tim QA
+            // Kirim Email notifikasi temuan negatif ke tim QA
             if ($isNegatif) {
-                $auditeeObj  = User::find($this->auditee_id);
-                $pelaporDept = $user->karyawan?->departemen?->nama_departemen ?? 'Tanpa Departemen';
-                $link = route('bosq.temuan.detail', $temuan->id);
-                $msg  = "*[BOS'Q] Observasi Baru Perlu Verifikasi QA*\n\n"
-                      . "Observer: " . $user->name . " (Dept: " . $pelaporDept . ")\n"
-                      . "Auditee: " . ($auditeeObj?->name ?? '-') . "\n"
-                      . "📍 *Elemen*: " . (BosqElemenQfs::find($this->elemen_qfs_id)?->nama_elemen ?? '-') . "\n"
-                      . "⚠️ *Tingkat Risiko*: " . $this->tingkatResikoLabel($this->tingkat_resiko) . "\n"
-                      . "📌 *Action*: " . $this->action_negatif . "\n"
-                      . "📅 *Due Date*: " . Carbon::parse($this->due_date_action)->format('d F Y') . "\n\n"
-                      . "Buka dan verifikasi di:\n{$link}";
-
                 $qaUsers = User::where('role', 'qa')->get();
-                // $emailService->sendBosqNotification($temuan, 'baru'); // Dihapus untuk mencegah double email ke auditee/PIC
 
                 foreach ($qaUsers as $qa) {
                     if ($qa->email) {

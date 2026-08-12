@@ -2,7 +2,6 @@
 
 namespace App\Livewire\BosQ;
 
-use App\Jobs\SendWhatsApp;
 use App\Models\BosqTemuan;
 use App\Models\BosqTindakLanjut;
 use App\Models\User;

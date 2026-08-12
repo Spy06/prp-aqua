@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Jobs\SendWhatsApp;
 use App\Models\Departemen;
 use App\Models\Temuan;
 use App\Models\TindakLanjut;

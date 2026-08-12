@@ -20,7 +20,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property int         $id
  * @property string|null $nik         FK ke karyawan.nik — dipakai sebagai username login
  * @property string      $role        'karyawan' atau 'qa' — dua nilai yang diizinkan
- * @property string|null $no_whatsapp Nomor WA untuk notifikasi Twilio (format: 628xxx)
+ * @property string|null $no_whatsapp Nomor WhatsApp untuk notifikasi (format: 628xxx)
  * @property string|null $name
  * @property string|null $email       Kolom ini ada tapi tidak dipakai untuk login (NIK yang dipakai)
  * @property string      $password

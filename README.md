@@ -136,7 +136,7 @@ project-aqua/
 │   ├── Http/
 │   │   ├── Controllers/      # ExportController, BosqExportController, ItPortalAuthController
 │   │   └── Middleware/       # RoleMiddleware, SystemGuardMiddleware
-│   ├── Jobs/                 # SendWhatsApp (background job Twilio)
+│   ├── Jobs/                 # Background jobs untuk pengiriman Email async
 │   ├── Livewire/             # Komponen Livewire SIVERA
 │   │   └── BosQ/             # Komponen Livewire BOSQ
 │   ├── Mail/                 # Mailable: TemuanNotificationMail
@@ -259,7 +259,7 @@ project-aqua/
 - **Konfigurasi:** `QUEUE_CONNECTION=database` di `.env` — antrean disimpan di tabel `jobs` MySQL
 - **Menjalankan (Dev):** `php artisan queue:work`
 - **Menjalankan (Production):** Gunakan **Supervisor** agar worker berjalan 24/7 otomatis
-- **Job yang Diproses:** `SendWhatsApp` (notifikasi WA Twilio), notifikasi Email
+- **Job yang Diproses:** Notifikasi Email (Gmail SMTP) via `TemuanNotificationMail` — dikirim secara async melalui queue
 
 ### 6. Modul Retensi Data Otomatis (Scheduler)
 
@@ -402,7 +402,7 @@ Proyek ini dibangun di atas fondasi library & tools open-source berikut:
 | [Tailwind CSS v4](https://tailwindcss.com) | Utility-first CSS framework |
 | [Chart.js](https://www.chartjs.org) | Visualisasi data interaktif |
 | [Laravel DomPDF](https://github.com/barryvdh/laravel-dompdf) | Generasi dokumen PDF |
-| [Twilio SDK](https://www.twilio.com) | Notifikasi WhatsApp |
+| [Resend Laravel](https://github.com/resendlabs/resend-laravel) | SDK alternatif pengiriman Email transaksional |
 | [Pest PHP](https://pestphp.com) | Testing framework modern |
 | [Larastan](https://github.com/larastan/larastan) | Static analysis untuk Laravel |
 | [Laravel Pint](https://laravel.com/docs/pint) | Code style formatter |

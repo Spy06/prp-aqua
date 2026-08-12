@@ -68,6 +68,14 @@ class BosqExportController extends Controller
         $query = BosqTemuan::with(['departemen', 'subArea', 'elemenQfs', 'pelapor', 'auditee', 'tindakLanjut'])
             ->whereBetween('tanggal_temuan', [$awal, $akhir]);
 
+        $user = auth()->user();
+        if ($user && $user->role === 'karyawan') {
+            $query->where(function($q) use ($user) {
+                $q->where('pelapor_id', $user->id)
+                  ->orWhere('auditee_id', $user->id);
+            });
+        }
+
         if ($request->filled('departemen_id')) {
             $query->where('departemen_id', $request->input('departemen_id'));
         }

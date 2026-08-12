@@ -35,7 +35,7 @@
         .qtop-profile-pill .name { font-size: 13px; font-weight: 600; }
 
         /* ── Sidebar BOS'Q ── */
-        .qs { width: 260px; background: var(--bside); height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 50; border-right: 1px solid var(--bbor); overflow: hidden; }
+        .qs { width: 260px; background: var(--bside); height: 100dvh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 50; border-right: 1px solid var(--bbor); overflow: hidden; }
         .qs-header { height: 80px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--bbor); flex-shrink: 0; }
         .logo-area { display: flex; align-items: center; gap: 12px; width: 220px; flex-shrink: 0; }
 
@@ -87,29 +87,43 @@
             .qs-backdrop.qs-open { opacity: 1; pointer-events: auto; }
         }
         @media (max-width: 640px) {
-            .qtop { padding: 0 10px; height: 56px; }
-            .qtop-logo .logo-text p { display: none; }
-            .logo-area.qtop-logo { width: auto !important; max-width: 140px; gap: 6px; }
-            .logo-area.qtop-logo .logo-box { width: 32px; height: 32px; }
-            .logo-area.qtop-logo .logo-box span { font-size: 16px; }
-            .logo-area.qtop-logo .logo-text h1 { font-size: 14px; }
+            .qtop { padding: 0 10px; height: 50px; }
+            .logo-area.qtop-logo { gap: 6px; width: auto !important; max-width: 140px; }
+            .logo-area.qtop-logo img { height: 28px !important; margin-left: 0 !important; }
+            .logo-area.qtop-logo > div:nth-child(2) { margin: 0 6px !important; height: 18px !important; }
+            .logo-area.qtop-logo .logo-text h1 { font-size: 13px !important; }
+            .logo-area.qtop-logo .logo-text p { display: none; }
+            .logo-text h1 { font-size: 13px !important; }
+            .qs { width: 220px; }
+            .qs-item { font-size: 12px; padding: 10px 12px; }
+            
+            .qs-header { padding: 0 18px; justify-content: space-between; }
+            .qs-header .logo-area { gap: 6px; width: auto; }
+            .qs-header .logo-area img { height: 30px !important; margin-left: 0 !important; }
+            .qs-header .logo-area > div:nth-child(2) { margin: 0 6px !important; height: 20px !important; }
+            
             .qtop-profile-pill { padding: 3px 6px 3px 3px; gap: 4px; border-radius: 50px; }
             .qtop-profile-pill .name { display: none; }
 
-            .qmain { padding-top: 56px; }
-            .qcontent { padding: 10px 8px; }
+            .qmain { padding-top: 50px; }
+            .qcontent { padding: 16px; }
 
             .bcard { border-radius: 12px; width: 100%; box-sizing: border-box; }
             .bcard-header { padding: 12px 14px; gap: 8px; }
-            .bcard-body { padding: 12px 10px; }
+            .bcard-body { padding: 16px; }
 
-            .bph { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+            .bstat { padding: 12px 10px; gap: 8px; border-radius: 8px; }
+            .bstat-icon { width: 34px; height: 34px; border-radius: 6px; }
+            .bstat-val { font-size: 18px; }
+            .bstat-lbl { font-size: 10px; }
+
+            .bph { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 16px; width: 100%; }
             .bph-title { font-size: 17px; }
             .bph-sub { font-size: 12px; }
-            .bph > div:last-child { width: 100%; flex-direction: column; gap: 8px; }
+            .bph > div:last-child { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 6px; }
             .bph .bbtn { width: 100%; justify-content: center; }
 
-            .bbtn { white-space: normal; text-align: center; }
+            .bbtn { padding: 8px 14px; font-size: 12px; white-space: normal; text-align: center; }
         }
 
         /* ── Berry Cards (identik SIVERA) ── */
@@ -117,20 +131,20 @@
         .bcard-header { padding: 16px 20px; border-bottom: 1px solid var(--bbor); display: flex; align-items: center; gap: 12px; background: var(--bsur); }
         .bcard-hicon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .bcard-body { padding: 20px; }
-        @media (max-width: 640px) { .bcard-body { padding: 14px; } }
+        .bcard-body { padding: 20px; }
 
         /* ── Stat Cards ── */
-        .bstat { background: var(--bcard); border: 1px solid var(--bbor); border-radius: 12px; padding: 18px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: all 0.25s; }
+        .bstat { background: var(--bcard); border: 1px solid var(--bbor); border-radius: 10px; padding: 14px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: all 0.25s; }
         .bstat:hover { box-shadow: 0 6px 20px rgba(25,118,210,0.1); transform: translateY(-2px); }
-        .bstat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .bstat-val { font-size: 26px; font-weight: 700; color: var(--btxt); line-height: 1; }
-        .bstat-lbl { font-size: 12px; color: var(--btxt2); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bstat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .bstat-val { font-size: 22px; font-weight: 700; color: var(--btxt); line-height: 1; }
+        .bstat-lbl { font-size: 11px; color: var(--btxt2); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* ── Page Header ── */
         .bph { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; }
         .bph-title { font-size: 20px; font-weight: 700; color: var(--btxt); letter-spacing: -0.3px; margin: 0; }
         .bph-sub { font-size: 13px; color: var(--btxt2); margin-top: 3px; }
-        @media (max-width: 640px) { .bph { flex-direction: column; align-items: flex-start; } .bph-title { font-size: 18px; } }
+        .bph-sub { font-size: 13px; color: var(--btxt2); margin-top: 3px; }
 
         /* ── Status Badges ── */
         .sbadge { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; border: 1px solid transparent; white-space: nowrap; }
@@ -140,6 +154,7 @@
         .sbadge-closed { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
 
         /* ── Buttons ── */
+        .bbtn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; font-family: inherit; white-space: nowrap; }
         .bbtn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; font-family: inherit; white-space: nowrap; }
         .bbtn-primary { background: var(--bp); color: #fff; box-shadow: 0 4px 12px rgba(25,118,210,0.25); }
         .bbtn-primary:hover, .bbtn-primary:active { background: var(--bp-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25,118,210,0.35); }

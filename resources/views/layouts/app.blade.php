@@ -158,7 +158,7 @@
         .qs {
             width: 250px;
             background: var(--bside);
-            height: 100vh;
+            height: 100dvh;
             position: fixed;
             left: 0;
             top: 0;
@@ -425,38 +425,92 @@
         @media (max-width: 640px) {
             .qtop {
                 padding: 0 12px;
-                height: 56px;
+                height: 50px;
             }
 
             .qmain {
-                padding-top: 56px;
+                padding-top: 50px;
             }
 
             .qcontent {
-                padding: 12px;
+                padding: 16px;
+            }
+            
+            .qs {
+                width: 220px;
+            }
+
+            .logo-text h1 {
+                font-size: 13px !important;
+            }
+
+            .qs-item {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+
+            .qs-header {
+                padding: 0 18px;
+                justify-content: space-between;
+            }
+
+            .qs-header .logo-area {
+                gap: 6px;
+                width: auto;
+            }
+
+            .qs-header .logo-area img {
+                height: 30px !important;
+                margin-left: 0 !important;
+            }
+
+            .qs-header .logo-area > div:nth-child(2) {
+                margin: 0 6px !important;
+                height: 20px !important;
             }
 
             .qtop-profile-pill .name {
                 display: none;
             }
 
-            .qtop-logo .logo-box {
-                width: 32px;
-                height: 32px;
-                border-radius: 8px;
+            .logo-area.qtop-logo {
+                gap: 6px;
             }
 
-            .qtop-logo .logo-box span {
-                font-size: 16px;
+            .logo-area.qtop-logo img {
+                height: 28px !important;
+                margin-left: 0 !important;
             }
 
-            .qtop-logo .logo-text h1 {
-                font-size: 14px;
+            .logo-area.qtop-logo > div:nth-child(2) {
+                margin: 0 6px !important;
+                height: 18px !important;
             }
 
-            .qtop-logo .logo-text p {
+            .logo-area.qtop-logo .logo-text h1 {
+                font-size: 13px !important;
+            }
+
+            .logo-area.qtop-logo .logo-text p {
                 display: none;
             }
+
+            .bcard { border-radius: 12px; width: 100%; box-sizing: border-box; }
+            .bcard-header { padding: 12px 14px; gap: 8px; }
+            .bcard-body { padding: 16px; }
+
+            .bstat { padding: 12px 10px; gap: 8px; border-radius: 8px; }
+            .bstat-icon { width: 34px; height: 34px; border-radius: 6px; }
+            .bstat-val { font-size: 18px; }
+            .bstat-lbl { font-size: 10px; }
+
+            .bph { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 16px; width: 100%; }
+            .bph-title { font-size: 17px; }
+            .bph-sub { font-size: 12px; }
+            .bph > div:last-child { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 6px; }
+            .bph .bbtn { width: 100%; justify-content: center; }
+
+            .bbtn { padding: 8px 14px; font-size: 12px; white-space: normal; text-align: center; }
         }
 
         /* ── Berry Cards ── */
@@ -490,21 +544,19 @@
             padding: 20px;
         }
 
-        @media (max-width: 640px) {
-            .bcard-body {
-                padding: 14px;
-            }
+        .bcard-body {
+            padding: 20px;
         }
 
         /* ── Stat Cards ── */
         .bstat {
             background: var(--bcard);
             border: 1px solid var(--bbor);
-            border-radius: 12px;
-            padding: 18px 16px;
+            border-radius: 10px;
+            padding: 14px 14px;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
             transition: all 0.25s;
         }
@@ -515,9 +567,9 @@
         }
 
         .bstat-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -525,14 +577,14 @@
         }
 
         .bstat-val {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--btxt);
             line-height: 1;
         }
 
         .bstat-lbl {
-            font-size: 11.5px;
+            font-size: 11px;
             color: var(--btxt2);
             margin-top: 3px;
             font-weight: 600;
@@ -562,17 +614,6 @@
             font-size: 13px;
             color: var(--btxt2);
             margin-top: 3px;
-        }
-
-        @media (max-width: 640px) {
-            .bph {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .bph-title {
-                font-size: 18px;
-            }
         }
 
         /* ── Status Badges ── */
@@ -1025,9 +1066,8 @@
                         <div class="qtop-av">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                         <span class="name">{{ auth()->user()->name }}</span>
                     </div>
-                    <!-- Mobile Logout Button -->
-                    <form method="POST" action="{{ route('logout') }}" class="mobile-logout"
-                        style="display:none; margin: 0;">
+                    <!-- Logout Button -->
+                    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                         @csrf
                         <button type="submit" class="bbtn bbtn-secondary bbtn-sm"
                             style="padding: 6px 8px; border-color: var(--error) !important; color: var(--error);"

@@ -59,7 +59,7 @@
                     <span class="name" style="font-size:13px; font-weight:600; color:#6b21a8;">{{ auth()->user()->name }}</span>
                 </div>
                 {{-- Mobile Logout --}}
-                <form method="POST" action="{{ route('logout') }}" class="mobile-logout" style="display:none; margin: 0;">
+                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                     @csrf
                     <button type="submit" class="bbtn bbtn-secondary bbtn-sm" style="padding: 6px 8px; border-color: var(--error) !important; color: var(--error);" title="Sign Out">
                         <span class="material-symbols-outlined" style="font-size: 18px; margin: 0;">logout</span>

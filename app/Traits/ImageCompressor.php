@@ -26,6 +26,24 @@ trait ImageCompressor
         $image = null;
         if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
             $image = @imagecreatefromjpeg($sourcePath);
+            
+            // Perbaiki orientasi (rotasi) gambar berdasarkan EXIF data dari kamera HP
+            if ($image && function_exists('exif_read_data')) {
+                $exif = @exif_read_data($sourcePath);
+                if ($exif && !empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3:
+                            $image = imagerotate($image, 180, 0);
+                            break;
+                        case 6:
+                            $image = imagerotate($image, -90, 0);
+                            break;
+                        case 8:
+                            $image = imagerotate($image, 90, 0);
+                            break;
+                    }
+                }
+            }
         } elseif ($mime === 'image/png') {
             $image = @imagecreatefrompng($sourcePath);
             // Handle transparent background untuk PNG ke WebP

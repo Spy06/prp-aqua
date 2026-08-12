@@ -254,27 +254,27 @@ project-aqua/
 - **Alur Kerja:** Setiap perubahan status temuan → `EmailNotificationService::sendSiveraNotification()` / `sendBosqNotification()` dipanggil → Dicek rate-limit (cooldown 2 jam via Cache) → Jika lolos, email dikirim via SMTP/Resend
 - **Penerima:** `baru` ke PIC & QA, `tindaklanjut` ke QA, `bukti` ke QA, `closed` ke PIC & Pelapor
 
-### 5. Modul Queue Worker (Async)
+### 4. Modul Queue Worker (Async)
 
 - **Konfigurasi:** `QUEUE_CONNECTION=database` di `.env` — antrean disimpan di tabel `jobs` MySQL
 - **Menjalankan (Dev):** `php artisan queue:work`
 - **Menjalankan (Production):** Gunakan **Supervisor** agar worker berjalan 24/7 otomatis
 - **Job yang Diproses:** Notifikasi Email (Gmail SMTP) via `TemuanNotificationMail` — dikirim secara async melalui queue
 
-### 6. Modul Retensi Data Otomatis (Scheduler)
+### 5. Modul Retensi Data Otomatis (Scheduler)
 
 - **File Terkait:** `app/Console/Commands/PruneOldTemuan.php`
 - **Command:** `php artisan prp:prune-temuan [--years=N]`
 - **Fungsi:** Menghapus data temuan beserta foto pendukung yang sudah melewati batas retensi (default: 2 tahun, dikonfigurasi via `TEMUAN_RETENTION_YEARS`)
 - **Jadwal (Cron):** Daftarkan di Cron Job server: `* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1`
 
-### 7. Modul Enkripsi Data
+### 6. Modul Enkripsi Data
 
 - **File Terkait:** `app/Models/Temuan.php`, `app/Models/TindakLanjut.php`
 - **Kolom Terenkripsi:** `temuan.deskripsi`, `temuan.saran`, `tindak_lanjut.catatan_qa`
 - **Mekanisme:** Eloquent `encrypted` cast — data dienkripsi/didekripsi otomatis menggunakan `APP_KEY` saat disimpan/dibaca dari database
 
-### 8. Modul Kompresi Foto
+### 7. Modul Kompresi Foto
 
 - **Mekanisme:** GD Library PHP — foto yang diupload dikompresi otomatis ke format JPG/PNG dengan kualitas teroptimasi sebelum disimpan ke `storage/app/public/temuan/` atau `storage/app/public/bukti/`
 

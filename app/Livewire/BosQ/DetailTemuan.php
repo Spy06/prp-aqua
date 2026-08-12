@@ -54,6 +54,15 @@ class DetailTemuan extends Component
             ]);
         }
 
+        // Kirim email notifikasi bahwa observasi sudah di-close ke seluruh tim QA
+        $emailService = app(\App\Services\EmailNotificationService::class);
+        $qaUsers = \App\Models\User::where('role', 'qa')->get();
+        foreach ($qaUsers as $qa) {
+            if (!empty($qa->email)) {
+                $emailService->sendBosqNotification($this->temuan, 'closed', $qa->email);
+            }
+        }
+
         $this->temuan = $this->temuan->fresh([
             'departemen', 'line', 'subArea', 'elemenQfs', 'pelapor.karyawan.departemen', 'auditee.karyawan.departemen', 'tindakLanjut',
         ]);

@@ -63,7 +63,7 @@
     </div>
 
     {{-- Section 1: Form Tindakan & Due Date --}}
-    <form wire:submit.prevent="simpanDetail" style="margin-bottom:20px;">
+    <div style="margin-bottom:20px;">
         <div style="display:flex;flex-direction:column;gap:14px;">
 
             {{-- Deskripsi Tindakan --}}
@@ -91,17 +91,8 @@
                 @endif
             </div>
 
-            {{-- Tombol Simpan Detail (hanya tampil jika belum closed_acc) --}}
-            @if($currentStatus !== 'closed_acc')
-            <div>
-                <button type="submit" class="bbtn bbtn-secondary bbtn-sm">
-                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                    Simpan Detail
-                </button>
-            </div>
-            @endif
         </div>
-    </form>
+    </div>
 
     {{-- Section 2: File / Foto Bukti (Maksimal 3 File) --}}
     <div style="padding-top:16px;border-top:1.5px solid var(--bbor);margin-bottom:20px;">
@@ -135,7 +126,7 @@
                             <div style="height:120px;background:var(--bsur);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:pointer;"
                                  @click="picLightboxOpen = true; picLightboxSrc = '{{ Storage::disk('public')->url($path) }}'; picLightboxTitle = 'Foto Bukti #{{ $index + 1 }}'"
                                  title="Klik untuk memperbesar gambar">
-                                <img src="{{ Storage::disk('public')->url($path) }}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.25s;">
+                                <img src="{{ Storage::disk('public')->url($path) }}" loading="lazy" width="200" height="120" style="width:100%;height:100%;object-fit:cover;transition:transform 0.25s;">
                                 <div class="pic-img-hover-overlay">
                                     <span class="material-symbols-outlined" style="font-size:22px;color:#fff;">zoom_in</span>
                                     <span style="font-size:10.5px;color:#fff;font-weight:600;">Perbesar</span>
@@ -264,7 +255,7 @@
              x-transition:leave-end="opacity-0">
 
             <div @click.outside="showConfirmPendingQa = false"
-                 style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:fit-content;background:var(--bcard, #ffffff);border:1.5px solid var(--bbor, #e2e8f0);border-radius:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);max-width:440px;width:calc(100% - 40px);padding:28px 24px;text-align:center;"
+                 style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:fit-content;max-height:90vh;overflow-y:auto;background:var(--bcard, #ffffff);border:1.5px solid var(--bbor, #e2e8f0);border-radius:18px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);max-width:440px;width:calc(100% - 40px);padding:28px 24px;text-align:center;"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 transform scale-95"
                  x-transition:enter-end="opacity-100 transform scale-100"

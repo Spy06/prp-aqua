@@ -250,7 +250,7 @@
                                 <span class="sbadge sbadge-closed" style="font-size:11px;">CLOSED</span>
                             </div>
                             <div style="font-size:12px;color:var(--btxt2);margin-top:3px;">
-                                Observasi ini telah ditandai Selesai (CLOSED) oleh Pelapor / Auditee.
+                                Laporan sudah selesai dan ditutup. Tidak ada aksi lebih lanjut yang diperlukan.
                             </div>
                         </div>
                     </div>

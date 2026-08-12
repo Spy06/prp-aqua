@@ -1,7 +1,7 @@
 <div class="bcard" style="border-left:4px solid #1565c0;margin-top:20px;">
     <div class="bcard-header">
         <div class="bcard-hicon" style="background:#e3f2fd;">
-            <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">shield_check</span>
+            <span class="material-symbols-outlined fil" style="color:#1565c0;font-size:20px;">gpp_good</span>
         </div>
         <div>
             <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi Tim QA — BOS'Q</div>

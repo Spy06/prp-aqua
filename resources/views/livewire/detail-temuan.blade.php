@@ -114,7 +114,7 @@
                              @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $temuan->foto_temuan_path) }}'; lightboxTitle = 'Foto Temuan PRP #{{ $temuan->id }}'"
                              class="img-hover-container"
                              title="Klik untuk memperbesar gambar">
-                            <img src="{{ asset('storage/' . $temuan->foto_temuan_path) }}"
+                            <img src="{{ asset('storage/' . $temuan->foto_temuan_path) }}" loading="lazy" width="400" height="260"
                                  alt="Foto temuan PRP"
                                  style="width:100%;max-height:260px;object-fit:contain;display:block;transition:transform 0.25s;" />
                             <div class="img-hover-overlay">
@@ -189,7 +189,7 @@
                                         <div style="height:140px;overflow:hidden;position:relative;cursor:pointer;"
                                              @click="lightboxOpen = true; lightboxSrc = '{{ asset('storage/' . $path) }}'; lightboxTitle = 'Foto Bukti Tindak Lanjut #{{ $index + 1 }} (Temuan #{{ $temuan->id }})'"
                                              title="Klik untuk memperbesar gambar">
-                                            <img src="{{ asset('storage/' . $path) }}"
+                                            <img src="{{ asset('storage/' . $path) }}" loading="lazy" width="200" height="140"
                                                  alt="Foto bukti tindak lanjut"
                                                  style="width:100%;height:140px;object-fit:cover;display:block;transition:transform 0.25s;" />
                                             <div class="img-hover-overlay">
@@ -230,14 +230,29 @@
                     </div>
                     @endif
 
-                    @if($tl->catatan_qa)
-                    <div class="info-row" style="margin-top:14px;margin-bottom:0;">
-                        <div class="inf-label">Catatan QA</div>
-                        <div class="inf-text" style="background:#f3e5f5;border-color:#e1bee7;">{{ $tl->catatan_qa }}</div>
-                    </div>
-                    @endif
+
                 </div>
             </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Panel: Catatan QA (Jika Ada) --}}
+    @if($tl && $tl->catatan_qa)
+    <div class="bcard fu2" style="margin-bottom:20px; border-left: 4px solid #8e24aa; overflow:hidden;">
+        <div class="bcard-header" style="background-color: #f3e5f5; border-bottom: 1px solid #e1bee7;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="bcard-hicon" style="background:#e1bee7;">
+                    <span class="material-symbols-outlined fil" style="color:#8e24aa;font-size:20px;">rate_review</span>
+                </div>
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:#6a1b9a;">Catatan & Keputusan Tim QA</div>
+                    <div style="font-size:12px;color:#7b1fa2;">Revisi atau informasi khusus dari QA untuk tindak lanjut ini.</div>
+                </div>
+            </div>
+        </div>
+        <div class="bcard-body" style="padding:20px;">
+            <p style="font-size:14.5px;color:var(--btxt);line-height:1.6;margin:0;white-space:pre-wrap;font-weight:500;">{{ $tl->catatan_qa }}</p>
         </div>
     </div>
     @endif

@@ -46,7 +46,7 @@
 
                     {{-- Departemen --}}
                     <div>
-                        <label class="blabel" for="dept">Departemen <span style="color:var(--error);">*</span></label>
+                        <label class="blabel" for="dept">Departemen Temuan <span style="color:var(--error);">*</span></label>
                         <select wire:model.live="departemen_id" id="dept" class="binput">
                             <option value="">Pilih Departemen</option>
                             @foreach($departemens as $dept)
@@ -58,7 +58,7 @@
 
                     {{-- Sub Area --}}
                     <div>
-                        <label class="blabel" for="subarea">Sub Area <span style="color:var(--error);">*</span></label>
+                        <label class="blabel" for="subarea">Sub Area Temuan <span style="color:var(--error);">*</span></label>
                         <select wire:model.live="sub_area_id" id="subarea" class="binput" {{ empty($departemen_id) ? 'disabled' : '' }}>
                             <option value="">Pilih Sub Area</option>
                             @foreach($subAreas as $sa)
@@ -71,7 +71,7 @@
                     {{-- Detail Sub Area (Hanya jika memilih 'Others') --}}
                     @if($this->isSubAreaOthers)
                     <div>
-                        <label class="blabel" for="detail_sa">Detail Sub Area <span style="color:var(--error);">*</span></label>
+                        <label class="blabel" for="detail_sa">Detail Sub Area Temuan <span style="color:var(--error);">*</span></label>
                         <input type="text" wire:model="detail_sub_area" id="detail_sa" class="binput" placeholder="Tuliskan nama detail area spesifik...">
                         @error('detail_sub_area') <span class="berr">{{ $message }}</span> @enderror
                     </div>

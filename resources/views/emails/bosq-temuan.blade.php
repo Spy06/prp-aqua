@@ -182,8 +182,9 @@
             </div>
         </div>
 
-        <div class="email-footer">
-            Email ini dikirim secara otomatis oleh Sistem BOS'Q. Harap tidak membalas email ini.
+        <div class="email-footer" style="padding-top: 20px; line-height: 1.6;">
+            Email ini dikirim otomatis oleh Sistem BOS'Q &bull; {{ now()->format('d M Y, H:i') }} WIB<br>
+            Harap tidak membalas email ini. Jika ada pertanyaan, hubungi Tim QA secara langsung.
         </div>
     </div>
 </body>

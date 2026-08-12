@@ -37,11 +37,17 @@
         @php
             $bdgClass = match($temuan->status) {
                 'open'              => 'b-open',
-                'in_progress'       => 'b-prog',
+                'in_progress'       => $type === 'ditolak' ? 'b-prog' : 'b-prog', // or a specific red color if you want
                 'closed_pending_qa' => 'b-pend',
                 'closed_acc'        => 'b-closed',
                 default             => 'b-open',
             };
+            if ($type === 'ditolak') {
+                $bdgClass = 'b-pend'; // Make it red-ish or yellow-ish
+            }
+            if ($type === 'baru_qa') {
+                $bdgClass = 'b-open';
+            }
             $bdgText = match($temuan->status) {
                 'open'              => 'Open — Menunggu Aksi',
                 'in_progress'       => 'In Progress — Rencana Aksi Dibuat',
@@ -49,12 +55,20 @@
                 'closed_acc'        => 'Closed ACC — Selesai',
                 default             => strtoupper($temuan->status),
             };
+            if ($type === 'ditolak') {
+                $bdgText = 'IN PROGRESS — PERBAIKAN DITOLAK QA';
+            }
+            if ($type === 'baru_qa') {
+                $bdgText = 'OPEN — LAPORAN BARU DIBUAT';
+            }
             $greeting = $recipientName ?? 'Tim SIVERA';
             $intro    = match($type) {
                 'baru'         => 'Anda ditunjuk sebagai <strong>Person in Charge (PIC)</strong> untuk menindaklanjuti temuan audit internal berikut. Mohon segera ambil tindakan.',
+                'baru_qa'      => 'Terdapat laporan temuan audit internal baru di sistem. PIC telah ditunjuk untuk menindaklanjuti temuan ini.',
                 'tindaklanjut' => 'PIC telah mengisi rencana aksi dan menetapkan target tanggal penyelesaian untuk temuan berikut.',
                 'bukti'        => 'PIC telah mengunggah bukti perbaikan. Mohon lakukan verifikasi segera.',
                 'closed'       => 'Temuan audit internal berikut telah diverifikasi dan <strong>dinyatakan selesai (Closed ACC)</strong> oleh QA.',
+                'ditolak'      => 'Bukti perbaikan yang Anda ajukan <strong>ditolak oleh QA</strong>. Silakan periksa catatan QA di halaman detail dan segera lakukan revisi perbaikan.',
                 default        => 'Terdapat pembaruan status pada temuan audit internal berikut.',
             };
         @endphp
@@ -86,9 +100,17 @@
         <div class="callout">
             &#128276; <strong>Aksi diperlukan:</strong> Login ke SIVERA dan isi rencana tindak lanjut serta target tanggal penyelesaian pada halaman detail temuan.
         </div>
+        @elseif($type === 'baru_qa')
+        <div class="callout" style="background-color:#e3f2fd; border-left:4px solid #1565c0;">
+            &#128065; <strong>Pemberitahuan QA:</strong> Ini adalah notifikasi temuan baru. Tidak ada aksi yang diperlukan dari Anda saat ini. Tim QA akan kembali diberi notifikasi saat PIC selesai mengunggah bukti perbaikan.
+        </div>
         @elseif($type === 'bukti')
         <div class="callout">
             &#9989; Bukti perbaikan telah dikirim oleh PIC. Silakan buka detail temuan dan verifikasi apakah temuan dapat ditutup (ACC).
+        </div>
+        @elseif($type === 'ditolak')
+        <div class="callout" style="background-color: #ffebee; border-left: 4px solid #c62828;">
+            &#10060; <strong>Revisi Diperlukan:</strong> QA telah menolak perbaikan Anda. Mohon segera periksa catatan QA dan unggah ulang bukti yang sesuai.
         </div>
         @endif
 

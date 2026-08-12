@@ -14,6 +14,7 @@ use Livewire\WithFileUploads;
 class TindakLanjutAuditee extends Component
 {
     use WithFileUploads;
+    use \App\Traits\ImageCompressor;
 
     public int $bosqTemuanId;
 
@@ -134,7 +135,7 @@ class TindakLanjutAuditee extends Component
 
         $newPaths = [];
         foreach ($files as $file) {
-            $newPaths[] = $file->store('bukti_bosq', 'public');
+            $newPaths[] = $this->compressAndSaveAsWebp($file, 'bukti_bosq');
         }
 
         $allPaths = array_merge($existing, $newPaths);
@@ -201,6 +202,25 @@ class TindakLanjutAuditee extends Component
         if ($newOrder < $currentOrder) {
             session()->flash('status_error', 'Status tidak bisa diundur.');
             return;
+        }
+
+        // AUTO-SAVE: Otomatis menyimpan action dan due_date saat mengubah status
+        if (in_array($statusBaru, ['in_progress', 'closed_pending_qa'])) {
+            $this->validate([
+                'action'     => 'required|string|max:2000',
+                'due_date'   => 'required|date',
+            ], [
+                'action.required'     => 'Deskripsi tindakan wajib diisi sebelum mengubah status.',
+                'due_date.required'   => 'Due date wajib diisi sebelum mengubah status.',
+            ]);
+
+            BosqTindakLanjut::where('bosq_temuan_id', $this->bosqTemuanId)->update([
+                'action'     => $this->action,
+                'due_date'   => $this->due_date,
+            ]);
+            
+            $tl->action = $this->action;
+            $tl->due_date = $this->due_date;
         }
 
         if ($statusBaru === 'closed_pending_qa') {

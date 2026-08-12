@@ -14,6 +14,7 @@ use Livewire\WithFileUploads;
 class TindakLanjutPIC extends Component
 {
     use WithFileUploads;
+    use \App\Traits\ImageCompressor;
 
     public int $temuanId;
 
@@ -151,7 +152,7 @@ class TindakLanjutPIC extends Component
 
         $newPaths = [];
         foreach ($files as $file) {
-            $newPaths[] = $file->store('bukti', 'public');
+            $newPaths[] = $this->compressAndSaveAsWebp($file, 'bukti');
         }
 
         $allPaths = array_merge($existing, $newPaths);
@@ -220,6 +221,25 @@ class TindakLanjutPIC extends Component
         if ($newOrder < $currentOrder) {
             session()->flash('status_error', 'Status tidak bisa diundur dari ' . $tl->status . ' ke ' . $statusBaru . '.');
             return;
+        }
+
+        // AUTO-SAVE: Otomatis menyimpan action dan due_date saat mengubah status
+        if (in_array($statusBaru, ['in_progress', 'closed_pending_qa'])) {
+            $this->validate([
+                'action'     => 'required|string|max:2000',
+                'due_date'   => 'required|date',
+            ], [
+                'action.required'     => 'Deskripsi tindakan wajib diisi sebelum mengubah status.',
+                'due_date.required'   => 'Due date wajib diisi sebelum mengubah status.',
+            ]);
+
+            TindakLanjut::where('temuan_id', $this->temuanId)->update([
+                'action'     => $this->action,
+                'due_date'   => $this->due_date,
+            ]);
+            
+            $tl->action = $this->action;
+            $tl->due_date = $this->due_date;
         }
 
         if ($statusBaru === 'closed_pending_qa') {

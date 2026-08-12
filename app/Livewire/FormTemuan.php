@@ -15,6 +15,7 @@ use Livewire\WithFileUploads;
 class FormTemuan extends Component
 {
     use WithFileUploads;
+    use \App\Traits\ImageCompressor;
 
     public $tanggal_temuan;
     public $departemen_id;
@@ -124,7 +125,7 @@ class FormTemuan extends Component
         }
 
         // 1. Simpan foto jika diupload
-        $fotoPath = $this->foto_temuan ? $this->foto_temuan->store('temuan', 'public') : null;
+        $fotoPath = $this->foto_temuan ? $this->compressAndSaveAsWebp($this->foto_temuan, 'temuan') : null;
 
         DB::beginTransaction();
         try {
@@ -159,7 +160,7 @@ class FormTemuan extends Component
             $qaUsers = User::where('role', 'qa')->get();
             foreach ($qaUsers as $qa) {
                 if ($qa->email) {
-                    $emailService->sendSiveraNotification($temuan, 'baru', $qa->email);
+                    $emailService->sendSiveraNotification($temuan, 'baru_qa', $qa->email);
                 }
             }
 

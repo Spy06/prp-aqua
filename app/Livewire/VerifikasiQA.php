@@ -36,7 +36,7 @@ class VerifikasiQA extends Component
                 'acc_qa' => true,
                 'tanggal_acc' => now(),
                 'status' => 'closed_acc',
-                'catatan_qa' => null, // clear previous if any
+                'catatan_qa' => $this->catatan_qa ?: null,
             ]);
         }
 
@@ -90,9 +90,18 @@ class VerifikasiQA extends Component
         ]);
 
         // Send notif email to PIC only
+        $emailService = app(\App\Services\EmailNotificationService::class);
         $picUser = User::find($this->temuan->pic_id);
         if ($picUser && $picUser->email) {
-            app(\App\Services\EmailNotificationService::class)->sendSiveraNotification($this->temuan, 'tindaklanjut', $picUser->email);
+            $emailService->sendSiveraNotification($this->temuan, 'ditolak', $picUser->email);
+        }
+
+        // Clear rate limit untuk notifikasi 'bukti' QA, agar saat PIC submit ulang, email QA masuk
+        $qaUsers = User::where('role', 'qa')->get();
+        foreach ($qaUsers as $qa) {
+            if ($qa->email) {
+                $emailService->clearRateLimit('sivera', 'bukti', $this->temuan->id, $qa->email);
+            }
         }
 
         $this->redirectRoute('temuan.detail', $this->temuan->id);

@@ -37,15 +37,25 @@ class TemuanNotificationMail extends Mailable implements ShouldQueue
     {
         $systemLabel = $this->system === 'bosq' ? "BOS'Q" : 'SIVERA';
 
-        // Subject dipersonalisasi & menyertakan ID temuan agar tiap email benar-benar unik
-        $typeLabel = match($this->type) {
-            'baru'         => 'Penunjukan PIC – Tindak Lanjut Diperlukan',
-            'tindaklanjut' => 'Rencana Aksi Telah Diperbarui',
-            'bukti'        => 'Bukti Perbaikan Dikirim – Mohon Verifikasi',
-            'closed'       => 'Temuan #' . $this->temuan->id . ' Telah Ditutup',
-            'subarea_pic'  => 'Peringatan Observasi Baru di Sub Area Anda',
-            default        => 'Pembaruan Status Temuan',
-        };
+        if ($this->system === 'bosq') {
+            $typeLabel = match($this->type) {
+                'baru'         => 'Laporan Observasi Baru Dibuat',
+                'subarea_pic'  => 'Pemberitahuan Observasi Baru di Area Anda',
+                'closed'       => 'Observasi Telah Ditandai Selesai (CLOSED)',
+                default        => 'Pembaruan Status Observasi',
+            };
+        } else {
+            $typeLabel = match($this->type) {
+                'baru'         => 'Penunjukan PIC – Tindak Lanjut Diperlukan',
+                'baru_qa'      => 'Laporan Temuan Baru Dibuat',
+                'tindaklanjut' => 'Rencana Aksi Telah Diperbarui',
+                'bukti'        => 'Bukti Perbaikan Dikirim – Mohon Verifikasi',
+                'closed'       => 'Temuan #' . $this->temuan->id . ' Telah Ditutup',
+                'subarea_pic'  => 'Peringatan Observasi Baru di Sub Area Anda',
+                'ditolak'      => 'Perbaikan Ditolak QA – Revisi Dibutuhkan',
+                default        => 'Pembaruan Status Temuan',
+            };
+        }
 
         // Sertakan nama penerima & ID temuan agar tidak dianggap email massal
         $namePrefix = $this->recipientName ? "Yth. {$this->recipientName} – " : '';

@@ -58,8 +58,14 @@ class ItPortalAuthController extends Controller
             ]);
         }
 
-        // Verifikasi PIN Keamanan IT (Default: 2026 atau sesuai yang diset)
-        $expectedPin = $user->it_pin ?: '2026';
+        // Verifikasi PIN Keamanan IT
+        // Prioritas: it_pin di DB → IT_ADMIN_PIN di .env → tolak login (tidak ada hardcoded fallback)
+        $expectedPin = $user->it_pin ?: env('IT_ADMIN_PIN');
+        if (!$expectedPin) {
+            throw ValidationException::withMessages([
+                'secret_pin' => 'Konfigurasi PIN Keamanan IT belum diatur. Hubungi administrator sistem.',
+            ]);
+        }
         if ($request->secret_pin !== $expectedPin) {
             throw ValidationException::withMessages([
                 'secret_pin' => 'PIN Keamanan IT salah. Akses ditolak.',

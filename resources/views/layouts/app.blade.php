@@ -1007,12 +1007,10 @@
             </button>
 
             <div class="logo-area qtop-logo">
-                <div class="logo-box">
-                    <span class="material-symbols-outlined">factory</span>
-                </div>
+                <img src="{{ asset('images/aqua-logo.png') }}" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/id/3/36/AQUA_Logo_2013.png';" alt="AQUA Logo" style="height: 40px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1)); margin-left: 10px;">
+                <div style="height: 28px; width: 2px; background-color: #cbd5e1; margin: 0 12px;"></div>
                 <div class="logo-text">
-                    <h1>SIVERA</h1>
-                    <p>Verifikasi PRP</p>
+                    <h1 style="color:#0d47a1; font-size: 18px; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">SIVERA</h1>
                 </div>
             </div>
         </div>
@@ -1045,12 +1043,10 @@
     <aside id="sidebar-drawer" class="qs">
         <div class="qs-header">
             <div class="logo-area">
-                <div class="logo-box">
-                    <span class="material-symbols-outlined">factory</span>
-                </div>
+                <img src="{{ asset('images/aqua-logo.png') }}" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/id/3/36/AQUA_Logo_2013.png';" alt="AQUA Logo" style="height: 40px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1)); margin-left: 10px;">
+                <div style="height: 28px; width: 2px; background-color: #cbd5e1; margin: 0 12px;"></div>
                 <div class="logo-text">
-                    <h1>SIVERA</h1>
-                    <p>Internal System</p>
+                    <h1 style="color:#0d47a1; font-size: 18px; font-weight: 800; letter-spacing: -0.2px; margin: 0; white-space: nowrap;">SIVERA</h1>
                 </div>
             </div>
             <button id="mobile-menu-close" class="qs-close-btn" aria-label="Close Menu">

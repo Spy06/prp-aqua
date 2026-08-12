@@ -53,7 +53,7 @@
     </div>
 
     {{-- Section 1: Form Tindakan & Due Date --}}
-    <form wire:submit.prevent="simpanDetail" style="margin-bottom:20px;">
+    <div style="margin-bottom:20px;">
         <div style="display:flex;flex-direction:column;gap:14px;">
 
             <div>
@@ -79,16 +79,8 @@
                 @endif
             </div>
 
-            @if($currentStatus !== 'closed_acc')
-            <div>
-                <button type="submit" class="bbtn bbtn-secondary bbtn-sm">
-                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
-                    Simpan Detail
-                </button>
-            </div>
-            @endif
         </div>
-    </form>
+    </div>
 
     {{-- Section 2: File / Foto Bukti --}}
     <div style="padding-top:16px;border-top:1.5px solid var(--bbor);margin-bottom:20px;">
@@ -120,7 +112,7 @@
                             <div style="height:120px;background:var(--bsur);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:pointer;"
                                  @click="lightboxOpen = true; lightboxSrc = '{{ Storage::disk('public')->url($path) }}'; lightboxTitle = 'Foto Bukti #{{ $index + 1 }}'"
                                  title="Klik untuk memperbesar gambar">
-                                <img src="{{ Storage::disk('public')->url($path) }}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.25s;">
+                                <img src="{{ Storage::disk('public')->url($path) }}" loading="lazy" width="200" height="120" style="width:100%;height:100%;object-fit:cover;transition:transform 0.25s;">
                                 <div class="pic-img-hover-overlay">
                                     <span class="material-symbols-outlined" style="font-size:22px;color:#fff;">zoom_in</span>
                                     <span style="font-size:10.5px;color:#fff;font-weight:600;">Perbesar</span>

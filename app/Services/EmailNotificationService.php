@@ -35,7 +35,9 @@ class EmailNotificationService
             if (!$email) {
                 $email = match($type) {
                     'baru'         => $temuan->pic?->email,
+                    'baru_qa'      => null, // Sent to QA explicitly via recipientEmail
                     'tindaklanjut' => $temuan->pic?->email,
+                    'ditolak'      => $temuan->pic?->email,
                     'bukti'        => null, // Sent to QA explicitly via recipientEmail
                     'closed'       => $temuan->pic?->email,
                     default        => $temuan->pic?->email,
@@ -48,7 +50,8 @@ class EmailNotificationService
             }
 
             // ── Rate Limiting ──────────────────────────────────────────────
-            if ($this->isRateLimited('sivera', $type, $temuan->id, $email)) {
+            // Bypass rate limit untuk penolakan agar PIC selalu tahu jika ditolak berkali-kali
+            if ($type !== 'ditolak' && $this->isRateLimited('sivera', $type, $temuan->id, $email)) {
                 return false;
             }
 
@@ -152,6 +155,15 @@ class EmailNotificationService
     {
         $key = $this->rateLimitKey($system, $type, $entityId, $email);
         Cache::put($key, true, self::COOLDOWN_SECONDS);
+    }
+
+    /**
+     * Hapus cooldown (rate limit) untuk notifikasi tertentu.
+     */
+    public function clearRateLimit(string $system, string $type, int $entityId, string $email): void
+    {
+        $key = $this->rateLimitKey($system, $type, $entityId, $email);
+        Cache::forget($key);
     }
 
     /**

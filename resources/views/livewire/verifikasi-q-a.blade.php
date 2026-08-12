@@ -2,7 +2,7 @@
     <div class="bcard-header">
         <div style="display:flex;align-items:center;gap:10px;">
             <div class="bcard-hicon" style="background:#fff8e1;">
-                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">shield_check</span>
+                <span class="material-symbols-outlined fil" style="color:#e65100;font-size:20px;">gpp_good</span>
             </div>
             <div>
                 <div style="font-size:15px;font-weight:700;color:var(--btxt);">Verifikasi QA</div>
@@ -16,10 +16,10 @@
             <div>
                 <label class="blabel" for="catatan_qa">
                     Catatan QA
-                    <span style="font-size:10px;font-weight:400;color:var(--btxt2);text-transform:none;">(Wajib diisi jika menolak)</span>
+                    <span style="font-size:10px;font-weight:400;color:var(--btxt2);text-transform:none;">(Opsional saat menyetujui, Wajib saat menolak)</span>
                 </label>
                 <textarea wire:model="catatan_qa" id="catatan_qa" rows="3"
-                    placeholder="Tulis alasan jika bukti kurang jelas atau tindakan tidak sesuai..."
+                    placeholder="Tulis alasan penolakan, atau tinggalkan pesan pujian/saran jika menyetujui..."
                     class="binput" style="resize:vertical;"></textarea>
                 @error('catatan_qa')
                     <span class="berr">{{ $message }}</span>

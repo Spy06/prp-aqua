@@ -16,7 +16,7 @@
             ],
             default => [
                 'title'    => 'SIVERA',
-                'sub'      => 'Sistem Verifikasi & Pelaporan Temuan Auditee',
+                'sub'      => 'Sistem Verifikasi PRP Plant Cianjur',
                 'btn_cls'  => 'btn-theme-sivera',
                 'title_cls'=> 'text-indigo-900 dark:text-indigo-400',
             ],

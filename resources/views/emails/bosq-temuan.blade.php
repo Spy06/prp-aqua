@@ -158,9 +158,11 @@
                     <td class="label">Dampak Observasi</td>
                     <td class="value">
                         @if($temuan->dampak_temuan === 'positif')
-                            <span style="background-color: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12.5px; display: inline-block;">Positif</span>
+                            <span
+                                style="background-color: #e0f2fe; color: #0284c7; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12.5px; display: inline-block;">Positif</span>
                         @else
-                            <span style="background-color: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12.5px; display: inline-block;">Negatif</span>
+                            <span
+                                style="background-color: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12.5px; display: inline-block;">Negatif</span>
                         @endif
                     </td>
                 </tr>

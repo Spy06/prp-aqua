@@ -344,7 +344,7 @@
                     {{-- Action & Due Date (Jika Negatif) --}}
                     <div x-show="dampakTemuan === 'negatif'" style="display:flex;flex-direction:column;gap:14px;">
                         <div>
-                            <label class="blabel" for="action_negatif" style="margin-bottom:6px;display:block;">Action (Jika Negatif) <span style="color:var(--error);">*</span></label>
+                            <label class="blabel" for="action_negatif" style="margin-bottom:6px;display:block;">Action (berikan Saran dan masukan jika diperlukan) <span style="color:var(--error);">*</span></label>
                             <textarea wire:model="action_negatif" id="action_negatif" rows="3" class="binput" placeholder="Tuliskan tindakan / action perbaikan..."></textarea>
                             @error('action_negatif') <span class="berr">{{ $message }}</span> @enderror
                         </div>

@@ -174,6 +174,12 @@
                     <td class="label">Auditee</td>
                     <td class="value">{{ $temuan->auditee?->name ?? '-' }}</td>
                 </tr>
+                <tr>
+                    <td class="label">Catatan (Temuan)</td>
+                    <td class="value" style="font-style: italic; color: #475569;">
+                        "{{ $temuan->temuan_bqa }}"
+                    </td>
+                </tr>
             </table>
 
             <div style="text-align: center;">

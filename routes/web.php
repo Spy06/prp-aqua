@@ -77,6 +77,12 @@ Route::middleware(['auth'])->group(function () {
                 }
                 return view('pages.qa.daftar-temuan');
             })->name('qa.daftar-temuan');
+
+            // Export routes SIVERA — QA & PIC
+            Route::middleware(['role:karyawan,qa'])->group(function () {
+                Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
+                Route::get('/export/pdf/daftar', [\App\Http\Controllers\ExportController::class, 'pdfDaftar'])->name('export.pdf.daftar');
+            });
         });
 
         // Role QA Only — Rekap Periode & Master Data SIVERA
@@ -102,8 +108,6 @@ Route::middleware(['auth'])->group(function () {
 
         // Export routes SIVERA — hanya QA
         Route::middleware(['role:qa'])->group(function () {
-            Route::get('/export/excel', [\App\Http\Controllers\ExportController::class, 'excel'])->name('export.excel');
-            Route::get('/export/pdf/daftar', [\App\Http\Controllers\ExportController::class, 'pdfDaftar'])->name('export.pdf.daftar');
             Route::get('/export/pdf/rekap', [\App\Http\Controllers\ExportController::class, 'pdfRekap'])->name('export.pdf.rekap');
         });
 

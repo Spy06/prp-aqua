@@ -16,7 +16,18 @@ class ExportController extends Controller
     protected function requireQa(): void
     {
         if (auth()->user()?->role !== 'qa') {
-            abort(403, 'Hanya QA yang dapat mengakses fitur export.');
+            abort(403, 'Hanya QA yang dapat mengakses fitur export ini.');
+        }
+    }
+
+    /**
+     * Guard: QA atau PIC SIVERA yang boleh mengakses.
+     */
+    protected function requireQaOrPic(): void
+    {
+        $user = auth()->user();
+        if ($user?->role !== 'qa' && !($user?->role === 'karyawan' && $user->isSiveraPicUser())) {
+            abort(403, 'Hanya QA dan PIC yang dapat mengakses fitur export ini.');
         }
     }
 
@@ -89,7 +100,7 @@ class ExportController extends Controller
      */
     public function excel(Request $request)
     {
-        $this->requireQa();
+        $this->requireQaOrPic();
 
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
         $temuans = $this->getTemuans($awal, $akhir, $request);
@@ -134,7 +145,7 @@ class ExportController extends Controller
      */
     public function pdfDaftar(Request $request)
     {
-        $this->requireQa();
+        $this->requireQaOrPic();
 
         ['awal' => $awal, 'akhir' => $akhir, 'label' => $label] = $this->parseFilter($request);
         $temuans = $this->getTemuans($awal, $akhir, $request);

@@ -148,7 +148,7 @@
                 @if($temuan->tindakLanjut && $temuan->tindakLanjut->action)
                 <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--bbor);">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
-                        <div class="inf-label" style="margin:0;">Action (Jika Negatif)</div>
+                        <div class="inf-label" style="margin:0;">Action (berikan Saran dan masukan jika diperlukan)</div>
                         @if($temuan->tindakLanjut->due_date)
                             <div style="font-size:12px;font-weight:600;color:#e65100;background:#fff3e0;padding:3px 10px;border-radius:6px;border:1px solid #ffe0b2;display:flex;align-items:center;gap:4px;">
                                 <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
@@ -165,8 +165,8 @@
         </div>
     </div>
 
-    {{-- Card: Action Ubah Status ke CLOSED oleh Observer / Pelapor / Auditee --}}
-    @if($isPelapor || $isAuditee)
+    {{-- Card: Action Ubah Status ke CLOSED oleh Observer / Pelapor --}}
+    @if($isPelapor)
         <div class="bcard fu2" style="margin-bottom:20px;border:1.5px solid {{ $isClosed ? '#a5d6a7' : '#90caf9' }};background:{{ $isClosed ? '#f1f8e9' : '#f4f8fb' }};">
             <div class="bcard-header" style="justify-content:space-between;border-bottom:1px solid {{ $isClosed ? '#c8e6c9' : '#e0e0e0' }};">
                 <div style="display:flex;align-items:center;gap:12px;">
